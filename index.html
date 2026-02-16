@@ -1,30 +1,71 @@
-
 <!DOCTYPE html>
 <html lang="ja">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ローラーストーン施工費用シミュレーター</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RollerStone 施工費用シミュレーター</title>
     <style>
-      @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap');
-      body {
-        font-family: 'Noto+Sans+JP', sans-serif;
-      }
+        body { font-family: "Helvetica Neue", Arial, sans-serif; background-color: #f4f4f4; color: #333; margin: 0; padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .container { background: #fff; width: 100%; max-width: 500px; padding: 30px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); text-align: center; }
+        h1 { color: #444; font-size: 22px; margin-bottom: 20px; border-bottom: 2px solid #ddd; padding-bottom: 10px; }
+        .input-group { margin-bottom: 25px; text-align: left; }
+        label { display: block; margin-bottom: 8px; font-weight: bold; color: #666; }
+        input[type="number"] { width: 100%; padding: 15px; font-size: 18px; border: 2px solid #ddd; border-radius: 8px; box-sizing: border-box; outline: none; }
+        button { background-color: #333; color: #fff; border: none; padding: 15px 40px; font-size: 18px; border-radius: 8px; cursor: pointer; width: 100%; font-weight: bold; }
+        button:hover { background-color: #555; }
+        #resultArea { margin-top: 30px; display: none; background: #f9f9f9; padding: 20px; border-radius: 8px; border: 1px solid #eee; }
+        .price-row { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 16px; }
+        .total-price { margin-top: 15px; padding-top: 15px; border-top: 2px dashed #ccc; font-size: 24px; font-weight: bold; color: #d4af37; }
+        .note { margin-top: 20px; font-size: 12px; color: #999; text-align: left; line-height: 1.5; }
     </style>
-  <script type="importmap">
-{
-  "imports": {
-    "lucide-react": "https://esm.sh/lucide-react@^0.564.0",
-    "react/": "https://esm.sh/react@^19.2.4/",
-    "react": "https://esm.sh/react@^19.2.4",
-    "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
-    "recharts": "https://esm.sh/recharts@^3.7.0"
-  }
-}
-</script>
 </head>
-  <body class="bg-slate-50 text-slate-900 min-h-screen">
-    <div id="root"></div>
-  </body>
+<body>
+<div class="container">
+    <h1>RollerStone<br>施工費用シミュレーター</h1>
+    <p style="font-size:14px; color:#666;">施工面積を入力してください</p>
+    <div class="input-group">
+        <label for="area">面積 (㎡)</label>
+        <input type="number" id="area" placeholder="例: 15" min="1">
+    </div>
+    <button onclick="calculate()">概算見積もりを見る</button>
+    <div id="resultArea">
+        <div class="price-row"><span>適用単価:</span><span id="unitPrice">-</span></div>
+        <div class="price-row"><span>施工費(税別):</span><span id="basePrice">-</span></div>
+        <div class="price-row"><span>消費税(10%):</span><span id="taxPrice">-</span></div>
+        <div class="total-price">税込合計: <span id="totalPrice">-</span></div>
+    </div>
+    <div class="note">※2024年1月版価格表に基づきます。<br>※下地処理・オプションは別途。<br>※最低施工金額(一式)が適用される場合があります。</div>
+</div>
+<script>
+    function calculate() {
+        const area = parseFloat(document.getElementById('area').value);
+        if (!area || area <= 0) { alert("正しい面積を入力してください"); return; }
+        let unitPrice = 0;
+        let basePrice = 0;
+        let isFixedPrice = false;
+        // 単価テーブル
+        const priceTable = {
+            10: 11200, 11: 11200, 12: 11100, 13: 11000, 14: 11000, 15: 10900, 16: 10800, 17: 10700, 18: 10700,
+            19: 10600, 20: 10500, 21: 10400, 22: 10400, 23: 10300, 24: 10200, 25: 10200, 26: 10100, 27: 10100,
+            28: 10100, 29: 10100, 30: 10000, 31: 10000, 32: 9900, 33: 9900, 34: 9900, 35: 9900, 36: 9800,
+            37: 9800, 38: 9800, 39: 9800, 40: 9700, 41: 9700, 42: 9700, 43: 9700, 44: 9600, 45: 9600, 46: 9600,
+            47: 9600, 48: 9500, 49: 9500, 50: 9500, 51: 9500, 52: 9400, 53: 9400, 54: 9400, 55: 9400
+        };
+        const checkArea = Math.round(area);
+        if (checkArea >= 63) { unitPrice = 9200; }
+        else if (checkArea >= 56) { unitPrice = 9300; }
+        else if (priceTable[checkArea]) { unitPrice = priceTable[checkArea]; }
+        else { unitPrice = 11200; }
+        basePrice = area * unitPrice;
+        if (basePrice < 115900) { basePrice = 115900; isFixedPrice = true; unitPrice = "一式適用"; }
+        const tax = Math.floor(basePrice * 0.1);
+        const total = Math.floor(basePrice + tax);
+        document.getElementById('resultArea').style.display = 'block';
+        document.getElementById('unitPrice').innerText = isFixedPrice ? "一式工事" : unitPrice.toLocaleString() + " 円";
+        document.getElementById('basePrice').innerText = basePrice.toLocaleString() + " 円";
+        document.getElementById('taxPrice').innerText = tax.toLocaleString() + " 円";
+        document.getElementById('totalPrice').innerText = total.toLocaleString() + " 円";
+    }
+</script>
+</body>
 </html>
