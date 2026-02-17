@@ -74,7 +74,7 @@
 
         /* FAQアニメーション */
         .faq-content { transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out; max-height: 0; opacity: 0; overflow: hidden; }
-        .faq-content.open { max-height: 200px; opacity: 1; }
+        .faq-content.open { max-height: 500px; opacity: 1; } /* 高さを余裕を持たせました */
         .faq-icon { transition: transform 0.3s ease; }
         .faq-icon.rotate { transform: rotate(180deg); }
 
@@ -194,11 +194,11 @@
                         契約前でもOK！まずはイメージを確認しましょう。
                     </p>
 
-                    <!-- LINE公式登録 (パース依頼用) -->
-                    <button onclick="connectLine()" class="action-btn w-full bg-[#06C755] text-white py-4 rounded-xl font-bold text-base shadow-md flex items-center justify-center gap-2">
+                    <!-- LINE公式登録 (スマホ対応リンク) -->
+                    <a href="https://lin.ee/EAASJvg" target="_blank" class="action-btn w-full bg-[#06C755] text-white py-4 rounded-xl font-bold text-base shadow-md flex items-center justify-center gap-2 no-underline">
                         <i data-lucide="message-circle" class="w-6 h-6"></i>
                         <span>LINEで写真を送って無料パース依頼</span>
-                    </button>
+                    </a>
                     <p class="text-[9px] text-center text-slate-400 mt-2">
                         ※友だち追加後、写真を送信してください
                     </p>
@@ -211,7 +211,6 @@
                         <span>Instagramで施工例を見る</span>
                     </a>
 
-                    <!-- 【新機能】デジタルカタログボタン -->
                     <a href="https://rollerstone.com/catalog/" target="_blank" class="action-btn w-full bg-slate-800 text-white py-4 rounded-xl font-bold text-base shadow-md flex items-center justify-center gap-2">
                         <i data-lucide="book-open" class="w-6 h-6 text-gold-400"></i>
                         <span>WEBカタログを見る</span>
@@ -255,11 +254,12 @@
             </div>
         </div>
 
-        <!-- FAQセクション -->
+        <!-- FAQセクション (公式QAベースに拡充) -->
         <div class="space-y-4">
             <p class="text-center text-[10px] font-black text-slate-400 uppercase tracking-widest">Frequently Asked Questions</p>
             
             <div class="space-y-3">
+                <!-- Q1 -->
                 <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
                     <button onclick="toggleFaq(1)" class="w-full p-5 flex items-center justify-between text-left hover:bg-slate-50 transition-colors">
                         <span class="text-sm font-bold text-slate-800">Q1: 工期はどれくらいですか？</span>
@@ -267,31 +267,72 @@
                     </button>
                     <div id="faq-answer-1" class="faq-content bg-slate-50">
                         <div class="p-5 pt-2 text-xs text-slate-500 font-medium leading-relaxed border-t border-slate-100">
-                            通常2〜3日で完了します（施工面積や下地の状況によります）。既存の床を壊さないため、短期間でのリフォームが可能です。
+                            施工面積や天候によりますが、通常2〜3日で完了します。既存の床を解体せず、上から施工するため、一般的な工事よりも短期間で仕上がります。
                         </div>
                     </div>
                 </div>
 
+                <!-- Q2 -->
                 <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
                     <button onclick="toggleFaq(2)" class="w-full p-5 flex items-center justify-between text-left hover:bg-slate-50 transition-colors">
-                        <span class="text-sm font-bold text-slate-800">Q2: 車が乗っても大丈夫ですか？</span>
+                        <span class="text-sm font-bold text-slate-800">Q2: 駐車場で車が乗っても割れませんか？</span>
                         <i data-lucide="chevron-down" id="faq-icon-2" class="w-4 h-4 text-slate-400 faq-icon"></i>
                     </button>
                     <div id="faq-answer-2" class="faq-content bg-slate-50">
                         <div class="p-5 pt-2 text-xs text-slate-500 font-medium leading-relaxed border-t border-slate-100">
-                            はい、全く問題ありません。ローラーストーンは高強度コンクリート素材を使用しており、駐車場など大型車両が乗る場所でも長期間美しさと強度を保ちます。
+                            はい、問題ありません。ローラーストーンは圧縮強度・曲げ強度・付着強度の全てにおいて基準数値をクリアした高強度な特殊材料を使用しています。大型車両が乗る場所でも安心してご利用いただけます。
                         </div>
                     </div>
                 </div>
 
+                <!-- Q3 -->
                 <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
                     <button onclick="toggleFaq(3)" class="w-full p-5 flex items-center justify-between text-left hover:bg-slate-50 transition-colors">
-                        <span class="text-sm font-bold text-slate-800">Q3: 既存の床を解体しますか？</span>
+                        <span class="text-sm font-bold text-slate-800">Q3: 既存の床の解体は必要ですか？</span>
                         <i data-lucide="chevron-down" id="faq-icon-3" class="w-4 h-4 text-slate-400 faq-icon"></i>
                     </button>
                     <div id="faq-answer-3" class="faq-content bg-slate-50">
                         <div class="p-5 pt-2 text-xs text-slate-500 font-medium leading-relaxed border-t border-slate-100">
-                            いいえ、解体は不要です。既存のタイル、アスファルト、コンクリートの上から直接施工できるため、廃材が出ず、解体費用を大幅にカットできます。
+                            いいえ、解体は不要です。コンクリート、アスファルト、タイルなどの上から直接施工できるため、解体費用や廃材処分費がかからず、コストを抑えられます。
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Q4 (追加) -->
+                <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
+                    <button onclick="toggleFaq(4)" class="w-full p-5 flex items-center justify-between text-left hover:bg-slate-50 transition-colors">
+                        <span class="text-sm font-bold text-slate-800">Q4: メンテナンスや掃除は大変ですか？</span>
+                        <i data-lucide="chevron-down" id="faq-icon-4" class="w-4 h-4 text-slate-400 faq-icon"></i>
+                    </button>
+                    <div id="faq-answer-4" class="faq-content bg-slate-50">
+                        <div class="p-5 pt-2 text-xs text-slate-500 font-medium leading-relaxed border-t border-slate-100">
+                            特別なお手入れは不要です。日常的な掃き掃除や水洗いで十分綺麗になります。高圧洗浄機の使用も可能です。
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Q5 (追加) -->
+                <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
+                    <button onclick="toggleFaq(5)" class="w-full p-5 flex items-center justify-between text-left hover:bg-slate-50 transition-colors">
+                        <span class="text-sm font-bold text-slate-800">Q5: どんな場所に施工できますか？</span>
+                        <i data-lucide="chevron-down" id="faq-icon-5" class="w-4 h-4 text-slate-400 faq-icon"></i>
+                    </button>
+                    <div id="faq-answer-5" class="faq-content bg-slate-50">
+                        <div class="p-5 pt-2 text-xs text-slate-500 font-medium leading-relaxed border-t border-slate-100">
+                            駐車場、アプローチ、玄関ポーチ、内装の土間、店舗の床など、コンクリートやアスファルト等のしっかりした下地があれば基本的にどこでも施工可能です。
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Q6 (追加) -->
+                <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
+                    <button onclick="toggleFaq(6)" class="w-full p-5 flex items-center justify-between text-left hover:bg-slate-50 transition-colors">
+                        <span class="text-sm font-bold text-slate-800">Q6: デザインや色は選べますか？</span>
+                        <i data-lucide="chevron-down" id="faq-icon-6" class="w-4 h-4 text-slate-400 faq-icon"></i>
+                    </button>
+                    <div id="faq-answer-6" class="faq-content bg-slate-50">
+                        <div class="p-5 pt-2 text-xs text-slate-500 font-medium leading-relaxed border-t border-slate-100">
+                            はい、自由に選べます。石の形、大きさ、色（基本色に加えオリジナルカラーも調色可能）、目地の色まで、お客様の好みに合わせてフルオーダーメイドで仕上げます。
                         </div>
                     </div>
                 </div>
@@ -361,11 +402,6 @@
             const notice = document.getElementById('fixedPriceNotice');
             if (isFixedPrice) notice.classList.remove('hidden');
             else notice.classList.add('hidden');
-        }
-
-        function connectLine() {
-            // 指定されたLINE URLへ遷移
-            window.location.href = "https://lin.ee/EAASJvg";
         }
 
         function toggleFaq(id) {
