@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ローラーストーン施工費用シミュレーター</title>
+    <title>【3秒見積もり】ローラーストーン施工費用シミュレーター</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts -->
@@ -26,64 +26,149 @@
                             500: '#D4AF37',
                             600: '#B8860B',
                         }
-                    },
-                    fontFamily: {
-                        sans: ['Noto Sans JP', 'sans-serif'],
                     }
                 }
             }
         }
     </script>
     <style>
-        body { font-family: 'Noto Sans JP', sans-serif; background-color: #f8fafc; color: #1a1a1a; overflow-x: hidden; }
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background-color: #ffffff;
+            color: #1a1a1a;
+            overflow-x: hidden;
+        }
         .gold-text {
             background: linear-gradient(135deg, #D4AF37 0%, #B8860B 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
-        .luxury-shadow { box-shadow: 0 20px 50px -12px rgba(212, 175, 55, 0.2); }
+        .insta-gradient {
+            background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%);
+        }
+        .line-color { background-color: #06C755; }
         
-        /* スライダー用スタイル */
-        .slider-container { position: relative; width: 100%; height: 250px; border-radius: 1.5rem; overflow: hidden; user-select: none; background: #000; }
-        /* 画像がない場合のダミー背景 */
-        .bg-after { background: #333; display:flex; align-items:center; justify-content:center; color:#666; font-weight:bold; }
-        .bg-before { background: #666; display:flex; align-items:center; justify-content:center; color:#ccc; font-weight:bold; }
+        /* Reveal Animation */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease-out;
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
 
-        .slider-img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
-        .slider-overlay { position: absolute; top: 0; left: 0; width: 50%; height: 100%; overflow: hidden; border-right: 2px solid #fff; z-index: 10; }
-        .slider-handle { 
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); 
-            width: 40px; height: 40px; background: #fff; border-radius: 50%; 
-            display: flex; align-items: center; justify-content: center; 
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3); z-index: 20; cursor: ew-resize;
+        .animate-slide-up {
+            animation: slideUp 0.5s ease-out forwards;
         }
-        input[type=range].slider-range {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
-            opacity: 0; cursor: ew-resize; z-index: 30; margin: 0;
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .luxury-shadow {
+            box-shadow: 0 20px 50px -12px rgba(212, 175, 55, 0.2);
         }
         
-        /* アニメーション */
-        .fade-in { animation: fadeIn 0.5s ease-out forwards; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        /* Comparison Slider */
+        .comparison-slider {
+            position: relative;
+            width: 100%;
+            padding-top: 66.66%; /* 3:2 Aspect Ratio */
+            overflow: hidden;
+            border-radius: 1.5rem;
+            cursor: ew-resize;
+            user-select: none;
+            background-color: #333; /* 画像がない時の背景 */
+        }
+        .comparison-slider img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            pointer-events: none; /* 画像のドラッグ防止 */
+        }
+        /* 画像がない場合のダミーテキスト */
+        .comparison-slider::before {
+            content: "After Image (施工後)";
+            position: absolute; top: 40%; left: 70%; transform: translate(-50%, -50%);
+            color: #666; font-weight: bold; font-size: 12px; z-index: 1;
+        }
+        .comparison-slider::after {
+            content: "Before Image (施工前)";
+            position: absolute; top: 40%; left: 30%; transform: translate(-50%, -50%);
+            color: #999; font-weight: bold; font-size: 12px; z-index: 1;
+        }
+
+        .comparison-slider .img-before {
+            z-index: 10;
+            clip-path: inset(0 50% 0 0); /* 初期位置 */
+            will-change: clip-path;
+        }
+        .comparison-slider .slider-handle {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            bottom: 0;
+            width: 4px;
+            background: white;
+            z-index: 20;
+            transform: translateX(-50%);
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+            cursor: ew-resize;
+        }
+        .comparison-slider .slider-button {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 44px;
+            height: 44px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            z-index: 21;
+        }
+        /* 矢印アイコン */
+        .comparison-slider .slider-button svg {
+            width: 24px;
+            height: 24px;
+            color: #333;
+        }
+
+        .pers-img {
+            width: 100%;
+            height: auto;
+            object-fit: cover;
+            border-radius: 12px;
+        }
+        .faq-transition {
+            transition: all 0.3s ease-in-out;
+        }
     </style>
 </head>
-<body class="min-h-screen flex flex-col items-center py-8 px-4 sm:px-6 bg-slate-50">
+<body class="min-h-screen flex flex-col items-center py-6 px-4 sm:px-6 bg-slate-50">
 
-    <div class="w-full max-w-xl space-y-8 mb-12">
+    <div class="w-full max-w-xl space-y-12 mb-20">
         <!-- Header -->
-        <div class="text-center space-y-4 fade-in">
+        <div class="text-center space-y-4 reveal active">
             <div class="inline-block px-4 py-1 border-2 border-gold-500 rounded-full bg-white shadow-sm">
                 <p class="text-[10px] font-black tracking-[0.2em] text-gold-600 uppercase">Professional Simulation Tool</p>
             </div>
             <h1 class="text-3xl sm:text-4xl font-black tracking-tighter leading-tight">
-                RollerStone<br/>
+                ローラーストーン<br/>
                 <span class="gold-text">施工費用シミュレーター</span>
             </h1>
             <p class="text-sm text-slate-500 font-bold italic">理想の足元を、適正価格で。</p>
         </div>
 
         <!-- Simulator Card -->
-        <div class="bg-white rounded-[2.5rem] p-8 luxury-shadow border border-slate-100 relative z-10 fade-in" style="animation-delay: 0.1s;">
+        <div class="bg-white rounded-[2.5rem] p-8 luxury-shadow border border-slate-100 relative z-10 reveal active">
             <div class="space-y-8">
                 <div class="space-y-4">
                     <label for="area" class="block text-center text-xs font-black text-slate-400 uppercase tracking-widest">施工面積を入力 (㎡)</label>
@@ -95,32 +180,32 @@
 
                     <!-- Guide Buttons -->
                     <div class="grid grid-cols-3 gap-2">
-                        <button onclick="setArea(15)" class="flex flex-col items-center justify-center p-3 border-2 border-slate-100 rounded-xl hover:border-gold-400 hover:bg-gold-50 transition-all group active:scale-95">
+                        <button onclick="setArea(15)" class="flex flex-col items-center justify-center p-3 border-2 border-slate-100 rounded-xl hover:border-gold-400 hover:bg-gold-50 transition-all group">
                             <i data-lucide="car" class="w-5 h-5 text-slate-400 group-hover:text-gold-500 mb-1"></i>
                             <span class="text-[9px] font-black text-slate-500 group-hover:text-gold-600">車1台(15㎡)</span>
                         </button>
-                        <button onclick="setArea(30)" class="flex flex-col items-center justify-center p-3 border-2 border-slate-100 rounded-xl hover:border-gold-400 hover:bg-gold-50 transition-all group active:scale-95">
+                        <button onclick="setArea(30)" class="flex flex-col items-center justify-center p-3 border-2 border-slate-100 rounded-xl hover:border-gold-400 hover:bg-gold-50 transition-all group">
                             <div class="flex gap-0.5">
                                 <i data-lucide="car" class="w-4 h-4 text-slate-400 group-hover:text-gold-500 mb-1"></i>
                                 <i data-lucide="car" class="w-4 h-4 text-slate-400 group-hover:text-gold-500 mb-1"></i>
                             </div>
                             <span class="text-[9px] font-black text-slate-500 group-hover:text-gold-600">車2台(30㎡)</span>
                         </button>
-                        <button onclick="setArea(5)" class="flex flex-col items-center justify-center p-3 border-2 border-slate-100 rounded-xl hover:border-gold-400 hover:bg-gold-50 transition-all group text-center active:scale-95">
-                            <i data-lucide="footprints" class="w-5 h-5 text-slate-400 group-hover:text-gold-500 mb-1"></i>
-                            <span class="text-[9px] font-black text-slate-500 group-hover:text-gold-600 leading-tight">アプローチ<br>(5㎡)</span>
+                        <button onclick="setArea(5)" class="flex flex-col items-center justify-center p-3 border-2 border-slate-100 rounded-xl hover:border-gold-400 hover:bg-gold-50 transition-all group text-center">
+                            <i data-lucide="bike" class="w-5 h-5 text-slate-400 group-hover:text-gold-500 mb-1"></i>
+                            <span class="text-[9px] font-black text-slate-500 group-hover:text-gold-600 leading-tight">アプローチ<br>(一式工事)</span>
                         </button>
                     </div>
                 </div>
 
-                <button onclick="calculate()" class="w-full bg-slate-900 text-white py-6 rounded-2xl font-black text-xl hover:bg-slate-800 hover:-translate-y-1 transition-all active:scale-[0.98] shadow-2xl flex items-center justify-center gap-3">
+                <button onclick="calculate()" class="w-full bg-black text-white py-6 rounded-2xl font-black text-xl hover:bg-slate-800 hover:-translate-y-1 transition-all active:scale-[0.98] shadow-2xl flex items-center justify-center gap-3">
                     <span>概算見積もりを見る</span>
                     <i data-lucide="calculator" class="w-6 h-6 text-gold-500"></i>
                 </button>
             </div>
 
             <!-- Result Area -->
-            <div id="resultArea" class="hidden mt-10 space-y-6 fade-in">
+            <div id="resultArea" class="hidden mt-10 space-y-6 animate-slide-up">
                 <div class="border-t border-dashed border-slate-200 pt-6 space-y-4">
                     <div class="flex justify-between items-center text-sm font-bold">
                         <span class="text-slate-400">適用単価</span>
@@ -137,15 +222,295 @@
                 </div>
 
                 <div class="bg-gold-50 rounded-2xl p-8 text-center border border-gold-200 relative overflow-hidden">
-                    <div class="absolute -top-4 -right-4 opacity-10">
+                    <div class="absolute -top-4 -right-4 opacity-5">
                         <i data-lucide="check-circle" class="w-32 h-32 text-gold-600"></i>
                     </div>
                     <p class="text-[10px] font-black text-gold-600 uppercase tracking-widest mb-1 relative z-10">Total Estimated Price</p>
-                    
-                    <!-- 金額表示 -->
                     <div class="text-5xl font-black gold-text relative z-10 mb-2" id="totalPrice">¥0</div>
-                    
-                    <p id="fixedPriceNotice" class="text-[10px] text-gold-600 font-bold hidden bg-white/50 inline-block px-2 py-1 rounded">※一式工事価格が適用されています</p>
+                    <p id="fixedPriceNotice" class="text-[10px] text-gold-600 font-bold hidden">※一式工事価格が適用されています</p>
                 </div>
 
-                <div class="text-
+                <div class="text-[10px] text-slate-400 font-bold leading-relaxed text-center px-4">
+                    ※2024年1月版価格表に基づきます。現場状況（下地調整等）により別途費用が発生する場合がございます。
+                </div>
+            </div>
+        </div>
+
+        <!-- Reinforced Photopars CTA Area -->
+        <div class="bg-black rounded-[3rem] p-8 text-white space-y-10 shadow-2xl relative overflow-hidden border border-white/10 reveal active">
+            <div class="space-y-3 text-center relative z-10">
+                <div class="inline-block px-3 py-1 bg-gold-500 text-black text-[9px] font-black rounded-full uppercase tracking-widest mb-2">Visual Comparison</div>
+                <h3 class="text-2xl sm:text-3xl font-black leading-tight">劇的なビフォーアフターを<br/><span class="text-gold-400 underline decoration-gold-600 decoration-4 underline-offset-8">指先で体験。</span></h3>
+                <p class="text-slate-400 text-sm leading-relaxed font-medium mt-4 px-4">
+                    スライダーを動かして、ローラーストーンの魅力を体感してください。
+                </p>
+            </div>
+
+            <!-- Comparison Slider -->
+            <div class="relative z-10">
+                <div class="comparison-slider" id="comparison-slider">
+                    <!-- GitHubにアップロードする画像ファイル名をここに指定してください -->
+                    <img src="after1.jpg.JPG" alt="After" class="img-after">
+                    <img src="before.jpg.JPG" alt="Before" class="img-before" id="slider-img-before">
+                    
+                    <div class="slider-handle" id="slider-handle">
+                        <div class="slider-button">
+                             <i data-lucide="chevrons-left-right" class="text-black w-5 h-5"></i>
+                        </div>
+                    </div>
+                    <div class="absolute bottom-4 left-4 z-30 bg-black/60 backdrop-blur px-3 py-1 rounded text-[10px] font-black border border-white/10 uppercase tracking-widest">Before</div>
+                    <div class="absolute bottom-4 right-4 z-30 bg-gold-600/60 backdrop-blur px-3 py-1 rounded text-[10px] font-black border border-white/10 uppercase tracking-widest">After</div>
+                </div>
+            </div>
+
+            <!-- Photo Gallery Grid -->
+            <div class="space-y-4 relative z-10">
+                <p class="text-center text-[10px] font-black text-gold-500 uppercase tracking-[0.2em]">More Samples</p>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="relative group rounded-xl overflow-hidden border border-white/10">
+                        <img src="after2.jpg.JPG" alt="完成イメージ別アングル" class="pers-img group-hover:scale-110 transition-transform duration-700">
+                        <div class="absolute bottom-2 left-2 bg-black/60 backdrop-blur-sm px-2 py-0.5 rounded text-[8px] font-bold">別アングル</div>
+                    </div>
+                    <div class="relative group rounded-xl overflow-hidden border border-white/10">
+                        <img src="material.jpg.JPG" alt="使用素材" class="pers-img group-hover:scale-110 transition-transform duration-700">
+                        <div class="absolute bottom-2 left-2 bg-black/60 backdrop-blur-sm px-2 py-0.5 rounded text-[8px] font-bold">使用素材</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FAQ Section -->
+            <div class="pt-8 space-y-4 relative z-10 border-t border-white/10">
+                <p class="text-center text-[10px] font-black text-gold-500 uppercase tracking-[0.2em] mb-6">Frequently Asked Questions</p>
+                <div class="space-y-3">
+                    <div class="border border-white/10 rounded-2xl overflow-hidden bg-white/5">
+                        <button onclick="toggleFaq(1)" class="w-full p-5 flex items-center justify-between text-left hover:bg-white/5 transition-colors">
+                            <span class="text-sm font-black">Q1: 工期はどれくらいですか？</span>
+                            <i data-lucide="chevron-down" id="faq-icon-1" class="w-5 h-5 text-gold-500 transition-transform"></i>
+                        </button>
+                        <div id="faq-answer-1" class="max-h-0 overflow-hidden faq-transition" style="max-height: 0px;">
+                            <div class="p-5 pt-0 text-xs text-slate-400 font-medium leading-relaxed">
+                                通常2〜3日で完了します（施工面積や下地の状況によります）。既存の床を壊さないため、短期間でのリフォームが可能です。
+                            </div>
+                        </div>
+                    </div>
+                    <div class="border border-white/10 rounded-2xl overflow-hidden bg-white/5">
+                        <button onclick="toggleFaq(2)" class="w-full p-5 flex items-center justify-between text-left hover:bg-white/5 transition-colors">
+                            <span class="text-sm font-black">Q2: 車が乗っても大丈夫ですか？</span>
+                            <i data-lucide="chevron-down" id="faq-icon-2" class="w-5 h-5 text-gold-500 transition-transform"></i>
+                        </button>
+                        <div id="faq-answer-2" class="max-h-0 overflow-hidden faq-transition" style="max-height: 0px;">
+                            <div class="p-5 pt-0 text-xs text-slate-400 font-medium leading-relaxed">
+                                はい、全く問題ありません。ローラーストーンは高強度コンクリート素材を使用しており、駐車場など大型車両が乗る場所でも長期間美しさと強度を保ちます。
+                            </div>
+                        </div>
+                    </div>
+                    <div class="border border-white/10 rounded-2xl overflow-hidden bg-white/5">
+                        <button onclick="toggleFaq(3)" class="w-full p-5 flex items-center justify-between text-left hover:bg-white/5 transition-colors">
+                            <span class="text-sm font-black">Q3: 既存の床を解体しますか？</span>
+                            <i data-lucide="chevron-down" id="faq-icon-3" class="w-5 h-5 text-gold-500 transition-transform"></i>
+                        </button>
+                        <div id="faq-answer-3" class="max-h-0 overflow-hidden faq-transition" style="max-height: 0px;">
+                            <div class="p-5 pt-0 text-xs text-slate-400 font-medium leading-relaxed">
+                                いいえ、解体は不要です。既存のタイル、アスファルト、コンクリートの上から直接施工できるため、廃材が出ず、解体費用を大幅にカットできます。
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="grid grid-cols-1 gap-4 relative z-10 pt-4">
+                <button onclick="contactLine()" class="line-color text-white py-6 rounded-2xl flex items-center justify-center gap-3 font-black text-lg hover:opacity-90 hover:scale-[1.02] transition-all shadow-xl active:scale-[0.98]">
+                    <i data-lucide="message-circle" class="w-6 h-6 fill-current"></i>
+                    <span>LINEで写真を送る</span>
+                </button>
+                <a href="https://www.instagram.com/cementart_numan/" target="_blank" class="insta-gradient text-white py-6 rounded-2xl flex items-center justify-center gap-3 font-black text-lg hover:opacity-90 hover:scale-[1.02] transition-all shadow-xl active:scale-[0.98]">
+                    <i data-lucide="instagram" class="w-6 h-6"></i>
+                    <span>Instagramで相談する</span>
+                </a>
+            </div>
+            
+            <p class="text-[9px] text-center text-slate-500 font-bold uppercase tracking-[0.3em]">No commitment required. Professional support.</p>
+        </div>
+
+        <!-- Footer Info -->
+        <div class="px-6 py-8 text-center space-y-6 reveal active">
+            <div class="flex justify-center gap-8 text-slate-400">
+                <button onclick="shareX()" class="hover:text-black transition-colors flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest">
+                    <i data-lucide="twitter" class="w-4 h-4"></i> Share Result
+                </button>
+                <div class="w-px h-4 bg-slate-200"></div>
+                <button onclick="shareLine()" class="hover:text-green-500 transition-colors flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest">
+                    <i data-lucide="message-circle" class="w-4 h-4"></i> Send LINE
+                </button>
+            </div>
+            <p class="text-[9px] text-slate-300 font-black tracking-[0.5em] uppercase">Roller Stone Authorized Simulator</p>
+        </div>
+    </div>
+
+    <!-- JavaScript Implementation -->
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // -----------------------
+        // Calculator Logic
+        // -----------------------
+        function setArea(val) {
+            document.getElementById('area').value = val;
+            calculate();
+        }
+
+        function calculate() {
+            const areaInput = document.getElementById('area').value;
+            const area = parseFloat(areaInput);
+
+            if (!area || area <= 0) {
+                alert("面積を正しく入力してください");
+                return;
+            }
+
+            let unitPrice = 0;
+            let basePrice = 0;
+            let isFixedPrice = false;
+
+            // Price Table (Based on user data)
+            const priceTable = {
+                10: 11200, 11: 11200, 12: 11100, 13: 11000, 14: 11000, 15: 10900, 16: 10800, 17: 10700, 18: 10700,
+                19: 10600, 20: 10500, 21: 10400, 22: 10400, 23: 10300, 24: 10200, 25: 10200, 26: 10100, 27: 10100,
+                28: 10100, 29: 10100, 30: 10000, 31: 10000, 32: 9900, 33: 9900, 34: 9900, 35: 9900, 36: 9800,
+                37: 9800, 38: 9800, 39: 9800, 40: 9700, 41: 9700, 42: 9700, 43: 9700, 44: 9600, 45: 9600, 46: 9600,
+                47: 9600, 48: 9500, 49: 9500, 50: 9500, 51: 9500, 52: 9400, 53: 9400, 54: 9400, 55: 9400
+            };
+
+            const rArea = Math.round(area);
+
+            // Determine Unit Price
+            if (rArea >= 63) { unitPrice = 9200; }
+            else if (rArea >= 56) { unitPrice = 9300; }
+            else if (priceTable[rArea]) { unitPrice = priceTable[rArea]; }
+            else { unitPrice = 11200; }
+
+            basePrice = area * unitPrice;
+
+            // Check Minimum Price (115,900 JPY)
+            if (basePrice < 115900) {
+                basePrice = 115900;
+                isFixedPrice = true;
+            }
+
+            const tax = Math.floor(basePrice * 0.1);
+            const total = Math.floor(basePrice + tax);
+
+            // Update UI
+            document.getElementById('resultArea').classList.remove('hidden');
+            
+            document.getElementById('unitPrice').innerText = isFixedPrice ? "一式工事適用" : unitPrice.toLocaleString() + " 円";
+            document.getElementById('basePrice').innerText = basePrice.toLocaleString() + " 円";
+            document.getElementById('taxPrice').innerText = tax.toLocaleString() + " 円";
+            
+            // Count up animation for total price
+            animateValue("totalPrice", 0, total, 1000);
+
+            const notice = document.getElementById('fixedPriceNotice');
+            if (isFixedPrice) notice.classList.remove('hidden');
+            else notice.classList.add('hidden');
+        }
+
+        // Count up animation helper
+        function animateValue(id, start, end, duration) {
+            const obj = document.getElementById(id);
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                const val = Math.floor(progress * (end - start) + start);
+                obj.innerHTML = "¥" + val.toLocaleString();
+                if (progress < 1) {
+                    window.requestAnimationFrame(step);
+                }
+            };
+            window.requestAnimationFrame(step);
+        }
+
+        // -----------------------
+        // FAQ Logic
+        // -----------------------
+        function toggleFaq(id) {
+            const answer = document.getElementById(`faq-answer-${id}`);
+            const icon = document.getElementById(`faq-icon-${id}`);
+            
+            if (answer.style.maxHeight === '0px' || answer.style.maxHeight === '') {
+                answer.style.maxHeight = answer.scrollHeight + "px";
+                icon.style.transform = "rotate(180deg)";
+            } else {
+                answer.style.maxHeight = "0px";
+                icon.style.transform = "rotate(0deg)";
+            }
+        }
+
+        // -----------------------
+        // Comparison Slider Logic
+        // -----------------------
+        document.addEventListener('DOMContentLoaded', () => {
+            const slider = document.getElementById('comparison-slider');
+            const beforeImg = document.getElementById('slider-img-before');
+            const handle = document.getElementById('slider-handle');
+            
+            let isDragging = false;
+
+            const updateSliderPosition = (x) => {
+                const rect = slider.getBoundingClientRect();
+                let position = ((x - rect.left) / rect.width) * 100;
+                
+                // Limit range
+                position = Math.max(0, Math.min(100, position));
+                
+                beforeImg.style.clipPath = `inset(0 ${100 - position}% 0 0)`;
+                handle.style.left = `${position}%`;
+            };
+
+            // Mouse Events
+            slider.addEventListener('mousedown', () => isDragging = true);
+            window.addEventListener('mouseup', () => isDragging = false);
+            window.addEventListener('mousemove', (e) => {
+                if (!isDragging) return;
+                updateSliderPosition(e.clientX);
+            });
+
+            // Touch Events (Mobile)
+            slider.addEventListener('touchstart', () => isDragging = true);
+            window.addEventListener('touchend', () => isDragging = false);
+            window.addEventListener('touchmove', (e) => {
+                if (!isDragging) return;
+                updateSliderPosition(e.touches[0].clientX);
+            });
+
+            // Click to jump
+            slider.addEventListener('click', (e) => {
+                updateSliderPosition(e.clientX);
+            });
+        });
+
+        // -----------------------
+        // Contact & Share Logic
+        // -----------------------
+        function contactLine() {
+            // ここにあなたのLINE公式アカウントのURLを入れてください
+            window.location.href = "https://line.me/R/ti/p/@example"; 
+        }
+
+        function shareX() {
+            const text = encodeURIComponent("ローラーストーンの施工費用をシミュレーションしました！ #RollerStone");
+            const url = encodeURIComponent(window.location.href);
+            window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, '_blank');
+        }
+
+        function shareLine() {
+            const text = encodeURIComponent("ローラーストーンの施工費用シミュレーター");
+            const url = encodeURIComponent(window.location.href);
+            window.open(`https://line.me/R/msg/text/?${text}%20${url}`, '_blank');
+        }
+    </script>
+</body>
+</html>
