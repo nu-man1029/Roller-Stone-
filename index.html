@@ -57,14 +57,6 @@
         .luxury-shadow {
             box-shadow: 0 20px 50px -12px rgba(212, 175, 55, 0.15);
         }
-        /* スムーズな横スクロール */
-        .no-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
-        .no-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
     </style>
 </head>
 <body class="min-h-screen flex flex-col items-center py-6 px-4 sm:px-6">
@@ -142,12 +134,12 @@
                 </p>
             </div>
 
-            <!-- Before/After Gallery -->
-            <div class="space-y-4 relative z-10">
+            <!-- Before/After Gallery - Vertical Layout -->
+            <div class="space-y-6 relative z-10">
                 <p class="text-center text-[10px] font-black text-gold-500 uppercase tracking-[0.2em]">Photopars Samples</p>
-                <div class="flex overflow-x-auto gap-4 no-scrollbar snap-x snap-mandatory pb-4">
+                <div class="flex flex-col gap-6">
                     <!-- Before -->
-                    <div class="snap-center shrink-0 w-4/5 sm:w-1/3 space-y-2">
+                    <div class="w-full space-y-2">
                         <div class="relative aspect-video rounded-xl overflow-hidden border border-white/10 group">
                             <img src="https://placehold.co/600x400/333/fff?text=Before" alt="Before" class="w-full h-full object-cover">
                             <div class="absolute top-2 left-2 bg-black/60 backdrop-blur-md px-2 py-1 rounded text-[9px] font-black text-white border border-white/20">施工前</div>
@@ -155,7 +147,7 @@
                         <p class="text-[10px] text-slate-500 font-bold text-center italic">現在の施工場所の写真</p>
                     </div>
                     <!-- After A -->
-                    <div class="snap-center shrink-0 w-4/5 sm:w-1/3 space-y-2">
+                    <div class="w-full space-y-2">
                         <div class="relative aspect-video rounded-xl overflow-hidden border-2 border-gold-500/50">
                             <img src="https://placehold.co/600x400/D4AF37/000?text=After+A" alt="After A" class="w-full h-full object-cover">
                             <div class="absolute top-2 left-2 bg-gold-500 px-2 py-1 rounded text-[9px] font-black text-black">完成イメージ案①</div>
@@ -163,18 +155,13 @@
                         <p class="text-[10px] text-gold-400 font-bold text-center italic">石畳調デザイン</p>
                     </div>
                     <!-- After B -->
-                    <div class="snap-center shrink-0 w-4/5 sm:w-1/3 space-y-2">
+                    <div class="w-full space-y-2">
                         <div class="relative aspect-video rounded-xl overflow-hidden border-2 border-gold-500/50">
                             <img src="https://placehold.co/600x400/B8860B/fff?text=After+B" alt="After B" class="w-full h-full object-cover">
                             <div class="absolute top-2 left-2 bg-gold-600 px-2 py-1 rounded text-[9px] font-black text-white">完成イメージ案②</div>
                         </div>
                         <p class="text-[10px] text-gold-500 font-bold text-center italic">タイル調デザイン</p>
                     </div>
-                </div>
-                <div class="flex justify-center gap-1 sm:hidden">
-                    <div class="w-1.5 h-1.5 rounded-full bg-gold-500"></div>
-                    <div class="w-1.5 h-1.5 rounded-full bg-white/20"></div>
-                    <div class="w-1.5 h-1.5 rounded-full bg-white/20"></div>
                 </div>
             </div>
 
