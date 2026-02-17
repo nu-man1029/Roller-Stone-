@@ -111,7 +111,7 @@
                             </div>
                         </div>
 
-                        <!-- Step 2: Result Display (Directly after input) -->
+                        <!-- Step 2: Result Display -->
                         <div class="pt-6 border-t border-slate-800">
                             <div class="bg-slate-950 rounded-[2.5rem] p-10 text-white relative shadow-2xl border border-gold-500/10 overflow-hidden group">
                                 <div class="text-[10px] font-black uppercase tracking-widest text-gold-400 opacity-60 mb-1">Estimated Total (Rough)</div>
@@ -143,7 +143,13 @@
                                 <span class="text-lg">この内容で静岡県認定施工店に問い合わせる</span>
                                 <i data-lucide="arrow-right" class="w-6 h-6 group-hover:translate-x-1 transition-transform"></i>
                             </button>
-                            <p class="text-center text-[11px] text-slate-500 font-bold">ボタンを押すと公式連絡先（Instagram / 電話）の選択画面が開きます</p>
+                            <div class="bg-gold-500/5 border border-gold-500/20 rounded-2xl p-4 flex items-start gap-3">
+                                <i data-lucide="sparkles" class="w-5 h-5 text-gold-500 shrink-0 mt-0.5"></i>
+                                <p class="text-[11px] text-gold-400/80 font-bold leading-relaxed">
+                                    <span class="text-gold-400 underline">画像送信で完成イメージを無料作成！</span><br/>
+                                    お問い合わせ時に施工検討場所の画像をお送りいただければ、施工完成パース図（フォトパース）を作成してご提案いたします。
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -172,6 +178,31 @@
 
             <!-- Right Column: Gallery & Stats -->
             <div class="lg:col-span-5 space-y-6">
+                <!-- PHOTO PERSPECTIVE CARD -->
+                <div class="bg-gradient-to-br from-slate-900 to-slate-950 border-2 border-gold-500/30 rounded-[2.5rem] p-8 space-y-5 relative overflow-hidden group shadow-2xl shadow-gold-500/5">
+                    <div class="absolute -top-10 -right-10 opacity-[0.05] group-hover:scale-110 transition-transform duration-700">
+                        <i data-lucide="camera" class="w-40 h-40 text-gold-500"></i>
+                    </div>
+                    <div class="space-y-4 relative z-10">
+                        <div class="inline-flex items-center gap-2 px-3 py-1 bg-gold-500 text-slate-900 text-[9px] font-black rounded-full uppercase tracking-widest">Special Proposal</div>
+                        <h3 class="text-2xl font-black text-white leading-tight">施工完成パース図を<br/><span class="gold-text-gradient">無料で作成します</span></h3>
+                        <p class="text-slate-400 text-sm leading-relaxed">
+                            「完成後のイメージが湧かない…」という方もご安心ください。施工検討場所の写真を1枚送るだけで、<span class="text-gold-400 font-bold">実際の写真にローラーストーンを合成した完成イメージ図</span>を作成いたします。
+                        </p>
+                    </div>
+                    <div class="flex items-center gap-4 pt-2 relative z-10">
+                        <div class="bg-slate-800 p-3 rounded-2xl border border-slate-700">
+                            <i data-lucide="image" class="w-6 h-6 text-gold-400"></i>
+                        </div>
+                        <div class="text-slate-500">
+                            <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                        </div>
+                        <div class="bg-gold-500/10 p-3 rounded-2xl border border-gold-500/20">
+                            <i data-lucide="sparkles" class="w-6 h-6 text-gold-500"></i>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Digital Catalog Card -->
                 <div class="luxury-card rounded-[2.5rem] p-8 space-y-5 relative overflow-hidden group">
                     <div class="space-y-3">
@@ -198,7 +229,7 @@
                 <!-- Price Trend Chart -->
                 <div class="luxury-card rounded-[2rem] p-8">
                     <h4 class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-6">面積別単価メリット</h4>
-                    <div class="h-[200px] w-full">
+                    <div class="h-[180px] w-full">
                         <canvas id="priceChart"></canvas>
                     </div>
                     <div class="mt-4 text-center">
@@ -215,7 +246,7 @@
         <div class="bg-slate-900 w-full max-w-lg rounded-[3rem] shadow-2xl relative z-10 overflow-hidden animate-fade-in border border-gold-500/20">
             <div class="p-8 bg-slate-950 flex justify-between items-center border-b border-gold-500/10">
                 <div class="space-y-1">
-                    <h3 class="text-xl font-black text-white">お問い合わせ方法を選択</h3>
+                    <h3 class="text-xl font-black text-white">お問い合わせ・画像送信</h3>
                     <p class="text-gold-400 text-[10px] font-bold uppercase tracking-widest">㈱Kouga Rimex 認定施工窓口</p>
                 </div>
                 <button onclick="closeModal()" class="p-2 hover:bg-slate-800 rounded-xl transition-colors">
@@ -224,6 +255,16 @@
             </div>
             
             <div class="p-8 space-y-6">
+                <!-- Photopars Instruction -->
+                <div class="bg-gold-500/10 border border-gold-500/20 rounded-2xl p-5 space-y-2">
+                    <div class="flex items-center gap-2 text-gold-500 font-black text-xs uppercase tracking-widest">
+                        <i data-lucide="camera" class="w-4 h-4"></i> Recommended Step
+                    </div>
+                    <p class="text-[11px] text-slate-300 font-bold leading-relaxed">
+                        現在の現場の画像をお送りいただければ、無料で<span class="text-gold-400 underline">施工完成パース図（フォトパース）</span>を作成し、より具体的なご提案が可能です。
+                    </p>
+                </div>
+
                 <!-- Summary -->
                 <div class="bg-slate-950 p-6 rounded-3xl border border-gold-500/10 text-center">
                      <div class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Estimated Total</div>
@@ -236,8 +277,8 @@
                         <i data-lucide="instagram" class="w-6 h-6 text-white"></i>
                     </div>
                     <div class="flex-1">
-                        <div class="text-lg font-black text-white">Instagram DMで相談</div>
-                        <div class="text-[10px] text-slate-500 font-bold leading-tight">施工事例をチェックしながらチャット相談</div>
+                        <div class="text-lg font-black text-white">Instagram DMで画像を送る</div>
+                        <div class="text-[10px] text-slate-500 font-bold leading-tight">そのままチャットで見積り・パース相談が可能</div>
                     </div>
                     <i data-lucide="external-link" class="w-5 h-5 text-slate-700 group-hover:text-gold-400"></i>
                 </a>
@@ -249,7 +290,7 @@
                     </div>
                     <div class="flex-1">
                         <div class="text-lg font-black text-white">電話で直接問い合わせ</div>
-                        <div class="text-[10px] text-slate-500 font-bold leading-tight">お急ぎの方、現地調査のご予約はこちら</div>
+                        <div class="text-[10px] text-slate-500 font-bold leading-tight">現地調査・採寸のご予約はこちら</div>
                     </div>
                     <span class="text-gold-400 font-black text-xs">Call</span>
                 </a>
@@ -284,8 +325,8 @@
                         <span>電話: 080-1582-0201</span>
                     </div>
                     <div class="flex items-center gap-3">
-                        <i data-lucide="info" class="w-4 h-4 text-gold-500"></i>
-                        <span>認定施工技術者在籍店</span>
+                        <i data-lucide="camera" class="w-4 h-4 text-gold-500"></i>
+                        <span>フォトパース作成無料</span>
                     </div>
                 </div>
             </div>
