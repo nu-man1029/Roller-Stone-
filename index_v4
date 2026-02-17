@@ -10,8 +10,6 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700;900&display=swap" rel="stylesheet">
-    <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
     
     <script>
         tailwind.config = {
@@ -91,13 +89,30 @@
                     </div>
                     <!-- 目安ボタン -->
                     <div class="grid grid-cols-3 gap-2 pt-2">
-                        <button onclick="setArea(15)" class="quick-btn flex flex-col items-center justify-center p-3 border border-slate-200 rounded-xl hover:border-gold-400 hover:bg-gold-50 transition-all bg-white shadow-sm"><i data-lucide="car" class="w-5 h-5 text-slate-400 mb-1"></i><span class="text-[10px] font-bold text-slate-600">車1台<br>(15㎡)</span></button>
-                        <button onclick="setArea(30)" class="quick-btn flex flex-col items-center justify-center p-3 border border-slate-200 rounded-xl hover:border-gold-400 hover:bg-gold-50 transition-all bg-white shadow-sm"><div class="flex gap-0.5"><i data-lucide="car" class="w-4 h-4 text-slate-400 mb-1"></i><i data-lucide="car" class="w-4 h-4 text-slate-400 mb-1"></i></div><span class="text-[10px] font-bold text-slate-600">車2台<br>(30㎡)</span></button>
-                        <button onclick="setArea(5)" class="quick-btn flex flex-col items-center justify-center p-3 border border-slate-200 rounded-xl hover:border-gold-400 hover:bg-gold-50 transition-all bg-white shadow-sm"><i data-lucide="footprints" class="w-5 h-5 text-slate-400 mb-1"></i><span class="text-[10px] font-bold text-slate-600">玄関アプローチ<br>(5㎡)</span></button>
+                        <button onclick="setArea(15)" class="quick-btn flex flex-col items-center justify-center p-3 border border-slate-200 rounded-xl hover:border-gold-400 hover:bg-gold-50 transition-all bg-white shadow-sm">
+                            <!-- Car Icon SVG -->
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-400 mb-1"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>
+                            <span class="text-[10px] font-bold text-slate-600">車1台<br>(15㎡)</span>
+                        </button>
+                        <button onclick="setArea(30)" class="quick-btn flex flex-col items-center justify-center p-3 border border-slate-200 rounded-xl hover:border-gold-400 hover:bg-gold-50 transition-all bg-white shadow-sm">
+                            <div class="flex gap-0.5">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-400 mb-1"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-400 mb-1"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>
+                            </div>
+                            <span class="text-[10px] font-bold text-slate-600">車2台<br>(30㎡)</span>
+                        </button>
+                        <button onclick="setArea(5)" class="quick-btn flex flex-col items-center justify-center p-3 border border-slate-200 rounded-xl hover:border-gold-400 hover:bg-gold-50 transition-all bg-white shadow-sm">
+                            <!-- Footprints Icon SVG -->
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-400 mb-1"><path d="M4 16v-2.38C4 11.5 2.97 10.5 3 8c.03-2.72 1.49-6 4.5-6C9.37 2 11 3.8 11 8c0 1.25-.51 2-1.25 2H6.88c-.66 0-1.2.55-1.2 1.2V19c0 2 2.5 4 4.5 4 2.47 0 4-1.67 4-5v-2.38c0-2.12-1.03-3.12-1-5.62-.03-2.72 1.43-6 4.5-6C19.37 2 21 3.8 21 8c0 1.25-.51 2-1.25 2h-2.88c-.66 0-1.2.55-1.2 1.2V19c0 2-2.5 4-4.5 4-2.47 0-4-1.67-4-5"/></svg>
+                            <span class="text-[10px] font-bold text-slate-600">玄関アプローチ<br>(5㎡)</span>
+                        </button>
                     </div>
                 </div>
                 <!-- 計算ボタン -->
-                <button onclick="calculate()" class="w-full bg-black-pure text-white py-5 rounded-2xl font-black text-lg hover:bg-slate-800 hover:-translate-y-1 transition-all active:scale-[0.98] shadow-xl flex items-center justify-center gap-2 group"><span>概算見積もりを見る</span><i data-lucide="calculator" class="w-5 h-5 text-gold-500 group-hover:text-gold-400"></i></button>
+                <button onclick="calculate()" class="w-full bg-black-pure text-white py-5 rounded-2xl font-black text-lg hover:bg-slate-800 hover:-translate-y-1 transition-all active:scale-[0.98] shadow-xl flex items-center justify-center gap-2 group">
+                    <span>概算見積もりを見る</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gold-500 group-hover:text-gold-400"><rect width="16" height="20" x="4" y="2" rx="2"/><line x1="8" x2="16" y1="6" y2="6"/><line x1="16" x2="16" y1="14" y2="18"/><path d="M16 10h.01"/><path d="M12 10h.01"/><path d="M8 10h.01"/><path d="M12 14h.01"/><path d="M8 14h.01"/><path d="M12 18h.01"/><path d="M8 18h.01"/></svg>
+                </button>
             </div>
 
             <!-- 結果表示 -->
@@ -109,13 +124,18 @@
                 </div>
                 <!-- 合計BOX -->
                 <div class="bg-gradient-to-br from-gold-400 to-gold-600 rounded-2xl p-6 text-center text-white shadow-lg relative overflow-hidden">
-                    <div class="absolute -top-6 -right-6 opacity-20"><i data-lucide="check-circle" class="w-32 h-32"></i></div>
+                    <div class="absolute -top-6 -right-6 opacity-20">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                    </div>
                     <p class="text-[10px] font-bold tracking-widest uppercase opacity-90 mb-1 relative z-10">Total Estimated Price</p>
                     <div class="text-4xl font-black tracking-tight relative z-10" id="totalPrice">¥0</div>
                     <div id="fixedPriceNotice" class="hidden mt-2"><span class="text-[10px] bg-black/20 px-2 py-1 rounded inline-block font-bold">※一式工事価格（最低施工金額）適用</span></div>
                 </div>
                 <!-- スクショ保存 -->
-                <button onclick="shareResult()" class="w-full mt-4 border border-slate-200 text-slate-500 py-3 rounded-xl font-bold text-sm hover:bg-slate-50 flex items-center justify-center gap-2"><i data-lucide="share" class="w-4 h-4"></i><span>結果を保存・共有する</span></button>
+                <button onclick="shareResult()" class="w-full mt-4 border border-slate-200 text-slate-500 py-3 rounded-xl font-bold text-sm hover:bg-slate-50 flex items-center justify-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" x2="12" y1="2" y2="15"/></svg>
+                    <span>結果を保存・共有する</span>
+                </button>
                 <p class="text-[10px] text-slate-400 mt-4 text-center leading-relaxed">※下地処理費、オプション、諸経費は含まれておりません。<br>※正確な金額は現地調査後に確定します。</p>
             </div>
         </div>
@@ -139,11 +159,11 @@
             <h3 class="text-center text-lg font-black text-slate-800">お客様の声</h3>
             <div class="space-y-4">
                 <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
-                    <div class="flex items-center gap-2 mb-2"><div class="flex text-gold-500"><i data-lucide="star" class="w-3 h-3 fill-current"></i><i data-lucide="star" class="w-3 h-3 fill-current"></i><i data-lucide="star" class="w-3 h-3 fill-current"></i><i data-lucide="star" class="w-3 h-3 fill-current"></i><i data-lucide="star" class="w-3 h-3 fill-current"></i></div><span class="text-xs font-bold text-slate-400">駐車場リフォーム</span></div>
+                    <div class="flex items-center gap-2 mb-2"><div class="flex text-gold-500 text-xs">★★★★★</div><span class="text-xs font-bold text-slate-400">駐車場リフォーム</span></div>
                     <p class="text-sm font-bold text-slate-800">「新築のような仕上がりに感動！」</p><p class="text-xs text-slate-500 mt-2 leading-relaxed">古くなったコンクリートが汚くて悩みでしたが、たった2日で高級ホテルの入り口みたいになりました。</p>
                 </div>
                 <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
-                    <div class="flex items-center gap-2 mb-2"><div class="flex text-gold-500"><i data-lucide="star" class="w-3 h-3 fill-current"></i><i data-lucide="star" class="w-3 h-3 fill-current"></i><i data-lucide="star" class="w-3 h-3 fill-current"></i><i data-lucide="star" class="w-3 h-3 fill-current"></i><i data-lucide="star" class="w-3 h-3 fill-current"></i></div><span class="text-xs font-bold text-slate-400">玄関アプローチ</span></div>
+                    <div class="flex items-center gap-2 mb-2"><div class="flex text-gold-500 text-xs">★★★★★</div><span class="text-xs font-bold text-slate-400">玄関アプローチ</span></div>
                     <p class="text-sm font-bold text-slate-800">「オリジナルデザインが嬉しい」</p><p class="text-xs text-slate-500 mt-2 leading-relaxed">文字を入れたいという要望にも応えてくれて、世界に一つだけの床になりました。近所の人からも褒められます。</p>
                 </div>
             </div>
@@ -154,7 +174,7 @@
             <div class="text-center relative z-10"><span class="text-gold-500 text-[10px] font-black uppercase tracking-widest">Visual Comparison</span><h3 class="text-2xl font-black mt-2">劇的ビフォーアフター</h3></div>
             <div class="comparison-slider" id="comparison-slider">
                 <img src="after1.jpg.JPG" alt="After" class="img-after"><img src="before.jpg.JPG" alt="Before" class="img-before" id="slider-img-before">
-                <div class="slider-handle" id="slider-handle"><div class="slider-button"><i data-lucide="chevrons-left-right" class="text-black w-5 h-5"></i></div></div>
+                <div class="slider-handle" id="slider-handle"><div class="slider-button"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left:-10px"><path d="m15 18-6-6 6-6"/></svg></div></div>
                 <div class="absolute bottom-3 left-4 z-30 bg-black/60 backdrop-blur px-2 py-1 rounded text-[10px] font-bold border border-white/20">BEFORE</div><div class="absolute bottom-3 right-4 z-30 bg-gold-600/80 backdrop-blur px-2 py-1 rounded text-[10px] font-bold border border-white/20">AFTER</div>
             </div>
             <!-- ギャラリー -->
@@ -168,34 +188,48 @@
         <div class="space-y-4">
             <p class="text-center text-[10px] font-black text-slate-400 uppercase tracking-widest">Frequently Asked Questions</p>
             <div class="space-y-3">
-                <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm"><button onclick="toggleFaq(1)" class="w-full p-5 flex items-center justify-between text-left hover:bg-slate-50 transition-colors"><span class="text-sm font-bold text-slate-800">Q1: 車が乗っても割れませんか？</span><i data-lucide="chevron-down" id="faq-icon-1" class="w-4 h-4 text-slate-400 faq-icon"></i></button><div id="faq-answer-1" class="faq-content bg-slate-50"><div class="p-5 pt-2 text-xs text-slate-500 font-medium leading-relaxed border-t border-slate-100">問題ありません。ローラーストーンは圧縮強度・曲げ強度・付着強度の基準数値をクリアした特殊材料を使用しており、駐車場など大型車両が乗る場所でも十分な強度があります。</div></div></div>
-                <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm"><button onclick="toggleFaq(2)" class="w-full p-5 flex items-center justify-between text-left hover:bg-slate-50 transition-colors"><span class="text-sm font-bold text-slate-800">Q2: どんな場所に施工できますか？</span><i data-lucide="chevron-down" id="faq-icon-2" class="w-4 h-4 text-slate-400 faq-icon"></i></button><div id="faq-answer-2" class="faq-content bg-slate-50"><div class="p-5 pt-2 text-xs text-slate-500 font-medium leading-relaxed border-t border-slate-100">コンクリート、タイル、アスファルト、防水塗装などの上から施工可能です。<br>※砂利や土の上には直接施工できないため、コンクリート打設等の下地処理が必要です。</div></div></div>
-                <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm"><button onclick="toggleFaq(3)" class="w-full p-5 flex items-center justify-between text-left hover:bg-slate-50 transition-colors"><span class="text-sm font-bold text-slate-800">Q3: 今ある床の解体は必要ですか？</span><i data-lucide="chevron-down" id="faq-icon-3" class="w-4 h-4 text-slate-400 faq-icon"></i></button><div id="faq-answer-3" class="faq-content bg-slate-50"><div class="p-5 pt-2 text-xs text-slate-500 font-medium leading-relaxed border-t border-slate-100">不要です。既存の床の上から施工できるため、解体・撤去費用やハツリ工事の騒音が出ません。コストを抑え、環境にも優しい工法です。</div></div></div>
-                <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm"><button onclick="toggleFaq(4)" class="w-full p-5 flex items-center justify-between text-left hover:bg-slate-50 transition-colors"><span class="text-sm font-bold text-slate-800">Q4: 工事は何日くらいかかりますか？</span><i data-lucide="chevron-down" id="faq-icon-4" class="w-4 h-4 text-slate-400 faq-icon"></i></button><div id="faq-answer-4" class="faq-content bg-slate-50"><div class="p-5 pt-2 text-xs text-slate-500 font-medium leading-relaxed border-t border-slate-100">施工面積や天候によりますが、最短2日で施工可能です。歩行は施工翌日から、車の乗り入れは施工完了後、数日後から可能です。</div></div></div>
-                <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm"><button onclick="toggleFaq(5)" class="w-full p-5 flex items-center justify-between text-left hover:bg-slate-50 transition-colors"><span class="text-sm font-bold text-slate-800">Q5: メンテナンスや保証は？</span><i data-lucide="chevron-down" id="faq-icon-5" class="w-4 h-4 text-slate-400 faq-icon"></i></button><div id="faq-answer-5" class="faq-content bg-slate-50"><div class="p-5 pt-2 text-xs text-slate-500 font-medium leading-relaxed border-t border-slate-100">特殊コーティングにより高圧洗浄機等での清掃が可能です。万が一の剥がれ等も部分補修が可能です。保証内容は現地調査時にご説明いたします。</div></div></div>
+                <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
+                    <button onclick="toggleFaq(1)" class="w-full p-5 flex items-center justify-between text-left hover:bg-slate-50 transition-colors"><span class="text-sm font-bold text-slate-800">Q1: 車が乗っても割れませんか？</span><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-400 faq-icon" id="faq-icon-1"><path d="m6 9 6 6 6-6"/></svg></button>
+                    <div id="faq-answer-1" class="faq-content bg-slate-50"><div class="p-5 pt-2 text-xs text-slate-500 font-medium leading-relaxed border-t border-slate-100">問題ありません。ローラーストーンは圧縮強度・曲げ強度・付着強度の基準数値をクリアした特殊材料を使用しており、駐車場など大型車両が乗る場所でも十分な強度があります。</div></div>
+                </div>
+                <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
+                    <button onclick="toggleFaq(2)" class="w-full p-5 flex items-center justify-between text-left hover:bg-slate-50 transition-colors"><span class="text-sm font-bold text-slate-800">Q2: 今ある床の解体は必要ですか？</span><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-400 faq-icon" id="faq-icon-2"><path d="m6 9 6 6 6-6"/></svg></button>
+                    <div id="faq-answer-2" class="faq-content bg-slate-50"><div class="p-5 pt-2 text-xs text-slate-500 font-medium leading-relaxed border-t border-slate-100">不要です。既存の床の上から施工できるため、解体・撤去費用やハツリ工事の騒音が出ません。コストを抑え、環境にも優しい工法です。</div></div>
+                </div>
+                <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
+                    <button onclick="toggleFaq(3)" class="w-full p-5 flex items-center justify-between text-left hover:bg-slate-50 transition-colors"><span class="text-sm font-bold text-slate-800">Q3: 工事は何日くらいかかりますか？</span><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-400 faq-icon" id="faq-icon-3"><path d="m6 9 6 6 6-6"/></svg></button>
+                    <div id="faq-answer-3" class="faq-content bg-slate-50"><div class="p-5 pt-2 text-xs text-slate-500 font-medium leading-relaxed border-t border-slate-100">施工面積や天候によりますが、最短2日で施工可能です。歩行は施工翌日から、車の乗り入れは施工完了後、数日後から可能です。</div></div>
+                </div>
+                <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
+                    <button onclick="toggleFaq(4)" class="w-full p-5 flex items-center justify-between text-left hover:bg-slate-50 transition-colors"><span class="text-sm font-bold text-slate-800">Q4: メンテナンスや保証は？</span><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-400 faq-icon" id="faq-icon-4"><path d="m6 9 6 6 6-6"/></svg></button>
+                    <div id="faq-answer-4" class="faq-content bg-slate-50"><div class="p-5 pt-2 text-xs text-slate-500 font-medium leading-relaxed border-t border-slate-100">特殊コーティングにより高圧洗浄機等での清掃が可能です。万が一の剥がれ等も部分補修が可能です。保証内容は現地調査時にご説明いたします。</div></div>
+                </div>
             </div>
         </div>
 
-        <!-- 問い合わせ (重要) -->
+        <!-- 問い合わせ -->
         <div class="mt-8 border-t-2 border-slate-100 pt-8 pb-4">
             <div class="text-center space-y-4 mb-6">
                 <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Contact Us</p>
-                <h3 class="text-2xl font-black text-slate-800 flex flex-col items-center justify-center gap-2"><span>お問い合わせはこちらから</span><i data-lucide="arrow-down" class="w-6 h-6 text-gold-500 animate-bounce mt-2"></i></h3>
+                <h3 class="text-2xl font-black text-slate-800 flex flex-col items-center justify-center gap-2"><span>お問い合わせはこちらから</span><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#D4AF37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="animate-bounce mt-2"><path d="M12 5v14"/><path d="m19 12-7 7-7-7"/></svg></h3>
             </div>
             <!-- キャンペーン -->
             <div class="border-2 border-gold-400 pulse-border rounded-2xl p-5 bg-gold-400/5 text-center relative overflow-hidden mb-6">
                 <div class="absolute top-0 right-0 bg-gold-500 text-white text-[9px] font-bold px-3 py-1 rounded-bl-lg">期間限定</div>
-                <h4 class="text-lg font-black text-black-pure mb-2 flex items-center justify-center gap-2"><i data-lucide="camera" class="w-5 h-5 text-gold-600"></i><span>無料パース作成中！</span></h4>
+                <h4 class="text-lg font-black text-black-pure mb-2 flex items-center justify-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#B8860B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg><span>無料パース作成中！</span></h4>
                 <p class="text-xs font-bold text-slate-600 leading-relaxed mb-4">あなたの家の写真（駐車場やアプローチ）を送ってください。<br><span class="text-gold-600 underline decoration-2 underline-offset-2">無料で完成イメージ図（パース）を作成します。</span><br>契約前でもOK！まずはイメージを確認しましょう。</p>
                 <!-- LINE (シンプルリンク) -->
-                <a href="https://lin.ee/EAASJvg" target="_blank" class="action-btn w-full bg-[#06C755] text-white py-4 rounded-xl font-bold text-base shadow-md flex items-center justify-center gap-2 no-underline"><i data-lucide="message-circle" class="w-6 h-6"></i><span>LINEで写真を送って無料パース依頼</span></a>
+                <a href="https://lin.ee/EAASJvg" target="_blank" class="action-btn w-full bg-[#06C755] text-white py-4 rounded-xl font-bold text-base shadow-md flex items-center justify-center gap-2 no-underline">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+                    <span>LINEで写真を送って無料パース依頼</span>
+                </a>
                 <p class="text-[9px] text-center text-slate-400 mt-2">※友だち追加後、写真を送信してください</p>
             </div>
             <!-- その他リンク -->
             <div class="space-y-3">
-                <a href="tel:09016250897" class="action-btn w-full bg-slate-800 text-white py-4 rounded-xl font-bold text-base shadow-md flex items-center justify-center gap-2 no-underline"><i data-lucide="phone" class="w-5 h-5 text-gold-400"></i><span>090-1625-0897 に電話する</span></a>
-                <a href="https://www.instagram.com/cementart_numan/" target="_blank" class="action-btn w-full bg-insta text-white py-4 rounded-xl font-bold text-base shadow-md flex items-center justify-center gap-2"><i data-lucide="instagram" class="w-6 h-6"></i><span>Instagramで施工例を見る</span></a>
-                <a href="https://rollerstone.com/catalog/" target="_blank" class="action-btn w-full bg-white border border-slate-200 text-slate-700 py-4 rounded-xl font-bold text-base shadow-sm flex items-center justify-center gap-2"><i data-lucide="book-open" class="w-6 h-6 text-gold-500"></i><span>WEBカタログを見る</span></a>
+                <a href="tel:09016250897" class="action-btn w-full bg-slate-800 text-white py-4 rounded-xl font-bold text-base shadow-md flex items-center justify-center gap-2 no-underline"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#EABF4F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg><span>090-1625-0897 に電話する</span></a>
+                <a href="https://www.instagram.com/cementart_numan/" target="_blank" class="action-btn w-full bg-insta text-white py-4 rounded-xl font-bold text-base shadow-md flex items-center justify-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg><span>Instagramで施工例を見る</span></a>
+                <a href="https://rollerstone.com/catalog/" target="_blank" class="action-btn w-full bg-white border border-slate-200 text-slate-700 py-4 rounded-xl font-bold text-base shadow-sm flex items-center justify-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#D4AF37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg><span>WEBカタログを見る</span></a>
             </div>
         </div>
 
@@ -204,12 +238,8 @@
 
     <!-- JSロジック -->
     <script>
-        // DOM読込後に実行
-        window.addEventListener('DOMContentLoaded', () => {
-            // アイコン生成
-            if (window.lucide) lucide.createIcons();
-
-            // オープニング
+        // オープニング
+        window.addEventListener('load', () => {
             setTimeout(() => {
                 const splash = document.getElementById('splash-screen');
                 if(splash) {
