@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ローラーストーン施工費用シミュレーター | 公式認定施工店</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            font-family: 'Noto+Sans+JP', sans-serif;
+            scroll-behavior: smooth;
+        }
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.3s ease-out forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900 min-h-screen">
+
+    <!-- Header -->
+    <header class="bg-white/80 backdrop-blur-md border-b border-slate-200 sticky top-0 z-40">
+        <div class="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <div class="bg-slate-900 text-white p-2 rounded-xl">
+                    <i data-lucide="calculator" class="w-5 h-5"></i>
+                </div>
+                <h1 class="text-xl font-black tracking-tighter text-slate-800 uppercase">Roller Stone</h1>
+            </div>
+            <button onclick="scrollToInquiry()" class="bg-slate-900 text-white px-6 py-2.5 rounded-full text-sm font-bold hover:bg-slate-800 transition-all active:scale-95">
+                無料相談
+            </button>
+        </div>
+    </header>
+
+    <main class="max-w-5xl mx-auto w-full px-4 py-8 md:py-12 space-y-12">
+        <!-- Hero Section -->
+        <div class="text-center space-y-4 max-w-2xl mx-auto">
+            <div class="inline-block px-4 py-1.5 bg-slate-100 text-slate-500 text-[10px] font-black rounded-full tracking-widest uppercase border border-slate-200">
+                Official Price Simulator
+            </div>
+            <h2 class="text-4xl md:text-5xl font-black text-slate-900 tracking-tight leading-tight">
+                理想の足元を、<br/><span class="text-slate-400">もっと身近に。</span>
+            </h2>
+            <p class="text-slate-500 text-sm md:text-base leading-relaxed">
+                施工面積を入力し、エリアを選択してください。<br class="hidden sm:block"/>
+                概算費用を確認後、そのまま公式LINEで施工店へご相談いただけます。
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            <!-- Left Column: Simulator -->
+            <div class="lg:col-span-7 space-y-8">
+                <div class="bg-white rounded-[2.5rem] shadow-xl shadow-slate-200/50 border border-slate-200 p-6 md:p-10 relative overflow-hidden">
+                    <div class="absolute top-0 left-0 w-1.5 h-full bg-slate-900"></div>
+                    
+                    <div class="space-y-10">
+                        <!-- Step 1: Area Input -->
+                        <div class="space-y-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-full bg-slate-900 text-white flex items-center justify-center text-xs font-black">1</div>
+                                <label class="text-sm font-black text-slate-600 uppercase tracking-widest">施工面積を入力</label>
+                            </div>
+                            <div class="relative group">
+                                <input type="number" id="areaInput" value="20" class="w-full px-8 py-7 text-5xl font-black bg-slate-50 border-2 border-slate-100 rounded-[2rem] focus:border-slate-900 focus:ring-0 outline-none pr-24 transition-all" />
+                                <div class="absolute inset-y-0 right-8 flex items-center pointer-events-none text-3xl font-black text-slate-300">㎡</div>
+                            </div>
+                        </div>
+
+                        <!-- Step 2: Area Selection -->
+                        <div id="pref-selector" class="space-y-4 pt-6 border-t border-slate-50">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-full bg-slate-900 text-white flex items-center justify-center text-xs font-black">2</div>
+                                <label class="text-sm font-black text-slate-600 uppercase tracking-widest">施工エリアを選択</label>
+                            </div>
+                            <div class="relative">
+                                <i data-lucide="map-pin" class="absolute left-6 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5"></i>
+                                <select id="prefSelect" class="w-full pl-14 pr-8 py-5 bg-slate-50 border-2 border-slate-100 rounded-[1.5rem] outline-none text-base font-bold appearance-none cursor-pointer focus:border-slate-900 transition-all text-slate-400">
+                                    <option value="">都道府県を選択してください</option>
+                                    <!-- Options populated by JS -->
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Step 3: Result Display -->
+                        <div class="pt-6 border-t border-slate-50">
+                            <div class="bg-slate-900 rounded-[2.5rem] p-10 text-white relative shadow-2xl overflow-hidden group">
+                                <div class="text-[10px] font-black uppercase tracking-widest opacity-50 mb-1">Estimated Total Cost (Rough)</div>
+                                <div class="flex items-baseline gap-2">
+                                    <span id="totalDisplay" class="text-5xl md:text-7xl font-black tracking-tighter">¥0</span>
+                                    <span class="text-xl font-bold opacity-30">（税込）</span>
+                                </div>
+                                <div class="text-[10px] font-bold text-white/40 mt-2">※こちらの金額はあくまでも概算となります。</div>
+                                
+                                <div class="mt-8 grid grid-cols-2 gap-8 border-t border-white/10 pt-8 relative z-10">
+                                    <div>
+                                        <div class="text-[10px] font-bold text-white/30 uppercase mb-1">施工単価（㎡）</div>
+                                        <div id="unitPriceDisplay" class="text-2xl font-black">¥0</div>
+                                    </div>
+                                    <div class="text-right">
+                                        <div class="text-[10px] font-bold text-white/30 uppercase mb-1">選択エリア</div>
+                                        <div id="areaDisplay" class="text-2xl font-black">---</div>
+                                    </div>
+                                </div>
+                                <div class="absolute -bottom-20 -right-20 opacity-[0.03]">
+                                    <i data-lucide="calculator" class="w-[300px] h-[300px]"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Disclaimer Box -->
+                <div class="bg-white border border-slate-200 rounded-[2rem] p-8 space-y-6">
+                    <div class="flex items-center gap-3 text-slate-800">
+                        <i data-lucide="alert-triangle" class="text-amber-500 w-5 h-5"></i>
+                        <h3 class="text-sm font-black uppercase tracking-widest">お見積りに関する重要な注意事項</h3>
+                    </div>
+                    <p class="text-xs text-slate-500 leading-relaxed font-bold">
+                        本シミュレーターの結果は標準的な施工条件に基づく<span class="text-slate-900">「概算」</span>です。実際の正式なお見積りでは、現場の状態や環境により変動する場合があります。
+                    </p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100 space-y-2">
+                            <div class="flex items-center gap-2 text-slate-700 font-black text-xs">
+                                <i data-lucide="construction" class="w-3.5 h-3.5"></i> 下地処理費用
+                            </div>
+                            <p class="text-[11px] text-slate-500 leading-normal">クラック、凹凸、既存塗装の劣化状況により、別途下地調整が必要になる場合がございます。</p>
+                        </div>
+                        <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100 space-y-2">
+                            <div class="flex items-center gap-2 text-slate-700 font-black text-xs">
+                                <i data-lucide="map-pin" class="w-3.5 h-3.5"></i> 流動的な諸経費
+                            </div>
+                            <p class="text-[11px] text-slate-500 leading-normal">搬入経路、駐車スペースの有無、地域に応じた遠方諸経費などがかかる場合がございます。</p>
+                        </div>
+                    </div>
+                    <p class="text-[10px] text-slate-400 text-center italic">※正確な金額は現地調査後の正式な見積書にてご提示いたします。</p>
+                </div>
+            </div>
+
+            <!-- Right Column: Info & Actions -->
+            <div class="lg:col-span-5 space-y-6">
+                <!-- Real Photo Perspective Card -->
+                <div class="bg-emerald-50 border-2 border-emerald-100 rounded-[2.5rem] p-8 space-y-5 relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 p-4 opacity-[0.05] group-hover:scale-110 transition-transform">
+                        <i data-lucide="image" class="w-24 h-24"></i>
+                    </div>
+                    <div class="space-y-3 relative z-10">
+                        <div class="inline-block px-3 py-1 bg-emerald-500 text-white text-[9px] font-black rounded-full uppercase tracking-widest">Special Service</div>
+                        <h3 class="text-2xl font-black text-slate-900 leading-tight">施工後のイメージを<br/>無料で制作します</h3>
+                        <p class="text-slate-600 text-sm leading-relaxed">
+                            今の現場の写真をLINEで送るだけ。専門スタッフが「ローラーストーン設置後」の<span class="font-bold underline decoration-emerald-300">リアルフォトパース</span>を無料で制作してお送りします。
+                        </p>
+                    </div>
+                    <div class="flex gap-3 relative z-10">
+                        <div class="bg-white p-3 rounded-2xl border border-emerald-100 text-emerald-500"><i data-lucide="camera" class="w-6 h-6"></i></div>
+                        <div class="bg-white p-3 rounded-2xl border border-emerald-100 text-emerald-500"><i data-lucide="image" class="w-6 h-6"></i></div>
+                    </div>
+                </div>
+
+                <!-- CTA Action Card -->
+                <div class="bg-slate-900 rounded-[2.5rem] p-8 text-white space-y-8 shadow-2xl overflow-hidden relative">
+                    <div class="space-y-4">
+                        <h3 class="text-2xl font-black flex items-center gap-3">
+                            <div class="w-1.5 h-8 bg-emerald-400 rounded-full"></div>
+                            正式な見積りへ。
+                        </h3>
+                        <p id="ctaDescription" class="text-slate-400 text-sm leading-relaxed">
+                            エリアを選択して、お近くの施工店へ直接相談しましょう。
+                        </p>
+                    </div>
+                    <button id="ctaButton" onclick="openModal()" disabled class="w-full font-black py-5 rounded-2xl flex items-center justify-center gap-3 transition-all bg-slate-800 text-slate-600 cursor-not-allowed">
+                        <span>エリアを選択してください</span>
+                        <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                    </button>
+                </div>
+
+                <!-- Unit Price Trend Chart -->
+                <div class="bg-white rounded-[2rem] border border-slate-200 p-8">
+                    <h4 class="text-xs font-black text-slate-400 uppercase tracking-widest mb-6">面積別単価メリット</h4>
+                    <div class="h-[180px] w-full">
+                        <canvas id="priceChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal Overlay -->
+    <div id="modalOverlay" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4">
+        <div class="fixed inset-0 bg-slate-900/90 backdrop-blur-sm" onclick="closeModal()"></div>
+        <div class="bg-white w-full max-w-2xl rounded-[3rem] shadow-2xl relative z-10 overflow-hidden animate-fade-in max-h-[90vh] overflow-y-auto">
+            
+            <!-- Modal Content (Inquiry) -->
+            <div id="modalInquiry">
+                <div class="p-8 bg-slate-900 text-white flex justify-between items-center">
+                    <div class="space-y-1">
+                        <h3 class="text-xl font-black flex items-center gap-3">
+                            <i data-lucide="message-square" class="text-emerald-400 w-6 h-6"></i> お問い合わせ
+                        </h3>
+                        <p id="modalPrefLabel" class="text-white/40 text-[10px] font-bold uppercase tracking-widest">担当施工窓口</p>
+                    </div>
+                    <button onclick="closeModal()" class="p-2 hover:bg-white/10 rounded-xl transition-colors">
+                        <i data-lucide="x" class="w-6 h-6"></i>
+                    </button>
+                </div>
+                
+                <div class="p-8 md:p-10 space-y-8">
+                    <!-- Result Summary -->
+                    <div class="bg-slate-50 p-6 rounded-3xl border-2 border-slate-100 flex items-center justify-between">
+                        <div class="space-y-1">
+                            <div class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Estimated Result (Rough)</div>
+                            <div id="modalResultText" class="text-lg font-black text-slate-800">0㎡ / ¥0</div>
+                        </div>
+                        <div id="modalPrefTag" class="text-right text-[10px] font-black text-slate-400 uppercase tracking-widest">Area: ---</div>
+                    </div>
+
+                    <!-- Recommended Method: LINE -->
+                    <div class="space-y-4">
+                        <div class="flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">
+                            <i data-lucide="sparkles" class="text-emerald-500 w-3 h-3"></i> Recommended Method
+                        </div>
+                        <a id="lineLink" href="https://line.me/R/ti/p/@rollerstone" target="_blank" class="flex items-center gap-6 p-7 bg-[#06C755] text-white rounded-[2rem] hover:opacity-95 transition-all shadow-xl shadow-emerald-500/20 relative overflow-hidden group">
+                            <div class="bg-white/20 p-4 rounded-2xl group-hover:rotate-12 transition-transform">
+                                <i data-lucide="message-circle" class="w-8 h-8"></i>
+                            </div>
+                            <div class="flex-1 space-y-1">
+                                <div class="text-xl font-black leading-tight">公式LINEで写真を送る</div>
+                                <div class="text-[11px] font-bold opacity-80 leading-relaxed">
+                                    写真を送るだけで「リアルフォトパース」を無料制作。チャットで見積り相談が完結します。
+                                </div>
+                            </div>
+                            <i data-lucide="external-link" class="w-5 h-5 opacity-40"></i>
+                            <div class="absolute top-0 right-0 p-2">
+                                <div class="bg-white text-[#06C755] text-[9px] font-black px-2 py-0.5 rounded-full animate-bounce shadow-sm">人気No.1</div>
+                            </div>
+                        </a>
+                    </div>
+
+                    <!-- Email Form -->
+                    <div class="pt-8 border-t border-slate-100 space-y-6">
+                        <div class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Email Inquiry Form</div>
+                        <form onsubmit="handleFormSubmit(event)" class="space-y-4">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <input required type="text" placeholder="お名前" class="w-full px-6 py-4 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-slate-900 outline-none text-sm font-bold" />
+                                <input required type="tel" placeholder="電話番号" class="w-full px-6 py-4 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-slate-900 outline-none text-sm font-bold" />
+                            </div>
+                            <button type="submit" id="submitBtn" class="w-full bg-slate-900 text-white font-black py-5 rounded-2xl flex items-center justify-center gap-3 hover:bg-slate-800 transition-all shadow-lg active:scale-[0.98]">
+                                <span id="submitBtnText">この内容でメール送信</span>
+                                <div id="submitSpinner" class="hidden w-5 h-5 border-4 border-white/20 border-t-white rounded-full animate-spin"></div>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Content (Success) -->
+            <div id="modalSuccess" class="hidden p-16 text-center space-y-8">
+                <div class="w-20 h-20 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto shadow-inner">
+                    <i data-lucide="check-circle-2" class="w-10 h-10"></i>
+                </div>
+                <div class="space-y-2">
+                    <h3 class="text-3xl font-black text-slate-900">受付完了いたしました</h3>
+                    <p class="text-slate-500 font-medium leading-relaxed">
+                        担当施工店より、24時間以内に折り返しご連絡させていただきます。
+                    </p>
+                </div>
+                <button onclick="closeModal()" class="w-full bg-slate-900 text-white py-5 rounded-3xl font-bold hover:bg-slate-800 transition-all">
+                    シミュレーターに戻る
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-white border-t border-slate-200 py-12 text-center">
+        <p class="text-slate-300 text-[10px] font-black tracking-[0.3em] uppercase">© 2024 Roller Stone Construction System.</p>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        // --- Data Definitions ---
+        const MINIMUM_SUBTOTAL = 115900;
+        const TAX_RATE = 0.10;
+        const PRICING_TIERS = [
+            { maxArea: 11, price: 11200 }, { maxArea: 12, price: 11100 }, { maxArea: 14, price: 11000 },
+            { maxArea: 15, price: 10900 }, { maxArea: 16, price: 10800 }, { maxArea: 18, price: 10700 },
+            { maxArea: 19, price: 10600 }, { maxArea: 20, price: 10500 }, { maxArea: 22, price: 10400 },
+            { maxArea: 23, price: 10300 }, { maxArea: 25, price: 10200 }, { maxArea: 29, price: 10100 },
+            { maxArea: 31, price: 10000 }, { maxArea: 35, price: 9900 }, { maxArea: 39, price: 9800 },
+            { maxArea: 43, price: 9700 }, { maxArea: 47, price: 9600 }, { maxArea: 51, price: 9500 },
+            { maxArea: 55, price: 9400 }, { maxArea: 62, price: 9400 }, { maxArea: Infinity, price: 9200 }
+        ];
+
+        const ALL_PREFECTURES = [
+            '北海道', '青森県', '岩手県', '宮城県', '秋田県', '山形県', '福島県',
+            '茨城県', '栃木県', '群馬県', '埼玉県', '千葉県', '東京都', '神奈川県',
+            '新潟県', '富山県', '石川県', '福井県', '山梨県', '長野県', '岐阜県',
+            '静岡県', '愛知県', '三重県', '滋賀県', '京都府', '大阪府', '兵庫県',
+            '奈良県', '和歌山県', '鳥取県', '島根県', '岡山県', '広島県', '山口県',
+            '徳島県', '香川県', '愛媛県', '高知県', '福岡県', '佐賀県', '長崎県',
+            '熊本県', '大分県', '宮崎県', '鹿児島県', '沖縄県'
+        ];
+
+        const CONTRACTORS = [
+            { id: 'tokyo', name: '本部直営店', prefectures: ['東京都', '神奈川県', '埼玉県', '千葉県'], lineUrl: 'https://line.me/R/ti/p/@rollerstone' },
+            { id: 'osaka', name: '関西エリア店', prefectures: ['大阪府', '兵庫県', '京都府', '奈良県'], lineUrl: 'https://line.me/R/ti/p/@rs-osaka' },
+            { id: 'nagoya', name: '名古屋中央店', prefectures: ['愛知県', '岐阜県', '三重県', '静岡県'], lineUrl: 'https://line.me/R/ti/p/@rs-nagoya' }
+        ];
+
+        // --- State ---
+        let areaValue = 20;
+        let selectedPrefecture = "";
+        let priceChartInstance = null;
+
+        // --- Functions ---
+        const getUnitPrice = (area) => {
+            if (area < 10) return 11200;
+            const tier = PRICING_TIERS.find(t => area <= t.maxArea);
+            return tier ? tier.price : 9200;
+        };
+
+        const formatCurrency = (val) => new Intl.NumberFormat('ja-JP', { style: 'currency', currency: 'JPY' }).format(val);
+
+        const updateSimulation = () => {
+            const unitPrice = getUnitPrice(areaValue);
+            const subtotalRaw = areaValue * unitPrice;
+            const subtotalFinal = Math.max(subtotalRaw, MINIMUM_SUBTOTAL);
+            const tax = Math.floor(subtotalFinal * TAX_RATE);
+            const total = subtotalFinal + tax;
+
+            // DOM Update
+            document.getElementById('totalDisplay').textContent = formatCurrency(total);
+            document.getElementById('unitPriceDisplay').textContent = formatCurrency(unitPrice);
+            document.getElementById('areaDisplay').textContent = selectedPrefecture || "---";
+
+            // CTA Button Logic
+            const btn = document.getElementById('ctaButton');
+            const desc = document.getElementById('ctaDescription');
+            if (selectedPrefecture) {
+                btn.disabled = false;
+                btn.className = "w-full font-black py-5 rounded-2xl flex items-center justify-center gap-3 transition-all bg-white text-slate-900 hover:bg-emerald-400 active:scale-95 shadow-xl";
+                btn.querySelector('span').textContent = "公式LINE・メールで依頼";
+                desc.textContent = `${selectedPrefecture}エリアの認定施工店が、あなたの現場を直接確認し正確なお見積りを算出します。`;
+            } else {
+                btn.disabled = true;
+                btn.className = "w-full font-black py-5 rounded-2xl flex items-center justify-center gap-3 transition-all bg-slate-800 text-slate-600 cursor-not-allowed";
+                btn.querySelector('span').textContent = "エリアを選択してください";
+                desc.textContent = "エリアを選択して、お近くの施工店へ直接相談しましょう。";
+            }
+        };
+
+        const initChart = () => {
+            const ctx = document.getElementById('priceChart').getContext('2d');
+            const dataPoints = [10, 15, 20, 25, 30, 40, 50, 60, 80];
+            const labels = dataPoints.map(a => `${a}㎡`);
+            const prices = dataPoints.map(a => getUnitPrice(a));
+
+            priceChartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: '平米単価',
+                        data: prices,
+                        borderColor: '#0f172a',
+                        borderWidth: 3,
+                        pointRadius: 0,
+                        fill: true,
+                        backgroundColor: 'rgba(241, 245, 249, 0.5)',
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false }, tooltip: { enabled: true } },
+                    scales: {
+                        x: { display: false },
+                        y: { display: false }
+                    }
+                }
+            });
+        };
+
+        const openModal = () => {
+            if (!selectedPrefecture) return;
+            
+            const unitPrice = getUnitPrice(areaValue);
+            const subtotalRaw = areaValue * unitPrice;
+            const subtotalFinal = Math.max(subtotalRaw, MINIMUM_SUBTOTAL);
+            const total = subtotalFinal + Math.floor(subtotalFinal * TAX_RATE);
+            
+            document.getElementById('modalResultText').textContent = `${areaValue}㎡ / ${formatCurrency(total)}`;
+            document.getElementById('modalPrefTag').textContent = `Area: ${selectedPrefecture}`;
+            document.getElementById('modalPrefLabel').textContent = `${selectedPrefecture}エリア 担当窓口`;
+            
+            const contractor = CONTRACTORS.find(c => c.prefectures.includes(selectedPrefecture));
+            document.getElementById('lineLink').href = contractor ? contractor.lineUrl : "https://line.me/R/ti/p/@rollerstone";
+
+            document.getElementById('modalOverlay').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        };
+
+        const closeModal = () => {
+            document.getElementById('modalOverlay').classList.add('hidden');
+            document.getElementById('modalInquiry').classList.remove('hidden');
+            document.getElementById('modalSuccess').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        };
+
+        const handleFormSubmit = (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('submitBtn');
+            const text = document.getElementById('submitBtnText');
+            const spinner = document.getElementById('submitSpinner');
+            
+            btn.disabled = true;
+            text.classList.add('opacity-0');
+            spinner.classList.remove('hidden');
+
+            setTimeout(() => {
+                document.getElementById('modalInquiry').classList.add('hidden');
+                document.getElementById('modalSuccess').classList.remove('hidden');
+                btn.disabled = false;
+                text.classList.remove('opacity-0');
+                spinner.classList.add('hidden');
+            }, 1500);
+        };
+
+        const scrollToInquiry = () => {
+            if (!selectedPrefecture) {
+                document.getElementById('pref-selector').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            } else {
+                openModal();
+            }
+        };
+
+        // --- Initialization ---
+        window.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            initChart();
+
+            // Populate Prefectures
+            const select = document.getElementById('prefSelect');
+            ALL_PREFECTURES.forEach(p => {
+                const opt = document.createElement('option');
+                opt.value = p;
+                opt.textContent = p;
+                select.appendChild(opt);
+            });
+
+            // Input Listeners
+            const areaInput = document.getElementById('areaInput');
+            areaInput.addEventListener('input', (e) => {
+                areaValue = parseFloat(e.target.value) || 0;
+                updateSimulation();
+            });
+
+            select.addEventListener('change', (e) => {
+                selectedPrefecture = e.target.value;
+                if (selectedPrefecture) {
+                    select.classList.remove('text-slate-400');
+                    select.classList.add('text-slate-900', 'border-slate-900');
+                } else {
+                    select.classList.remove('text-slate-900', 'border-slate-900');
+                    select.classList.add('text-slate-400');
+                }
+                updateSimulation();
+            });
+
+            // Initial Update
+            updateSimulation();
+        });
+    </script>
+</body>
+</html>
