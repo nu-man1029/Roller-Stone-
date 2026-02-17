@@ -74,7 +74,7 @@
 
         /* FAQアニメーション */
         .faq-content { transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out; max-height: 0; opacity: 0; overflow: hidden; }
-        .faq-content.open { max-height: 500px; opacity: 1; } /* 高さを余裕を持たせました */
+        .faq-content.open { max-height: 500px; opacity: 1; }
         .faq-icon { transition: transform 0.3s ease; }
         .faq-icon.rotate { transform: rotate(180deg); }
 
@@ -254,85 +254,74 @@
             </div>
         </div>
 
-        <!-- FAQセクション (公式QAベースに拡充) -->
+        <!-- FAQセクション (公式QAベース) -->
         <div class="space-y-4">
             <p class="text-center text-[10px] font-black text-slate-400 uppercase tracking-widest">Frequently Asked Questions</p>
             
             <div class="space-y-3">
-                <!-- Q1 -->
+                <!-- Q1: 強度・耐久性 -->
                 <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
                     <button onclick="toggleFaq(1)" class="w-full p-5 flex items-center justify-between text-left hover:bg-slate-50 transition-colors">
-                        <span class="text-sm font-bold text-slate-800">Q1: 工期はどれくらいですか？</span>
+                        <span class="text-sm font-bold text-slate-800">Q1: 車が乗っても割れませんか？</span>
                         <i data-lucide="chevron-down" id="faq-icon-1" class="w-4 h-4 text-slate-400 faq-icon"></i>
                     </button>
                     <div id="faq-answer-1" class="faq-content bg-slate-50">
                         <div class="p-5 pt-2 text-xs text-slate-500 font-medium leading-relaxed border-t border-slate-100">
-                            施工面積や天候によりますが、通常2〜3日で完了します。既存の床を解体せず、上から施工するため、一般的な工事よりも短期間で仕上がります。
+                            問題ありません。ローラーストーンは「圧縮強度・曲げ強度・付着強度」の全てにおいて基準数値をクリアした特殊材料を使用しており、駐車場など大型車両が乗る場所でも十分な強度があります。
                         </div>
                     </div>
                 </div>
 
-                <!-- Q2 -->
+                <!-- Q2: 施工場所・下地 -->
                 <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
                     <button onclick="toggleFaq(2)" class="w-full p-5 flex items-center justify-between text-left hover:bg-slate-50 transition-colors">
-                        <span class="text-sm font-bold text-slate-800">Q2: 駐車場で車が乗っても割れませんか？</span>
+                        <span class="text-sm font-bold text-slate-800">Q2: どんな場所に施工できますか？</span>
                         <i data-lucide="chevron-down" id="faq-icon-2" class="w-4 h-4 text-slate-400 faq-icon"></i>
                     </button>
                     <div id="faq-answer-2" class="faq-content bg-slate-50">
                         <div class="p-5 pt-2 text-xs text-slate-500 font-medium leading-relaxed border-t border-slate-100">
-                            はい、問題ありません。ローラーストーンは圧縮強度・曲げ強度・付着強度の全てにおいて基準数値をクリアした高強度な特殊材料を使用しています。大型車両が乗る場所でも安心してご利用いただけます。
+                            コンクリート、タイル、アスファルト、防水塗装などの上から施工可能です。<br>
+                            ※砂利や土の上には直接施工できないため、コンクリート打設等の下地処理が必要です。
                         </div>
                     </div>
                 </div>
 
-                <!-- Q3 -->
+                <!-- Q3: 解体の有無 -->
                 <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
                     <button onclick="toggleFaq(3)" class="w-full p-5 flex items-center justify-between text-left hover:bg-slate-50 transition-colors">
-                        <span class="text-sm font-bold text-slate-800">Q3: 既存の床の解体は必要ですか？</span>
+                        <span class="text-sm font-bold text-slate-800">Q3: 今ある床の解体は必要ですか？</span>
                         <i data-lucide="chevron-down" id="faq-icon-3" class="w-4 h-4 text-slate-400 faq-icon"></i>
                     </button>
                     <div id="faq-answer-3" class="faq-content bg-slate-50">
                         <div class="p-5 pt-2 text-xs text-slate-500 font-medium leading-relaxed border-t border-slate-100">
-                            いいえ、解体は不要です。コンクリート、アスファルト、タイルなどの上から直接施工できるため、解体費用や廃材処分費がかからず、コストを抑えられます。
+                            不要です。既存の床の上から施工できるため、解体・撤去費用やハツリ工事の騒音が出ません。コストを抑え、環境にも優しい工法です。
                         </div>
                     </div>
                 </div>
 
-                <!-- Q4 (追加) -->
+                <!-- Q4: 施工日数 -->
                 <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
                     <button onclick="toggleFaq(4)" class="w-full p-5 flex items-center justify-between text-left hover:bg-slate-50 transition-colors">
-                        <span class="text-sm font-bold text-slate-800">Q4: メンテナンスや掃除は大変ですか？</span>
+                        <span class="text-sm font-bold text-slate-800">Q4: 工事は何日くらいかかりますか？</span>
                         <i data-lucide="chevron-down" id="faq-icon-4" class="w-4 h-4 text-slate-400 faq-icon"></i>
                     </button>
                     <div id="faq-answer-4" class="faq-content bg-slate-50">
                         <div class="p-5 pt-2 text-xs text-slate-500 font-medium leading-relaxed border-t border-slate-100">
-                            特別なお手入れは不要です。日常的な掃き掃除や水洗いで十分綺麗になります。高圧洗浄機の使用も可能です。
+                            施工面積や天候によりますが、最短2日で施工可能です。歩行は施工翌日から、車の乗り入れは施工完了後、最終コーティングが乾燥すれば可能です（目安：施工完了から数日後）。
                         </div>
                     </div>
                 </div>
 
-                <!-- Q5 (追加) -->
+                <!-- Q5: メンテナンス・保証 -->
                 <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
                     <button onclick="toggleFaq(5)" class="w-full p-5 flex items-center justify-between text-left hover:bg-slate-50 transition-colors">
-                        <span class="text-sm font-bold text-slate-800">Q5: どんな場所に施工できますか？</span>
+                        <span class="text-sm font-bold text-slate-800">Q5: メンテナンスや保証はありますか？</span>
                         <i data-lucide="chevron-down" id="faq-icon-5" class="w-4 h-4 text-slate-400 faq-icon"></i>
                     </button>
                     <div id="faq-answer-5" class="faq-content bg-slate-50">
                         <div class="p-5 pt-2 text-xs text-slate-500 font-medium leading-relaxed border-t border-slate-100">
-                            駐車場、アプローチ、玄関ポーチ、内装の土間、店舗の床など、コンクリートやアスファルト等のしっかりした下地があれば基本的にどこでも施工可能です。
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Q6 (追加) -->
-                <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
-                    <button onclick="toggleFaq(6)" class="w-full p-5 flex items-center justify-between text-left hover:bg-slate-50 transition-colors">
-                        <span class="text-sm font-bold text-slate-800">Q6: デザインや色は選べますか？</span>
-                        <i data-lucide="chevron-down" id="faq-icon-6" class="w-4 h-4 text-slate-400 faq-icon"></i>
-                    </button>
-                    <div id="faq-answer-6" class="faq-content bg-slate-50">
-                        <div class="p-5 pt-2 text-xs text-slate-500 font-medium leading-relaxed border-t border-slate-100">
-                            はい、自由に選べます。石の形、大きさ、色（基本色に加えオリジナルカラーも調色可能）、目地の色まで、お客様の好みに合わせてフルオーダーメイドで仕上げます。
+                            特殊コーティングを施しているため、高圧洗浄機等での清掃が可能です。万が一の剥がれや欠けに対しても、部分補修が容易にできるためご安心ください。<br>
+                            ※保証内容は施工箇所や条件によりますので、現地調査時にご説明いたします。
                         </div>
                     </div>
                 </div>
