@@ -14,7 +14,8 @@
         /* 画像を大きく表示するためのスタイル */
         .pers-img { 
             width: 100%; 
-            height: 250px; /* スマホで見やすい高さ */
+            height: auto; /* 高さは自動調整 */
+            max-height: 400px; /* PCなどで縦長になりすぎないように制限 */
             object-fit: cover; 
             border-radius: 8px; 
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3); 
@@ -57,7 +58,7 @@
             <p class="text-[10px] text-gray-400 text-center">※施工費のみの概算です。下地処理等は別途。</p>
         </div>
 
-        <!-- パース作成訴求エリア（完全縦並び） -->
+        <!-- パース作成訴求エリア -->
         <div class="bg-black text-white rounded-xl p-5 mb-8 text-center shadow-2xl">
             <h3 class="font-bold text-xl mb-2 gold-text">完成イメージ、無料作成！</h3>
             <p class="text-xs mb-6 text-gray-300 leading-relaxed">
@@ -65,14 +66,14 @@
                 写真を送るだけで、<span class="font-bold text-white border-b border-yellow-500">世界に一枚の完成パース図</span>を作ります。
             </p>
             
-            <!-- 画像エリア：縦一列 (grid-cols-1) -->
+            <!-- 画像エリア -->
             <div class="grid grid-cols-1 gap-6 mb-8">
                 
                 <!-- ①ビフォー -->
                 <div class="relative">
                     <span class="absolute top-2 left-2 bg-gray-800 text-white text-xs font-bold px-3 py-1 rounded shadow z-10">Before</span>
                     <!-- ↓↓ ここにビフォー画像のファイル名を入れる ↓↓ -->
-                    <img src="https://placehold.co/600x400/333/fff?text=Before+Photo" alt="施工前" class="pers-img">
+                    <img src="before.jpg" alt="施工前" class="pers-img" onerror="this.src='https://placehold.co/600x400/333/fff?text=Before+Photo'">
                 </div>
 
                 <!-- 矢印アイコン -->
@@ -84,54 +85,21 @@
                 <div class="relative">
                     <span class="absolute top-2 left-2 bg-yellow-600 text-white text-xs font-bold px-3 py-1 rounded shadow z-10">After パターンA</span>
                     <!-- ↓↓ ここにアフター1画像のファイル名を入れる ↓↓ -->
-                    <img src="https://placehold.co/600x400/d4af37/000?text=After+Pattern+A" alt="完成イメージ1" class="pers-img">
+                    <img src="after1.jpg" alt="完成イメージ1" class="pers-img" onerror="this.src='https://placehold.co/600x400/d4af37/000?text=After+Pattern+A'">
                 </div>
 
                 <!-- ③アフター2 -->
                 <div class="relative">
                     <span class="absolute top-2 left-2 bg-yellow-600 text-white text-xs font-bold px-3 py-1 rounded shadow z-10">After パターンB</span>
                     <!-- ↓↓ ここにアフター2画像のファイル名を入れる ↓↓ -->
-                    <img src="https://placehold.co/600x400/d4af37/000?text=After+Pattern+B" alt="完成イメージ2" class="pers-img">
+                    <img src="after2.jpg" alt="完成イメージ2" class="pers-img" onerror="this.src='https://placehold.co/600x400/d4af37/000?text=After+Pattern+B'">
                 </div>
             </div>
 
-            <!-- アクションボタン -->
+            <!-- アクションボタン（リンク修正済み） -->
             <div class="space-y-3">
-                <a href="https://line.me/ti/p/YOUR_LINE_ID" target="_blank" class="block w-full bg-[#06c755] text-white font-bold py-4 rounded-lg shadow-lg btn-hover flex items-center justify-center text-lg">
+                <a href="https://lin.ee/BHVnDPk" target="_blank" class="block w-full bg-[#06c755] text-white font-bold py-4 rounded-lg shadow-lg btn-hover flex items-center justify-center text-lg">
+                    <svg class="w-6 h-6 mr-2" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 5.92 2 10.75c0 2.87 1.6 5.43 4.09 7.03-.18.66-.64 2.3-.73 2.65-.07.26-.03.5.15.65.17.14.43.1.66-.02.43-.22 2.51-1.39 3.42-1.98.78.16 1.6.25 2.41.25 5.52 0 10-3.92 10-8.75S17.52 2 12 2z"/></svg>
                     LINEで写真を送る ＞
                 </a>
-                <a href="https://www.instagram.com/YOUR_INSTAGRAM_ID/" target="_blank" class="block w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold py-4 rounded-lg shadow-lg btn-hover flex items-center justify-center text-lg">
-                    Instagramで送る ＞
-                </a>
-            </div>
-        </div>
-
-    </div>
-
-</main>
-
-<script>
-    function calc() {
-        const area = parseFloat(document.getElementById('area').value);
-        if (!area || area <= 0) { alert("面積を入力してください"); return; }
-        
-        // 単価テーブル
-        const t = {
-            10:11200,11:11200,12:11100,13:11000,14:11000,15:10900,16:10800,17:10700,18:10700,
-            19:10600,20:10500,21:10400,22:10400,23:10300,24:10200,25:10200,26:10100,27:10100,
-            28:10100,29:10100,30:10000,31:10000,32:9900,33:9900,34:9900,35:9900,36:9800,37:9800,
-            38:9800,39:9800,40:9700,41:9700,42:9700,43:9700,44:9600,45:9600,46:9600,47:9600,
-            48:9500,49:9500,50:9500,51:9500,52:9400,53:9400,54:9400,55:9400
-        };
-        let u = 0; const rA = Math.round(area);
-        if (rA >= 63) u = 9200; else if (rA >= 56) u = 9300; else if (t[rA]) u = t[rA]; else u = 11200;
-        let base = area * u;
-        if (base < 115900) base = 115900;
-        const tax = Math.floor(base * 0.1);
-        
-        document.getElementById('resultArea').classList.remove('hidden');
-        document.getElementById('total').innerText = (base + tax).toLocaleString() + " 円";
-    }
-</script>
-</body>
-</html>
+                <a href="https://www.instagram.com/cementart_numan/" target="_blank" class="block w-full bg-gradient-to-r from-purple-500 to-pink-500 text-<span class="cursor">█</span>
