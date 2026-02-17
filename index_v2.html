@@ -3,56 +3,43 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>【3秒見積もり】ローラーストーン施工費用シミュレーター</title>
-    <!-- Tailwind CSS -->
+    <title>ローラーストーン施工費用シミュレーター</title>
+    <!-- Tailwind CSS (デザイン用) -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700;900&display=swap" rel="stylesheet">
-    
-    <!-- Lucide Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap" rel="stylesheet">
+    <!-- Lucide Icons (アイコン用) -->
     <script src="https://unpkg.com/lucide@latest"></script>
+    
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        gold: {
-                            100: '#FDF6E3',
-                            200: '#F9EBAE',
-                            300: '#F3D679',
-                            400: '#EABF4F',
-                            500: '#D4AF37',
-                            600: '#B8860B',
-                        }
+                        gold: { 400: '#EABF4F', 500: '#D4AF37', 600: '#B8860B' }
+                    },
+                    fontFamily: {
+                        sans: ['Noto Sans JP', 'sans-serif'],
                     }
                 }
             }
         }
     </script>
     <style>
-        body { font-family: 'Noto Sans JP', sans-serif; background-color: #ffffff; color: #1a1a1a; overflow-x: hidden; }
-        .gold-text {
+        body { background-color: #f8fafc; color: #1a1a1a; }
+        .gold-gradient-text {
             background: linear-gradient(135deg, #D4AF37 0%, #B8860B 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
-        .insta-gradient {
-            background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%);
+        .luxury-card {
+            box-shadow: 0 20px 40px -5px rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
         }
-        .line-color { background-color: #06C755; }
-        .luxury-shadow { box-shadow: 0 20px 50px -12px rgba(212, 175, 55, 0.2); }
-        .pers-img { width: 100%; height: auto; object-fit: cover; border-radius: 12px; }
-        .faq-transition { transition: all 0.3s ease-in-out; }
-        
-        /* スクロールアニメーション用 */
-        .reveal { opacity: 0; transform: translateY(30px); transition: all 0.8s ease-out; }
-        .reveal.active { opacity: 1; transform: translateY(0); }
-
-        /* スライダー用スタイル */
-        .slider-container { position: relative; width: 100%; height: 250px; border-radius: 12px; overflow: hidden; user-select: none; }
-        .slider-img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
+        /* スライダー用 */
+        .slider-container { position: relative; width: 100%; height: 250px; border-radius: 12px; overflow: hidden; background: #333; }
+        .slider-img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; }
         .slider-overlay { position: absolute; top: 0; left: 0; width: 50%; height: 100%; overflow: hidden; border-right: 2px solid #fff; z-index: 10; }
         .slider-handle { 
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); 
@@ -66,127 +53,188 @@
         }
     </style>
 </head>
-<body class="min-h-screen flex flex-col items-center py-6 px-4 sm:px-6 bg-slate-50">
+<body class="min-h-screen flex flex-col items-center py-10 px-4">
 
-    <div class="w-full max-w-xl space-y-8 mb-12">
-        <!-- Header -->
-        <div class="text-center space-y-4 reveal active">
-            <div class="inline-block px-4 py-1 border-2 border-gold-500 rounded-full bg-white shadow-sm">
-                <p class="text-[10px] font-black tracking-[0.2em] text-gold-600 uppercase">Professional Simulation Tool</p>
-            </div>
-            <h1 class="text-3xl sm:text-4xl font-black tracking-tighter leading-tight">
-                ローラーストーン<br/>
-                <span class="gold-text">施工費用シミュレーター</span>
+    <!-- メインコンテンツ -->
+    <div class="w-full max-w-lg space-y-8 mb-12">
+        
+        <!-- ヘッダー -->
+        <div class="text-center space-y-2">
+            <span class="inline-block px-3 py-1 border border-gold-500 text-gold-600 text-[10px] font-bold tracking-widest rounded-full uppercase">Official Simulator</span>
+            <h1 class="text-3xl font-black tracking-tight leading-tight">
+                RollerStone<br/>
+                <span class="gold-gradient-text">施工費用シミュレーター</span>
             </h1>
-            <p class="text-sm text-slate-500 font-bold italic">理想の足元を、適正価格で。</p>
+            <p class="text-xs text-slate-500 font-bold">認定施工店：ぬーまん</p>
         </div>
 
-        <!-- Simulator Card -->
-        <div class="bg-white rounded-[2.5rem] p-8 luxury-shadow border border-slate-100 relative z-10 reveal">
-            <div class="space-y-8">
-                <div class="space-y-4">
-                    <label for="area" class="block text-center text-xs font-black text-slate-400 uppercase tracking-widest">施工面積を入力 (㎡)</label>
-                    <div class="relative group max-w-xs mx-auto">
-                        <input type="number" id="area" placeholder="例: 15" 
-                            class="w-full px-6 py-6 text-5xl font-black bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-gold-500 focus:bg-white outline-none transition-all pr-20 text-center" />
-                        <span class="absolute right-6 top-1/2 -translate-y-1/2 text-2xl font-bold text-slate-300">㎡</span>
-                    </div>
-
-                    <!-- Guide Buttons -->
-                    <div class="grid grid-cols-3 gap-2">
-                        <button onclick="setArea(15)" class="flex flex-col items-center justify-center p-3 border-2 border-slate-100 rounded-xl hover:border-gold-400 hover:bg-gold-50 transition-all group active:scale-95">
-                            <i data-lucide="car" class="w-5 h-5 text-slate-400 group-hover:text-gold-500 mb-1"></i>
-                            <span class="text-[9px] font-black text-slate-500 group-hover:text-gold-600">車1台(15㎡)</span>
-                        </button>
-                        <button onclick="setArea(30)" class="flex flex-col items-center justify-center p-3 border-2 border-slate-100 rounded-xl hover:border-gold-400 hover:bg-gold-50 transition-all group active:scale-95">
-                            <div class="flex gap-0.5">
-                                <i data-lucide="car" class="w-4 h-4 text-slate-400 group-hover:text-gold-500 mb-1"></i>
-                                <i data-lucide="car" class="w-4 h-4 text-slate-400 group-hover:text-gold-500 mb-1"></i>
-                            </div>
-                            <span class="text-[9px] font-black text-slate-500 group-hover:text-gold-600">車2台(30㎡)</span>
-                        </button>
-                        <button onclick="setArea(5)" class="flex flex-col items-center justify-center p-3 border-2 border-slate-100 rounded-xl hover:border-gold-400 hover:bg-gold-50 transition-all group text-center active:scale-95">
-                            <i data-lucide="bike" class="w-5 h-5 text-slate-400 group-hover:text-gold-500 mb-1"></i>
-                            <span class="text-[9px] font-black text-slate-500 group-hover:text-gold-600 leading-tight">アプローチ<br>(一式工事)</span>
-                        </button>
+        <!-- シミュレーター入力エリア -->
+        <div class="luxury-card rounded-3xl p-8 border border-white">
+            <div class="space-y-6">
+                <!-- 入力フォーム -->
+                <div class="space-y-2 text-center">
+                    <label class="text-xs font-bold text-slate-400 uppercase tracking-widest">施工面積 (㎡)</label>
+                    <div class="relative max-w-[200px] mx-auto">
+                        <input type="number" id="area" placeholder="0" 
+                            class="w-full px-4 py-4 text-4xl font-black text-center bg-slate-50 border-2 border-slate-200 rounded-2xl focus:border-gold-500 focus:bg-white outline-none transition-all placeholder-slate-200" />
+                        <span class="absolute right-4 bottom-5 text-lg font-bold text-slate-400">㎡</span>
                     </div>
                 </div>
 
-                <button onclick="calculate()" class="w-full bg-black text-white py-6 rounded-2xl font-black text-xl hover:bg-slate-800 hover:-translate-y-1 transition-all active:scale-[0.98] shadow-2xl flex items-center justify-center gap-3">
-                    <span>概算見積もりを見る</span>
-                    <i data-lucide="calculator" class="w-6 h-6 text-gold-500"></i>
+                <!-- クイックボタン -->
+                <div class="grid grid-cols-3 gap-2">
+                    <button onclick="setArea(5)" class="p-2 border border-slate-200 rounded-xl hover:bg-gold-50 hover:border-gold-400 transition-all text-center">
+                        <div class="text-[10px] text-slate-400 font-bold mb-1">玄関前</div>
+                        <div class="font-black text-slate-700">5㎡</div>
+                    </button>
+                    <button onclick="setArea(15)" class="p-2 border border-slate-200 rounded-xl hover:bg-gold-50 hover:border-gold-400 transition-all text-center">
+                        <div class="text-[10px] text-slate-400 font-bold mb-1">車1台</div>
+                        <div class="font-black text-slate-700">15㎡</div>
+                    </button>
+                    <button onclick="setArea(30)" class="p-2 border border-slate-200 rounded-xl hover:bg-gold-50 hover:border-gold-400 transition-all text-center">
+                        <div class="text-[10px] text-slate-400 font-bold mb-1">車2台</div>
+                        <div class="font-black text-slate-700">30㎡</div>
+                    </button>
+                </div>
+
+                <!-- 計算ボタン -->
+                <button onclick="calculate()" class="w-full bg-slate-900 text-white py-5 rounded-xl font-bold text-lg hover:bg-slate-800 shadow-lg hover:shadow-xl transition-all active:scale-95 flex items-center justify-center gap-2">
+                    見積もりを計算する
+                    <i data-lucide="calculator" class="w-5 h-5"></i>
                 </button>
             </div>
 
-            <!-- Result Area -->
-            <div id="resultArea" class="hidden mt-10 space-y-6">
-                <div class="border-t border-dashed border-slate-200 pt-6 space-y-4">
-                    <div class="flex justify-between items-center text-sm font-bold">
-                        <span class="text-slate-400">適用単価</span>
-                        <span id="unitPrice" class="text-slate-900">--</span>
+            <!-- 結果表示エリア (最初は隠れています) -->
+            <div id="resultArea" class="hidden mt-8 pt-8 border-t border-dashed border-slate-200 animate-fade-in">
+                <div class="space-y-3 mb-6">
+                    <div class="flex justify-between text-sm">
+                        <span class="text-slate-400 font-bold">適用単価</span>
+                        <span id="unitPrice" class="font-bold text-slate-800">-</span>
                     </div>
-                    <div class="flex justify-between items-center text-sm font-bold">
-                        <span class="text-slate-400">施工費 (税別)</span>
-                        <span id="basePrice" class="text-slate-900">--</span>
+                    <div class="flex justify-between text-sm">
+                        <span class="text-slate-400 font-bold">施工費 (税別)</span>
+                        <span id="basePrice" class="font-bold text-slate-800">-</span>
                     </div>
-                    <div class="flex justify-between items-center text-sm font-bold">
-                        <span class="text-slate-400">消費税 (10%)</span>
-                        <span id="taxPrice" class="text-slate-900">--</span>
+                    <div class="flex justify-between text-sm">
+                        <span class="text-slate-400 font-bold">消費税 (10%)</span>
+                        <span id="taxPrice" class="font-bold text-slate-800">-</span>
                     </div>
                 </div>
 
-                <div class="bg-gold-50 rounded-2xl p-8 text-center border border-gold-200 relative overflow-hidden">
-                    <div class="absolute -top-4 -right-4 opacity-5">
-                        <i data-lucide="check-circle" class="w-32 h-32 text-gold-600"></i>
-                    </div>
-                    <p class="text-[10px] font-black text-gold-600 uppercase tracking-widest mb-1 relative z-10">Total Estimated Price</p>
-                    <!-- 金額表示 (カウントアップ用) -->
-                    <div class="text-5xl font-black gold-text relative z-10 mb-2" id="totalPrice">¥0</div>
-                    <p id="fixedPriceNotice" class="text-[10px] text-gold-600 font-bold hidden">※一式工事価格が適用されています</p>
+                <div class="bg-gradient-to-br from-gold-400 to-gold-600 rounded-2xl p-6 text-center text-white shadow-lg relative overflow-hidden">
+                    <p class="text-[10px] font-bold tracking-widest uppercase opacity-80 mb-1">お見積り概算金額 (税込)</p>
+                    <div class="text-4xl font-black tracking-tight" id="totalPrice">¥0</div>
+                    <p id="fixedPriceNotice" class="text-[10px] mt-2 bg-black/20 inline-block px-2 py-1 rounded hidden">※一式工事価格適用</p>
                 </div>
 
-                <div class="text-[10px] text-slate-400 font-bold leading-relaxed text-center px-4">
-                    ※2024年1月版価格表に基づきます。現場状況（下地調整等）により別途費用が発生する場合がございます。
-                </div>
+                <p class="text-[10px] text-slate-400 mt-4 text-center leading-relaxed">
+                    ※2024年1月版価格表に基づく施工費のみの概算です。<br>
+                    下地処理、オプション、諸経費は含まれておりません。
+                </p>
             </div>
         </div>
 
-        <!-- Before/After Slider & Gallery -->
-        <div class="bg-black rounded-[3rem] p-8 text-white space-y-10 shadow-2xl relative overflow-hidden border border-white/10 reveal">
-            <div class="space-y-3 text-center relative z-10">
-                <div class="inline-block px-3 py-1 bg-gold-500 text-black text-[9px] font-black rounded-full uppercase tracking-widest mb-2">Visual Transformation</div>
-                <h3 class="text-2xl sm:text-3xl font-black leading-tight">劇的ビフォーアフター</h3>
-                <p class="text-slate-400 text-sm font-medium mt-4">中央のバーを左右に動かして比較してください。</p>
+        <!-- ビフォーアフター (画像がないためダミー表示) -->
+        <div class="rounded-3xl overflow-hidden shadow-2xl bg-black text-white relative">
+            <div class="absolute top-4 left-4 z-20 bg-black/50 backdrop-blur px-3 py-1 rounded-full border border-white/20">
+                <span class="text-[10px] font-bold tracking-widest uppercase">Before / After</span>
             </div>
-
-            <!-- Slider Component -->
-            <div class="slider-container shadow-2xl border-2 border-gold-500/30">
-                <!-- 右側: After画像 (背景) -->
-                <img src="after1.jpg.JPG" class="slider-img" alt="After">
+            
+            <div class="slider-container">
+                <!-- ダミー画像 (グレーの背景) -->
+                <div class="slider-img flex items-center justify-center bg-slate-800 text-slate-500 font-bold">
+                    After Image (施工後)
+                </div>
                 
-                <!-- 左側: Before画像 (クリップされる側) -->
                 <div class="slider-overlay" id="sliderOverlay">
-                    <img src="before.jpg.JPG" class="slider-img" alt="Before" style="width: 200%; max-width: none;"> <!-- width 200% trick to keep aspect ratio -->
-                </div>
-
-                <!-- Handle -->
-                <div class="slider-handle" id="sliderHandle">
-                    <i data-lucide="code-2" class="w-5 h-5 text-black"></i>
-                </div>
-
-                <!-- Input Range (Invisible controller) -->
-                <input type="range" min="0" max="100" value="50" class="slider-range" oninput="updateSlider(this.value)">
-            </div>
-
-            <!-- Other Images Gallery -->
-            <div class="grid grid-cols-2 gap-4">
-                <div class="space-y-2">
-                    <div class="relative rounded-xl overflow-hidden border border-white/20">
-                        <img src="after2.jpg.JPG" class="pers-img hover:scale-110 transition-transform duration-500">
-                        <div class="absolute bottom-2 left-2 bg-black/70 px-2 py-1 rounded text-[10px] font-bold">別アングル</div>
+                    <div class="slider-img flex items-center justify-center bg-slate-600 text-slate-300 font-bold" style="width: 200vw;">
+                       Before Image (施工前)
                     </div>
                 </div>
-                <div class="space-y-2">
-                    <div class="relative rounded-xl overflow-hidden border border-white/20">
-                        <img src="material.jpg.JPG" class="pers-img hover:scale-110 transition-transform duration-500">
-                        <div class="absolute bottom-2 left-2 bg-black/70 px-2 py-1 rounded text-[10px] font-bold">使用素材</div><span class="cursor">█</span>
+
+                <div class="slider-handle" id="sliderHandle">
+                    <i data-lucide="chevrons-left-right" class="w-4 h-4 text-slate-800"></i>
+                </div>
+                <input type="range" min="0" max="100" value="50" class="slider-range" oninput="updateSlider(this.value)">
+            </div>
+            <div class="p-6 text-center">
+                <p class="text-sm text-slate-400">スライダーを左右に動かして変化を確認できます</p>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- JavaScript (計算ロジック) -->
+    <script>
+        // アイコンの初期化
+        lucide.createIcons();
+
+        // 面積セット用関数
+        function setArea(val) {
+            document.getElementById('area').value = val;
+            calculate(); // セットしたら自動計算
+        }
+
+        // スライダー操作用関数
+        function updateSlider(val) {
+            document.getElementById('sliderOverlay').style.width = val + '%';
+            document.getElementById('sliderHandle').style.left = val + '%';
+        }
+
+        // 計算ロジック
+        function calculate() {
+            const areaInput = document.getElementById('area').value;
+            const area = parseFloat(areaInput);
+
+            if (!area || area <= 0) {
+                alert("面積を正しく入力してください");
+                return;
+            }
+
+            let unitPrice = 0;
+            let basePrice = 0;
+            let isFixedPrice = false;
+
+            // 単価テーブル (ページ1データ)
+            const priceTable = {
+                10: 11200, 11: 11200, 12: 11100, 13: 11000, 14: 11000, 15: 10900, 16: 10800, 17: 10700, 18: 10700,
+                19: 10600, 20: 10500, 21: 10400, 22: 10400, 23: 10300, 24: 10200, 25: 10200, 26: 10100, 27: 10100,
+                28: 10100, 29: 10100, 30: 10000, 31: 10000, 32: 9900, 33: 9900, 34: 9900, 35: 9900, 36: 9800,
+                37: 9800, 38: 9800, 39: 9800, 40: 9700, 41: 9700, 42: 9700, 43: 9700, 44: 9600, 45: 9600, 46: 9600,
+                47: 9600, 48: 9500, 49: 9500, 50: 9500, 51: 9500, 52: 9400, 53: 9400, 54: 9400, 55: 9400
+            };
+
+            const rArea = Math.round(area);
+
+            // 単価決定
+            if (rArea >= 63) { unitPrice = 9200; }
+            else if (rArea >= 56) { unitPrice = 9300; }
+            else if (priceTable[rArea]) { unitPrice = priceTable[rArea]; }
+            else { unitPrice = 11200; } // デフォルト
+
+            basePrice = area * unitPrice;
+
+            // 最低施工金額チェック (115,900円)
+            if (basePrice < 115900) {
+                basePrice = 115900;
+                isFixedPrice = true;
+            }
+
+            const tax = Math.floor(basePrice * 0.1);
+            const total = Math.floor(basePrice + tax);
+
+            // 表示更新
+            document.getElementById('resultArea').classList.remove('hidden');
+            
+            document.getElementById('unitPrice').innerText = isFixedPrice ? "一式工事適用" : unitPrice.toLocaleString() + " 円";
+            document.getElementById('basePrice').innerText = basePrice.toLocaleString() + " 円";
+            document.getElementById('taxPrice').innerText = tax.toLocaleString() + " 円";
+            document.getElementById('totalPrice').innerText = "¥" + total.toLocaleString();
+
+            const notice = document.getElementById('fixedPriceNotice');
+            if (isFixedPrice) notice.classList.remove('hidden');
+            else notice.classList.add('hidden');
+        }
+    </script>
+</body>
+</html>
