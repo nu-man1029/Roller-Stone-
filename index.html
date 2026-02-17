@@ -7,7 +7,10 @@
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <script>
@@ -20,7 +23,7 @@
                             200: '#F9EBAE',
                             300: '#F3D679',
                             400: '#EABF4F',
-                            500: '#D4AF37', // Official Gold
+                            500: '#D4AF37',
                             600: '#B8860B',
                         }
                     }
@@ -30,7 +33,7 @@
     </script>
     <style>
         body {
-            font-family: 'Noto+Sans+JP', sans-serif;
+            font-family: 'Noto Sans JP', sans-serif;
             background-color: #ffffff;
             color: #1a1a1a;
         }
@@ -137,7 +140,7 @@
                 </p>
             </div>
 
-            <!-- Before/After Gallery - Strictly Vertical 4-Image Stack -->
+            <!-- Before/After Gallery -->
             <div class="space-y-8 relative z-10">
                 <p class="text-center text-[10px] font-black text-gold-500 uppercase tracking-[0.2em]">Photopars Samples</p>
                 
@@ -145,7 +148,7 @@
                     <!-- 1. Before (現状) -->
                     <div class="w-full space-y-2">
                         <div class="relative rounded-xl overflow-hidden border border-white/10">
-                            <!-- ▼▼ ここ修正済み ▼▼ -->
+                            <!-- 画像ファイル名を修正済み -->
                             <img src="before.jpg.JPG" alt="施工前" class="pers-img">
                             <div class="absolute top-4 left-4 bg-black/60 backdrop-blur-md px-3 py-1.5 rounded text-xs font-black text-white border border-white/20 shadow-lg">1. 施工前（現状）</div>
                         </div>
@@ -159,7 +162,7 @@
                     <!-- 2. After -->
                     <div class="w-full space-y-2">
                         <div class="relative rounded-xl overflow-hidden border-2 border-gold-500/50 shadow-[0_0_25px_rgba(212,175,55,0.2)]">
-                            <!-- ▼▼ ここ修正済み ▼▼ -->
+                            <!-- 画像ファイル名を修正済み -->
                             <img src="after1.jpg.JPG" alt="完成イメージ" class="pers-img">
                             <div class="absolute top-4 left-4 bg-gold-500 px-3 py-1.5 rounded text-xs font-black text-black shadow-lg">2. 完成イメージ</div>
                         </div>
@@ -173,7 +176,7 @@
                     <!-- 3. After (アングルを変えた) -->
                     <div class="w-full space-y-2">
                         <div class="relative rounded-xl overflow-hidden border-2 border-gold-500/50 shadow-[0_0_25px_rgba(212,175,55,0.2)]">
-                            <!-- ▼▼ ここ修正済み ▼▼ -->
+                            <!-- 画像ファイル名を修正済み -->
                             <img src="after2.jpg.JPG" alt="完成イメージ別アングル" class="pers-img">
                             <div class="absolute top-4 left-4 bg-gold-600 px-3 py-1.5 rounded text-xs font-black text-white shadow-lg">3. 完成イメージ（別アングル）</div>
                         </div>
@@ -187,7 +190,7 @@
                     <!-- 4. 使用したRSの素材画像 -->
                     <div class="w-full space-y-2">
                         <div class="relative rounded-xl overflow-hidden border border-white/20 bg-white/5 p-1">
-                            <!-- ▼▼ ここ修正済み ▼▼ -->
+                            <!-- 画像ファイル名を修正済み -->
                             <img src="material.jpg.JPG" alt="使用素材" class="pers-img">
                             <div class="absolute top-4 left-4 bg-white/90 px-3 py-1.5 rounded text-xs font-black text-black shadow-lg">4. 使用したRS素材</div>
                         </div>
@@ -226,7 +229,7 @@
         </div>
     </div>
 
-   <script>
+    <script>
         // 計算結果を保持する変数
         let lastCalculation = { area: 0, total: 0 };
 
@@ -312,4 +315,3 @@
     </script>
 </body>
 </html>
-
