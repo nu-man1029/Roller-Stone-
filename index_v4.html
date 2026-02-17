@@ -1,212 +1,334 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>ローラーストーン施工費用シミュレーター</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        gold: { 400: '#EABF4F', 500: '#D4AF37', 600: '#B8860B' },
+                        black: { DEFAULT: '#111111', pure: '#000000' }
+                    },
+                    fontFamily: { sans: ['Noto Sans JP', 'sans-serif'] },
+                    boxShadow: { 'luxury': '0 20px 40px -10px rgba(212, 175, 55, 0.15)' }
+                }
+            }
+        }
+    </script>
     <style>
-        /* ベーススタイル */
-        body { font-family: "Helvetica Neue", Arial, sans-serif; background-color: #f9f9f9; color: #333; margin: 0; padding: 20px; line-height: 1.6; }
-        .container { max-width: 600px; margin: 0 auto; background: #fff; padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        body { background-color: #f8fafc; color: #1a1a1a; -webkit-tap-highlight-color: transparent; }
+        .text-gold-gradient { background: linear-gradient(135deg, #D4AF37 0%, #B8860B 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .bg-insta { background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); }
         
-        /* 色定義 */
-        :root { --gold: #D4AF37; --dark: #222; --green: #06C755; }
-
-        /* ヘッダー */
-        h1 { text-align: center; color: var(--dark); margin-bottom: 5px; font-size: 28px; }
-        .subtitle { text-align: center; color: var(--gold); font-size: 12px; letter-spacing: 2px; font-weight: bold; margin-bottom: 30px; text-transform: uppercase; }
-
-        /* 入力エリア */
-        .input-group { text-align: center; margin-bottom: 20px; }
-        label { display: block; font-weight: bold; margin-bottom: 10px; font-size: 18px; }
-        input[type="number"] { width: 80%; padding: 15px; font-size: 24px; text-align: center; border: 2px solid #ddd; border-radius: 10px; outline: none; }
-        input[type="number"]:focus { border-color: var(--gold); }
-
-        /* 目安ボタン */
-        .quick-btns { display: flex; gap: 10px; justify-content: center; margin-top: 10px; }
-        .q-btn { flex: 1; padding: 10px 5px; background: #f0f0f0; border: 1px solid #ddd; border-radius: 8px; font-size: 12px; cursor: pointer; }
-        .q-btn:active { background: #e0e0e0; transform: scale(0.98); }
-
-        /* 計算ボタン */
-        .calc-btn { width: 100%; padding: 18px; background: var(--dark); color: #fff; border: none; border-radius: 12px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
-        .calc-btn:active { transform: scale(0.98); }
-
-        /* 結果エリア */
-        #result { display: none; margin-top: 30px; padding: 20px; background: #f8f8f8; border-radius: 15px; border: 1px dashed #ccc; }
-        .row { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 14px; }
-        .total-box { background: linear-gradient(135deg, #D4AF37, #B8860B); color: white; padding: 20px; border-radius: 12px; text-align: center; margin-top: 15px; }
-        .total-price { font-size: 32px; font-weight: 900; display: block; }
-        .note { font-size: 10px; color: #888; margin-top: 10px; text-align: center; }
-
-        /* ボタン共通 */
-        .action-btn { display: block; width: 100%; padding: 15px; margin-top: 15px; text-align: center; text-decoration: none; border-radius: 10px; font-weight: bold; color: white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        
-        /* 各種ボタン色 */
-        .btn-line { background-color: var(--green); }
-        .btn-insta { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); }
-        .btn-catalog { background-color: #fff; color: #333; border: 2px solid #ddd; }
-        .btn-tel { background-color: #333; }
+        /* スライダー */
+        .comparison-slider { position: relative; width: 100%; padding-top: 66.66%; overflow: hidden; border-radius: 1.5rem; cursor: ew-resize; user-select: none; background: #333; }
+        .comparison-slider img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
+        .comparison-slider .img-before { z-index: 10; clip-path: inset(0 50% 0 0); will-change: clip-path; }
+        .comparison-slider .slider-handle { position: absolute; top: 0; left: 50%; bottom: 0; width: 2px; background: white; z-index: 20; transform: translateX(-50%); box-shadow: 0 0 10px rgba(0,0,0,0.5); }
+        .comparison-slider .slider-button { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 44px; height: 44px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(0,0,0,0.3); z-index: 21; }
 
         /* FAQ */
-        .faq-item { border-bottom: 1px solid #eee; }
-        .faq-q { padding: 15px; cursor: pointer; font-weight: bold; position: relative; }
-        .faq-q::after { content: '+'; position: absolute; right: 15px; }
-        .faq-a { display: none; padding: 0 15px 15px; color: #666; font-size: 14px; }
-        .faq-item.open .faq-a { display: block; }
-        .faq-item.open .faq-q::after { content: '-'; }
+        .faq-content { transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out; max-height: 0; opacity: 0; overflow: hidden; }
+        .faq-content.open { max-height: 500px; opacity: 1; }
+        .faq-icon { transition: transform 0.3s ease; }
+        .faq-icon.rotate { transform: rotate(180deg); }
 
-        /* 画像エリア */
-        .img-box { margin-top: 30px; text-align: center; }
-        .img-box img { width: 100%; border-radius: 15px; margin-bottom: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-        
-        /* キャンペーン枠 */
-        .campaign { border: 2px solid var(--gold); padding: 20px; border-radius: 15px; text-align: center; margin-top: 30px; background-color: #fffaf0; }
+        /* UI動作 */
+        .quick-btn:active { transform: scale(0.95); background-color: #f0fdf4; border-color: #D4AF37; }
+        .action-btn:active { transform: scale(0.98); opacity: 0.9; }
+        @keyframes pulse-border { 0% { border-color: rgba(212, 175, 55, 0.4); } 50% { border-color: rgba(212, 175, 55, 1); } 100% { border-color: rgba(212, 175, 55, 0.4); } }
+        .pulse-border { animation: pulse-border 2s infinite; }
+
+        /* オープニング */
+        #splash-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #111; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.5s ease-out, visibility 0.5s; }
+        #splash-screen.hidden { opacity: 0; visibility: hidden; }
+        .splash-logo { font-size: 2rem; font-weight: 900; color: white; letter-spacing: 0.1em; }
+        .splash-sub { font-size: 0.8rem; color: #D4AF37; letter-spacing: 0.3em; margin-top: 10px; text-transform: uppercase; }
     </style>
 </head>
-<body>
+<body class="min-h-screen flex flex-col items-center py-8 px-4 sm:px-6">
 
-<div class="container">
-    <h1>RollerStone</h1>
-    <div class="subtitle">Authorized Simulator</div>
+    <!-- オープニング -->
+    <div id="splash-screen">
+        <div class="splash-logo">RollerStone</div>
+        <div class="splash-sub">Authorized Simulator</div>
+    </div>
 
-    <!-- 入力フォーム -->
-    <div class="input-group">
-        <label>施工面積を入力 (㎡)</label>
-        <input type="number" id="area" placeholder="0">
+    <div class="w-full max-w-lg space-y-12 mb-20">
         
-        <div class="quick-btns">
-            <button class="q-btn" onclick="setVal(15)">車1台<br>(15㎡)</button>
-            <button class="q-btn" onclick="setVal(30)">車2台<br>(30㎡)</button>
-            <button class="q-btn" onclick="setVal(5)">玄関前<br>(5㎡)</button>
+        <!-- ヘッダー -->
+        <div class="text-center space-y-4 pt-4">
+            <div class="inline-block px-4 py-1 border border-gold-500 rounded-full bg-white shadow-sm">
+                <p class="text-[10px] font-black tracking-[0.2em] text-gold-600 uppercase">Authorized Simulator</p>
+            </div>
+            <h1 class="text-3xl font-black tracking-tighter leading-tight text-black-pure">
+                RollerStone<br/>
+                <span class="text-gold-gradient">施工費用シミュレーター</span>
+            </h1>
         </div>
+
+        <!-- 計算カード -->
+        <div class="bg-white rounded-[2rem] p-6 sm:p-8 shadow-luxury border border-slate-100 relative z-10">
+            <div class="space-y-6">
+                <!-- 入力 -->
+                <div class="space-y-4">
+                    <label for="area" class="block text-center text-lg font-black text-slate-800 tracking-wider">施工面積を入力 (㎡)</label>
+                    <div class="relative max-w-[240px] mx-auto">
+                        <input type="number" id="area" placeholder="0" class="w-full px-4 py-5 text-5xl font-black text-center bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-gold-500 focus:bg-white outline-none transition-all placeholder-slate-200 text-slate-800" />
+                        <span class="absolute right-4 bottom-6 text-xl font-bold text-slate-300">㎡</span>
+                    </div>
+                    <!-- 目安ボタン -->
+                    <div class="grid grid-cols-3 gap-2 pt-2">
+                        <button onclick="setArea(15)" class="quick-btn flex flex-col items-center justify-center p-3 border border-slate-200 rounded-xl hover:border-gold-400 hover:bg-gold-50 transition-all bg-white shadow-sm">
+                            <!-- Car Icon SVG -->
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-400 mb-1"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>
+                            <span class="text-[10px] font-bold text-slate-600">車1台<br>(15㎡)</span>
+                        </button>
+                        <button onclick="setArea(30)" class="quick-btn flex flex-col items-center justify-center p-3 border border-slate-200 rounded-xl hover:border-gold-400 hover:bg-gold-50 transition-all bg-white shadow-sm">
+                            <div class="flex gap-0.5">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-400 mb-1"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-400 mb-1"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>
+                            </div>
+                            <span class="text-[10px] font-bold text-slate-600">車2台<br>(30㎡)</span>
+                        </button>
+                        <button onclick="setArea(5)" class="quick-btn flex flex-col items-center justify-center p-3 border border-slate-200 rounded-xl hover:border-gold-400 hover:bg-gold-50 transition-all bg-white shadow-sm">
+                            <!-- Footprints Icon SVG -->
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-400 mb-1"><path d="M4 16v-2.38C4 11.5 2.97 10.5 3 8c.03-2.72 1.49-6 4.5-6C9.37 2 11 3.8 11 8c0 1.25-.51 2-1.25 2H6.88c-.66 0-1.2.55-1.2 1.2V19c0 2 2.5 4 4.5 4 2.47 0 4-1.67 4-5v-2.38c0-2.12-1.03-3.12-1-5.62-.03-2.72 1.43-6 4.5-6C19.37 2 21 3.8 21 8c0 1.25-.51 2-1.25 2h-2.88c-.66 0-1.2.55-1.2 1.2V19c0 2-2.5 4-4.5 4-2.47 0-4-1.67-4-5"/></svg>
+                            <span class="text-[10px] font-bold text-slate-600">玄関アプローチ<br>(5㎡)</span>
+                        </button>
+                    </div>
+                </div>
+                <!-- 計算ボタン -->
+                <button onclick="calculate()" class="w-full bg-black-pure text-white py-5 rounded-2xl font-black text-lg hover:bg-slate-800 hover:-translate-y-1 transition-all active:scale-[0.98] shadow-xl flex items-center justify-center gap-2 group">
+                    <span>概算見積もりを見る</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gold-500 group-hover:text-gold-400"><rect width="16" height="20" x="4" y="2" rx="2"/><line x1="8" x2="16" y1="6" y2="6"/><line x1="16" x2="16" y1="14" y2="18"/><path d="M16 10h.01"/><path d="M12 10h.01"/><path d="M8 10h.01"/><path d="M12 14h.01"/><path d="M8 14h.01"/><path d="M12 18h.01"/><path d="M8 18h.01"/></svg>
+                </button>
+            </div>
+
+            <!-- 結果表示 -->
+            <div id="resultArea" class="hidden mt-8 pt-8 border-t border-dashed border-slate-200">
+                <div class="space-y-3 mb-6 px-2">
+                    <div class="flex justify-between text-sm"><span class="text-slate-400 font-bold">適用単価</span><span id="unitPrice" class="font-bold text-slate-800">-</span></div>
+                    <div class="flex justify-between text-sm"><span class="text-slate-400 font-bold">施工費 (税別)</span><span id="basePrice" class="font-bold text-slate-800">-</span></div>
+                    <div class="flex justify-between text-sm"><span class="text-slate-400 font-bold">消費税 (10%)</span><span id="taxPrice" class="font-bold text-slate-800">-</span></div>
+                </div>
+                <!-- 合計BOX -->
+                <div class="bg-gradient-to-br from-gold-400 to-gold-600 rounded-2xl p-6 text-center text-white shadow-lg relative overflow-hidden">
+                    <div class="absolute -top-6 -right-6 opacity-20">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                    </div>
+                    <p class="text-[10px] font-bold tracking-widest uppercase opacity-90 mb-1 relative z-10">Total Estimated Price</p>
+                    <div class="text-4xl font-black tracking-tight relative z-10" id="totalPrice">¥0</div>
+                    <div id="fixedPriceNotice" class="hidden mt-2"><span class="text-[10px] bg-black/20 px-2 py-1 rounded inline-block font-bold">※一式工事価格（最低施工金額）適用</span></div>
+                </div>
+                <!-- スクショ保存 -->
+                <button onclick="shareResult()" class="w-full mt-4 border border-slate-200 text-slate-500 py-3 rounded-xl font-bold text-sm hover:bg-slate-50 flex items-center justify-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" x2="12" y1="2" y2="15"/></svg>
+                    <span>結果を保存・共有する</span>
+                </button>
+                <p class="text-[10px] text-slate-400 mt-4 text-center leading-relaxed">※下地処理費、オプション、諸経費は含まれておりません。<br>※正確な金額は現地調査後に確定します。</p>
+            </div>
+        </div>
+
+        <!-- 施工までの流れ -->
+        <div class="space-y-6">
+            <h3 class="text-center text-lg font-black text-slate-800">施工までの流れ</h3>
+            <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 space-y-6 relative overflow-hidden">
+                <div class="absolute left-[2.25rem] top-6 bottom-6 w-0.5 bg-slate-100"></div>
+                <!-- 1 -->
+                <div class="flex gap-4 relative"><div class="w-10 h-10 rounded-full bg-gold-500 flex items-center justify-center text-white font-bold shrink-0 z-10 shadow-md">1</div><div class="pt-1"><h4 class="font-bold text-sm text-slate-800">お問い合わせ</h4><p class="text-xs text-slate-500 mt-1">LINEまたはお電話で、面積や現状の写真をお送りください。</p></div></div>
+                <!-- 2 -->
+                <div class="flex gap-4 relative"><div class="w-10 h-10 rounded-full bg-white border-2 border-gold-500 flex items-center justify-center text-gold-600 font-bold shrink-0 z-10">2</div><div class="pt-1"><h4 class="font-bold text-sm text-slate-800">現地調査・お見積り</h4><p class="text-xs text-slate-500 mt-1">正確な採寸を行い、正式な金額をご提示します。ここまでは無料です。</p></div></div>
+                <!-- 3 -->
+                <div class="flex gap-4 relative"><div class="w-10 h-10 rounded-full bg-white border-2 border-gold-500 flex items-center justify-center text-gold-600 font-bold shrink-0 z-10">3</div><div class="pt-1"><h4 class="font-bold text-sm text-slate-800">施工開始</h4><p class="text-xs text-slate-500 mt-1">最短2〜3日で完了。騒音や廃材も少なく、近隣への配慮も万全です。</p></div></div>
+            </div>
+        </div>
+
+        <!-- お客様の声 -->
+        <div class="space-y-6">
+            <h3 class="text-center text-lg font-black text-slate-800">お客様の声</h3>
+            <div class="space-y-4">
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
+                    <div class="flex items-center gap-2 mb-2"><div class="flex text-gold-500 text-xs">★★★★★</div><span class="text-xs font-bold text-slate-400">駐車場リフォーム</span></div>
+                    <p class="text-sm font-bold text-slate-800">「新築のような仕上がりに感動！」</p><p class="text-xs text-slate-500 mt-2 leading-relaxed">古くなったコンクリートが汚くて悩みでしたが、たった2日で高級ホテルの入り口みたいになりました。</p>
+                </div>
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
+                    <div class="flex items-center gap-2 mb-2"><div class="flex text-gold-500 text-xs">★★★★★</div><span class="text-xs font-bold text-slate-400">玄関アプローチ</span></div>
+                    <p class="text-sm font-bold text-slate-800">「オリジナルデザインが嬉しい」</p><p class="text-xs text-slate-500 mt-2 leading-relaxed">文字を入れたいという要望にも応えてくれて、世界に一つだけの床になりました。近所の人からも褒められます。</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ビフォーアフター -->
+        <div class="bg-black-pure rounded-[2.5rem] p-6 sm:p-8 text-white space-y-8 shadow-2xl border border-white/10 relative overflow-hidden">
+            <div class="text-center relative z-10"><span class="text-gold-500 text-[10px] font-black uppercase tracking-widest">Visual Comparison</span><h3 class="text-2xl font-black mt-2">劇的ビフォーアフター</h3></div>
+            <div class="comparison-slider" id="comparison-slider">
+                <img src="after1.jpg.JPG" alt="After" class="img-after"><img src="before.jpg.JPG" alt="Before" class="img-before" id="slider-img-before">
+                <div class="slider-handle" id="slider-handle"><div class="slider-button"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left:-10px"><path d="m15 18-6-6 6-6"/></svg></div></div>
+                <div class="absolute bottom-3 left-4 z-30 bg-black/60 backdrop-blur px-2 py-1 rounded text-[10px] font-bold border border-white/20">BEFORE</div><div class="absolute bottom-3 right-4 z-30 bg-gold-600/80 backdrop-blur px-2 py-1 rounded text-[10px] font-bold border border-white/20">AFTER</div>
+            </div>
+            <!-- ギャラリー -->
+            <div class="space-y-4">
+                <div class="rounded-xl overflow-hidden border border-white/20 relative group"><img src="after2.jpg.JPG" class="w-full h-56 object-cover group-hover:scale-105 transition-transform duration-700"><span class="absolute bottom-3 left-3 text-xs font-bold bg-black/60 px-3 py-1 rounded backdrop-blur-sm">別アングル</span></div>
+                <div class="rounded-xl overflow-hidden border border-white/20 relative group"><img src="material.jpg.JPG" class="w-full h-56 object-cover group-hover:scale-105 transition-transform duration-700"><span class="absolute bottom-3 left-3 text-xs font-bold bg-black/60 px-3 py-1 rounded backdrop-blur-sm">使用素材</span></div>
+            </div>
+        </div>
+
+        <!-- FAQ -->
+        <div class="space-y-4">
+            <p class="text-center text-[10px] font-black text-slate-400 uppercase tracking-widest">Frequently Asked Questions</p>
+            <div class="space-y-3">
+                <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
+                    <button onclick="toggleFaq(1)" class="w-full p-5 flex items-center justify-between text-left hover:bg-slate-50 transition-colors"><span class="text-sm font-bold text-slate-800">Q1: 車が乗っても割れませんか？</span><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-400 faq-icon" id="faq-icon-1"><path d="m6 9 6 6 6-6"/></svg></button>
+                    <div id="faq-answer-1" class="faq-content bg-slate-50"><div class="p-5 pt-2 text-xs text-slate-500 font-medium leading-relaxed border-t border-slate-100">問題ありません。ローラーストーンは圧縮強度・曲げ強度・付着強度の基準数値をクリアした特殊材料を使用しており、駐車場など大型車両が乗る場所でも十分な強度があります。</div></div>
+                </div>
+                <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
+                    <button onclick="toggleFaq(2)" class="w-full p-5 flex items-center justify-between text-left hover:bg-slate-50 transition-colors"><span class="text-sm font-bold text-slate-800">Q2: 今ある床の解体は必要ですか？</span><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-400 faq-icon" id="faq-icon-2"><path d="m6 9 6 6 6-6"/></svg></button>
+                    <div id="faq-answer-2" class="faq-content bg-slate-50"><div class="p-5 pt-2 text-xs text-slate-500 font-medium leading-relaxed border-t border-slate-100">不要です。既存の床の上から施工できるため、解体・撤去費用やハツリ工事の騒音が出ません。コストを抑え、環境にも優しい工法です。</div></div>
+                </div>
+                <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
+                    <button onclick="toggleFaq(3)" class="w-full p-5 flex items-center justify-between text-left hover:bg-slate-50 transition-colors"><span class="text-sm font-bold text-slate-800">Q3: 工事は何日くらいかかりますか？</span><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-400 faq-icon" id="faq-icon-3"><path d="m6 9 6 6 6-6"/></svg></button>
+                    <div id="faq-answer-3" class="faq-content bg-slate-50"><div class="p-5 pt-2 text-xs text-slate-500 font-medium leading-relaxed border-t border-slate-100">施工面積や天候によりますが、最短2日で施工可能です。歩行は施工翌日から、車の乗り入れは施工完了後、数日後から可能です。</div></div>
+                </div>
+                <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
+                    <button onclick="toggleFaq(4)" class="w-full p-5 flex items-center justify-between text-left hover:bg-slate-50 transition-colors"><span class="text-sm font-bold text-slate-800">Q4: メンテナンスや保証は？</span><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-400 faq-icon" id="faq-icon-4"><path d="m6 9 6 6 6-6"/></svg></button>
+                    <div id="faq-answer-4" class="faq-content bg-slate-50"><div class="p-5 pt-2 text-xs text-slate-500 font-medium leading-relaxed border-t border-slate-100">特殊コーティングにより高圧洗浄機等での清掃が可能です。万が一の剥がれ等も部分補修が可能です。保証内容は現地調査時にご説明いたします。</div></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 問い合わせ -->
+        <div class="mt-8 border-t-2 border-slate-100 pt-8 pb-4">
+            <div class="text-center space-y-4 mb-6">
+                <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Contact Us</p>
+                <h3 class="text-2xl font-black text-slate-800 flex flex-col items-center justify-center gap-2"><span>お問い合わせはこちらから</span><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#D4AF37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="animate-bounce mt-2"><path d="M12 5v14"/><path d="m19 12-7 7-7-7"/></svg></h3>
+            </div>
+            <!-- キャンペーン -->
+            <div class="border-2 border-gold-400 pulse-border rounded-2xl p-5 bg-gold-400/5 text-center relative overflow-hidden mb-6">
+                <div class="absolute top-0 right-0 bg-gold-500 text-white text-[9px] font-bold px-3 py-1 rounded-bl-lg">期間限定</div>
+                <h4 class="text-lg font-black text-black-pure mb-2 flex items-center justify-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#B8860B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg><span>無料パース作成中！</span></h4>
+                <p class="text-xs font-bold text-slate-600 leading-relaxed mb-4">あなたの家の写真（駐車場やアプローチ）を送ってください。<br><span class="text-gold-600 underline decoration-2 underline-offset-2">無料で完成イメージ図（パース）を作成します。</span><br>契約前でもOK！まずはイメージを確認しましょう。</p>
+                <!-- LINE (シンプルリンク) -->
+                <a href="https://lin.ee/EAASJvg" target="_blank" class="action-btn w-full bg-[#06C755] text-white py-4 rounded-xl font-bold text-base shadow-md flex items-center justify-center gap-2 no-underline">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+                    <span>LINEで写真を送って無料パース依頼</span>
+                </a>
+                <p class="text-[9px] text-center text-slate-400 mt-2">※友だち追加後、写真を送信してください</p>
+            </div>
+            <!-- その他リンク -->
+            <div class="space-y-3">
+                <a href="tel:09016250897" class="action-btn w-full bg-slate-800 text-white py-4 rounded-xl font-bold text-base shadow-md flex items-center justify-center gap-2 no-underline"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#EABF4F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg><span>090-1625-0897 に電話する</span></a>
+                <a href="https://www.instagram.com/cementart_numan/" target="_blank" class="action-btn w-full bg-insta text-white py-4 rounded-xl font-bold text-base shadow-md flex items-center justify-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg><span>Instagramで施工例を見る</span></a>
+                <a href="https://rollerstone.com/catalog/" target="_blank" class="action-btn w-full bg-white border border-slate-200 text-slate-700 py-4 rounded-xl font-bold text-base shadow-sm flex items-center justify-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#D4AF37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg><span>WEBカタログを見る</span></a>
+            </div>
+        </div>
+
+        <div class="text-center py-8"><p class="text-[9px] text-slate-300 font-black tracking-[0.3em] uppercase">Roller Stone Authorized Simulator</p></div>
     </div>
 
-    <button class="calc-btn" onclick="calc()">見積もりを計算する</button>
+    <!-- JSロジック -->
+    <script>
+        // オープニング
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                const splash = document.getElementById('splash-screen');
+                if(splash) {
+                    splash.classList.add('hidden');
+                    setTimeout(() => splash.style.display = 'none', 500);
+                }
+            }, 3000);
 
-    <!-- 結果表示 -->
-    <div id="result">
-        <div class="row"><span>適用単価:</span> <span id="u-price">-</span></div>
-        <div class="row"><span>施工費(税別):</span> <span id="b-price">-</span></div>
-        <div class="row"><span>消費税(10%):</span> <span id="tax">-</span></div>
-        
-        <div class="total-box">
-            <span style="font-size:12px">概算見積もり合計 (税込)</span>
-            <span class="total-price" id="total">-</span>
-            <div id="fixed-notice" style="display:none; font-size:10px; margin-top:5px;">※最低施工金額(一式)適用</div>
-        </div>
-        <p class="note">※現地調査により正式金額は変動します。<br>※下地処理・オプションは別途。</p>
-    </div>
+            // スライダー
+            const slider = document.getElementById('comparison-slider');
+            const beforeImg = document.getElementById('slider-img-before');
+            const handle = document.getElementById('slider-handle');
+            if(slider && beforeImg && handle) {
+                let isDragging = false;
+                const updatePos = (x) => {
+                    const rect = slider.getBoundingClientRect();
+                    let pos = ((x - rect.left) / rect.width) * 100;
+                    pos = Math.max(0, Math.min(100, pos));
+                    beforeImg.style.clipPath = `inset(0 ${100 - pos}% 0 0)`;
+                    handle.style.left = `${pos}%`;
+                };
+                slider.addEventListener('mousedown', () => isDragging = true);
+                window.addEventListener('mouseup', () => isDragging = false);
+                window.addEventListener('mousemove', (e) => { if(isDragging) updatePos(e.clientX); });
+                slider.addEventListener('touchstart', () => isDragging = true);
+                window.addEventListener('touchend', () => isDragging = false);
+                window.addEventListener('touchmove', (e) => { if(isDragging) updatePos(e.touches[0].clientX); });
+                slider.addEventListener('click', (e) => updatePos(e.clientX));
+            }
+        });
 
-    <!-- キャンペーン & LINE -->
-    <div class="campaign">
-        <h3 style="margin:0 0 10px 0; color:#333;">無料パース作成中！</h3>
-        <p style="font-size:13px; margin-bottom:15px;">
-            あなたの家の写真を送ってください。<br>
-            <strong style="color:#D4AF37">無料で完成イメージ図を作成します。</strong>
-        </p>
-        <a href="https://lin.ee/EAASJvg" class="action-btn btn-line">LINEで写真を送る</a>
-        <p class="note">※友だち追加後、写真を送信してください</p>
-    </div>
-
-    <!-- その他リンク -->
-    <a href="tel:09016250897" class="action-btn btn-tel">電話で相談 (090-1625-0897)</a>
-    <a href="https://www.instagram.com/cementart_numan/" target="_blank" class="action-btn btn-insta">Instagramを見る</a>
-    <a href="https://rollerstone.com/catalog/" target="_blank" class="action-btn btn-catalog">WEBカタログを見る</a>
-
-    <!-- 画像ギャラリー -->
-    <div class="img-box">
-        <h3>施工事例</h3>
-        <!-- 画像ファイルがある場合のみ表示されます -->
-        <img src="after1.jpg.JPG" alt="After" onerror="this.style.display='none'">
-        <img src="after2.jpg.JPG" alt="Angle" onerror="this.style.display='none'">
-        <img src="material.jpg.JPG" alt="Material" onerror="this.style.display='none'">
-    </div>
-
-    <!-- FAQ -->
-    <div style="margin-top:40px;">
-        <h3 style="text-align:center;">よくある質問</h3>
-        <div class="faq-item" onclick="toggle(this)">
-            <div class="faq-q">Q. 車が乗っても割れませんか？</div>
-            <div class="faq-a">問題ありません。高強度な特殊材料を使用しており、駐車場でも十分な強度があります。</div>
-        </div>
-        <div class="faq-item" onclick="toggle(this)">
-            <div class="faq-q">Q. 今ある床の解体は必要？</div>
-            <div class="faq-a">不要です。既存の床の上から施工できるため、解体費用や騒音が抑えられます。</div>
-        </div>
-        <div class="faq-item" onclick="toggle(this)">
-            <div class="faq-q">Q. 工期はどれくらい？</div>
-            <div class="faq-a">最短2〜3日で完了します。歩行は翌日から可能です。</div>
-        </div>
-        <div class="faq-item" onclick="toggle(this)">
-            <div class="faq-q">Q. どんな場所に施工できる？</div>
-            <div class="faq-a">コンクリート、タイル、アスファルト等の上から施工可能です。土や砂利の上は不可です。</div>
-        </div>
-    </div>
-
-    <div style="text-align:center; margin-top:40px; font-size:10px; color:#ccc;">
-        Roller Stone Authorized Simulator
-    </div>
-</div>
-
-<script>
-    // シンプル計算ロジック
-    function setVal(n) {
-        document.getElementById('area').value = n;
-        calc();
-    }
-
-    function calc() {
-        var area = parseFloat(document.getElementById('area').value);
-        if(!area) { alert("面積を入力してください"); return; }
-
-        var unit = 11200;
-        var rA = Math.round(area);
-        
-        // 単価テーブル
-        var prices = {
-            10:11200, 11:11200, 12:11100, 13:11000, 14:11000, 15:10900,
-            16:10800, 17:10700, 18:10700, 19:10600, 20:10500, 21:10400,
-            22:10400, 23:10300, 24:10200, 25:10200, 26:10100, 27:10100,
-            28:10100, 29:10100, 30:10000, 31:10000, 32:9900, 33:9900,
-            34:9900, 35:9900, 36:9800, 37:9800, 38:9800, 39:9800,
-            40:9700, 41:9700, 42:9700, 43:9700, 44:9600, 45:9600,
-            46:9600, 47:9600, 48:9500, 49:9500, 50:9500, 51:9500,
-            52:9400, 53:9400, 54:9400, 55:9400
-        };
-
-        if(rA >= 63) unit = 9200;
-        else if(rA >= 56) unit = 9300;
-        else if(prices[rA]) unit = prices[rA];
-
-        var base = area * unit;
-        var fixed = false;
-        
-        if(base < 115900) {
-            base = 115900;
-            fixed = true;
+        // 面積セット
+        function setArea(val) {
+            const input = document.getElementById('area');
+            if(input) {
+                input.value = val;
+                calculate();
+            }
         }
 
-        var tax = Math.floor(base * 0.1);
-        var total = Math.floor(base + tax);
+        // 計算ロジック
+        function calculate() {
+            const input = document.getElementById('area');
+            const area = parseFloat(input.value);
+            if (!area || area <= 0) { alert("面積を正しく入力してください"); return; }
 
-        document.getElementById('result').style.display = 'block';
-        document.getElementById('u-price').innerText = fixed ? "一式適用" : unit.toLocaleString() + " 円";
-        document.getElementById('b-price').innerText = base.toLocaleString() + " 円";
-        document.getElementById('tax').innerText = tax.toLocaleString() + " 円";
-        document.getElementById('total').innerText = "¥" + total.toLocaleString();
-        
-        document.getElementById('fixed-notice').style.display = fixed ? 'block' : 'none';
-    }
+            const priceTable = { 10:11200,11:11200,12:11100,13:11000,14:11000,15:10900,16:10800,17:10700,18:10700,19:10600,20:10500,21:10400,22:10400,23:10300,24:10200,25:10200,26:10100,27:10100,28:10100,29:10100,30:10000,31:10000,32:9900,33:9900,34:9900,35:9900,36:9800,37:9800,38:9800,39:9800,40:9700,41:9700,42:9700,43:9700,44:9600,45:9600,46:9600,47:9600,48:9500,49:9500,50:9500,51:9500,52:9400,53:9400,54:9400,55:9400 };
+            
+            let unit = 11200;
+            const rA = Math.round(area);
+            if (rA >= 63) unit = 9200;
+            else if (rA >= 56) unit = 9300;
+            else if (priceTable[rA]) unit = priceTable[rA];
 
-    // FAQ開閉
-    function toggle(el) {
-        if(el.classList.contains('open')) {
-            el.classList.remove('open');
-        } else {
-            el.classList.add('open');
+            let base = area * unit;
+            let isFixed = false;
+            if (base < 115900) { base = 115900; isFixed = true; }
+
+            const tax = Math.floor(base * 0.1);
+            const total = Math.floor(base + tax);
+
+            document.getElementById('resultArea').classList.remove('hidden');
+            document.getElementById('unitPrice').innerText = isFixed ? "一式工事適用" : unit.toLocaleString() + " 円";
+            document.getElementById('basePrice').innerText = base.toLocaleString() + " 円";
+            document.getElementById('taxPrice').innerText = tax.toLocaleString() + " 円";
+            document.getElementById('totalPrice').innerText = "¥" + total.toLocaleString();
+            
+            const notice = document.getElementById('fixedPriceNotice');
+            if(isFixed) notice.classList.remove('hidden'); else notice.classList.add('hidden');
         }
-    }
-</script>
 
+        // シェア機能
+        function shareResult() {
+            if (navigator.share) {
+                navigator.share({ title: '見積もり結果', text: 'ローラーストーン施工費用シミュレーション', url: window.location.href }).catch(console.error);
+            } else {
+                alert("ブラウザのメニューから共有・保存してください");
+            }
+        }
+
+        // FAQトグル
+        function toggleFaq(id) {
+            const ans = document.getElementById('faq-answer-' + id);
+            const ico = document.getElementById('faq-icon-' + id);
+            if(ans && ico) {
+                ans.classList.toggle('open');
+                ico.classList.toggle('rotate');
+            }
+        }
+    </script>
 </body>
 </html>
