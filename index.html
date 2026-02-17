@@ -1,289 +1,125 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>【3秒見積もり】ローラーストーン施工費用シミュレーター</title>
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700;900&display=swap" rel="stylesheet">
-    <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        gold: {
-                            100: '#FDF6E3',
-                            200: '#F9EBAE',
-                            300: '#F3D679',
-                            400: '#EABF4F',
-                            500: '#D4AF37', // Official Gold
-                            600: '#B8860B',
-                        }
-                    }
-                }
-            }
-        }
-    </script>
     <style>
-        body {
-            font-family: 'Noto+Sans+JP', sans-serif;
-            background-color: #ffffff;
-            color: #1a1a1a;
-        }
-        .gold-gradient {
-            background: linear-gradient(135deg, #D4AF37 0%, #F9EBAE 50%, #B8860B 100%);
-        }
-        .gold-text {
-            background: linear-gradient(135deg, #D4AF37 0%, #B8860B 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        .insta-gradient {
-            background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%);
-        }
-        .line-color { background-color: #06C755; }
-        
-        .animate-slide-up {
-            animation: slideUp 0.5s ease-out forwards;
-        }
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .luxury-shadow {
-            box-shadow: 0 20px 50px -12px rgba(212, 175, 55, 0.15);
-        }
-        /* スムーズな横スクロール */
-        .no-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
-        .no-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap');
+        body { font-family: 'Noto Sans JP', sans-serif; background-color: #f8f9fa; }
+        .gold-text { color: #d4af37; }
+        .gold-border { border-color: #d4af37; }
+        .btn-hover:active { transform: scale(0.98); }
+        /* 画像の角丸と影 */
+        .pers-img { border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3); width: 100%; height: auto; margin-bottom: 8px; }
     </style>
 </head>
-<body class="min-h-screen flex flex-col items-center py-6 px-4 sm:px-6">
+<body class="bg-gray-50 text-gray-800">
 
-    <div class="w-full max-w-xl space-y-8 mb-12">
-        <!-- Header -->
-        <div class="text-center space-y-3">
-            <div class="inline-block px-4 py-1 border border-gold-500 rounded-full">
-                <p class="text-[10px] font-black tracking-[0.2em] text-gold-600 uppercase">3-Second Quick Estimate</p>
-            </div>
-            <h1 class="text-2xl sm:text-4xl font-black tracking-tighter leading-tight">
-                ローラーストーン<br/>
-                <span class="gold-text">施工費用シミュレーター</span>
-            </h1>
-            <p class="text-xs text-slate-400 font-medium italic">理想の足元。理想の価格を、今すぐチェック。</p>
+<!-- ヘッダー -->
+<header class="bg-black text-white py-6 text-center shadow-lg sticky top-0 z-50">
+    <h1 class="text-2xl md:text-3xl font-black tracking-wider">
+        <span class="gold-text">ROLLER STONE</span><br>
+        施工費用シミュレーター
+    </h1>
+</header>
+
+<!-- メインコンテンツ -->
+<main class="max-w-md mx-auto px-4 py-8">
+    
+    <!-- 入力エリア -->
+    <div class="bg-white rounded-2xl shadow-xl p-6 mb-8 border-t-4 gold-border">
+        <label class="block text-sm font-bold mb-2 text-gray-600">施工面積 (㎡)</label>
+        <div class="flex items-center mb-6">
+            <input type="number" id="area" placeholder="例: 20" class="w-full p-4 text-xl border-2 border-gray-200 rounded-lg focus:border-yellow-500 outline-none transition text-center font-bold">
+            <span class="ml-3 text-lg font-bold">㎡</span>
         </div>
 
-        <!-- Simulator Card -->
-        <div class="bg-white rounded-[2.5rem] p-8 luxury-shadow border border-slate-100">
-            <div class="space-y-6">
-                <div class="space-y-2 text-center">
-                    <label for="area" class="text-xs font-black text-slate-400 uppercase tracking-widest">施工面積を入力 (㎡)</label>
-                    <div class="relative group max-w-xs mx-auto">
-                        <input type="number" id="area" placeholder="例: 15" 
-                            class="w-full px-6 py-5 text-5xl font-black bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-gold-500 focus:bg-white outline-none transition-all pr-20 text-center" />
-                        <span class="absolute right-6 top-1/2 -translate-y-1/2 text-xl font-bold text-slate-300">㎡</span>
-                    </div>
-                </div>
-
-                <button onclick="calculate()" class="w-full bg-black text-white py-6 rounded-2xl font-black text-xl hover:bg-slate-800 transition-all active:scale-[0.98] shadow-xl flex items-center justify-center gap-3">
-                    <span>概算見積もりを見る</span>
-                    <i data-lucide="chevron-right" class="w-6 h-6"></i>
-                </button>
-            </div>
-
-            <!-- Result Area -->
-            <div id="resultArea" class="hidden mt-10 space-y-6 animate-slide-up">
-                <div class="border-t border-dashed border-slate-200 pt-6 space-y-4">
-                    <div class="flex justify-between items-center text-sm font-bold">
-                        <span class="text-slate-400">適用単価</span>
-                        <span id="unitPrice" class="text-slate-900">--</span>
-                    </div>
-                    <div class="flex justify-between items-center text-sm font-bold">
-                        <span class="text-slate-400">施工費 (税別)</span>
-                        <span id="basePrice" class="text-slate-900">--</span>
-                    </div>
-                    <div class="flex justify-between items-center text-sm font-bold">
-                        <span class="text-slate-400">消費税 (10%)</span>
-                        <span id="taxPrice" class="text-slate-900">--</span>
-                    </div>
-                </div>
-
-                <div class="bg-gold-50 rounded-2xl p-8 text-center border border-gold-100 relative overflow-hidden">
-                    <div class="absolute -top-4 -right-4 opacity-10">
-                        <i data-lucide="calculator" class="w-24 h-24 text-gold-500"></i>
-                    </div>
-                    <p class="text-[10px] font-black text-gold-600 uppercase tracking-widest mb-1 relative z-10">Total Estimated Price</p>
-                    <div class="text-5xl font-black gold-text relative z-10" id="totalPrice">¥0</div>
-                </div>
-
-                <div class="text-[10px] text-slate-400 font-bold leading-relaxed text-center px-4">
-                    ※2024年1月版価格表に基づきます。現場状況（下地調整等）により別途費用が発生する場合がございます。
-                </div>
-            </div>
-        </div>
-
-        <!-- Reinforced Photopars CTA Area -->
-        <div class="bg-black rounded-[3rem] p-8 text-white space-y-8 shadow-2xl relative overflow-hidden">
-            <div class="space-y-3 text-center relative z-10">
-                <div class="inline-block px-3 py-1 bg-gold-500 text-black text-[9px] font-black rounded-full uppercase tracking-widest mb-2">Free Proposal Service</div>
-                <h3 class="text-2xl sm:text-3xl font-black leading-tight">完成イメージ、<br/><span class="text-gold-400 underline decoration-gold-600 decoration-4 underline-offset-8">見てみませんか？</span></h3>
-                <p class="text-slate-400 text-sm leading-relaxed font-medium mt-4 px-4">
-                    施工場所の写真を送るだけ。あなたの家の「完成予想図」を<br class="hidden sm:block"/>
-                    プロのデザイナーが無料で作成します。
-                </p>
-            </div>
-
-            <!-- Before/After Gallery -->
-            <div class="space-y-4 relative z-10">
-                <p class="text-center text-[10px] font-black text-gold-500 uppercase tracking-[0.2em]">Photopars Samples</p>
-                <div class="flex overflow-x-auto gap-4 no-scrollbar snap-x snap-mandatory pb-4">
-                    <!-- Before -->
-                    <div class="snap-center shrink-0 w-4/5 sm:w-1/3 space-y-2">
-                        <div class="relative aspect-video rounded-xl overflow-hidden border border-white/10 group">
-                            <img src="https://placehold.co/600x400/333/fff?text=Before" alt="Before" class="w-full h-full object-cover">
-                            <div class="absolute top-2 left-2 bg-black/60 backdrop-blur-md px-2 py-1 rounded text-[9px] font-black text-white border border-white/20">施工前</div>
-                        </div>
-                        <p class="text-[10px] text-slate-500 font-bold text-center italic">現在の施工場所の写真</p>
-                    </div>
-                    <!-- After A -->
-                    <div class="snap-center shrink-0 w-4/5 sm:w-1/3 space-y-2">
-                        <div class="relative aspect-video rounded-xl overflow-hidden border-2 border-gold-500/50">
-                            <img src="https://placehold.co/600x400/D4AF37/000?text=After+A" alt="After A" class="w-full h-full object-cover">
-                            <div class="absolute top-2 left-2 bg-gold-500 px-2 py-1 rounded text-[9px] font-black text-black">完成イメージ案①</div>
-                        </div>
-                        <p class="text-[10px] text-gold-400 font-bold text-center italic">石畳調デザイン</p>
-                    </div>
-                    <!-- After B -->
-                    <div class="snap-center shrink-0 w-4/5 sm:w-1/3 space-y-2">
-                        <div class="relative aspect-video rounded-xl overflow-hidden border-2 border-gold-500/50">
-                            <img src="https://placehold.co/600x400/B8860B/fff?text=After+B" alt="After B" class="w-full h-full object-cover">
-                            <div class="absolute top-2 left-2 bg-gold-600 px-2 py-1 rounded text-[9px] font-black text-white">完成イメージ案②</div>
-                        </div>
-                        <p class="text-[10px] text-gold-500 font-bold text-center italic">タイル調デザイン</p>
-                    </div>
-                </div>
-                <div class="flex justify-center gap-1 sm:hidden">
-                    <div class="w-1.5 h-1.5 rounded-full bg-gold-500"></div>
-                    <div class="w-1.5 h-1.5 rounded-full bg-white/20"></div>
-                    <div class="w-1.5 h-1.5 rounded-full bg-white/20"></div>
-                </div>
-            </div>
-
-            <!-- Action Buttons -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 relative z-10 pt-4">
-                <a href="YOUR_LINE_URL" target="_blank" class="line-color text-white py-5 rounded-2xl flex items-center justify-center gap-3 font-black text-lg hover:opacity-90 transition-all shadow-xl group">
-                    <i data-lucide="message-circle" class="w-6 h-6 fill-current"></i>
-                    <span>LINEで写真を送る</span>
-                </a>
-                <a href="YOUR_INSTAGRAM_URL" target="_blank" class="insta-gradient text-white py-5 rounded-2xl flex items-center justify-center gap-3 font-black text-lg hover:opacity-90 transition-all shadow-xl">
-                    <i data-lucide="instagram" class="w-6 h-6"></i>
-                    <span>Instagramで送る</span>
-                </a>
-            </div>
-            
-            <p class="text-[9px] text-center text-slate-500 font-bold uppercase tracking-[0.3em]">No commitment required. Professional support.</p>
-        </div>
-
-        <!-- Footer Info -->
-        <div class="px-6 py-8 text-center space-y-6">
-            <div class="flex justify-center gap-8 text-slate-300">
-                <button onclick="shareX()" class="hover:text-black transition-colors flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest">
-                    <i data-lucide="twitter" class="w-4 h-4"></i> Share on X
-                </button>
-                <div class="w-px h-4 bg-slate-100"></div>
-                <button onclick="shareLine()" class="hover:text-green-500 transition-colors flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest">
-                    <i data-lucide="message-circle" class="w-4 h-4"></i> Send LINE
-                </button>
-            </div>
-            <p class="text-[9px] text-slate-300 font-black tracking-[0.5em] uppercase">Roller Stone Authorized Simulator</p>
-        </div>
+        <button onclick="calc()" class="w-full bg-black text-white font-bold py-4 rounded-lg text-lg btn-hover shadow-lg">
+            概算見積もりを見る
+        </button>
     </div>
 
-    <script>
-        let lastCalculation = { area: 0, total: 0 };
+    <!-- 結果エリア（最初は非表示） -->
+    <div id="resultArea" class="hidden animate-fade-in-up">
+        
+        <!-- 金額表示 -->
+        <div class="bg-white rounded-2xl shadow-xl p-6 mb-6 border-t-4 border-black">
+            <h2 class="text-center text-sm font-bold text-gray-500 mb-2">概算お見積り結果(税込)</h2>
+            <p class="text-4xl font-black gold-text text-center mb-2" id="total">- 円</p>
+            <p class="text-[10px] text-gray-400 text-center">※施工費のみの概算です。下地処理等は別途。</p>
+        </div>
 
-        function calculate() {
-            const areaInput = document.getElementById('area');
-            const area = parseFloat(areaInput.value);
+        <!-- パース作成訴求エリア（縦並び・大型画像） -->
+        <div class="bg-black text-white rounded-xl p-5 mb-8 text-center shadow-2xl">
+            <h3 class="font-bold text-xl mb-2 gold-text">完成イメージ、無料作成！</h3>
+            <p class="text-xs mb-6 text-gray-300 leading-relaxed">
+                「うちの駐車場、どう変わる？」<br>
+                写真を送るだけで、<span class="font-bold text-white border-b border-yellow-500">世界に一枚の完成パース図</span>を作ります。
+            </p>
             
-            if (!area || area <= 0) {
-                alert("正しい面積を入力してください");
-                return;
-            }
+            <!-- 画像エリア：ここを差し替えます -->
+            <div class="space-y-6 mb-8">
+                <!-- ①ビフォー -->
+                <div class="relative">
+                    <span class="absolute top-2 left-2 bg-gray-800 text-white text-xs font-bold px-2 py-1 rounded shadow">Before</span>
+                    <!-- ↓↓ ここにビフォー画像のファイル名を入れる ↓↓ -->
+                    <img src="https://placehold.co/600x400/333/fff?text=Before+Photo" alt="施工前" class="pers-img">
+                </div>
 
-            let unitPrice = 0;
-            let basePrice = 0;
-            let isFixedPrice = false;
+                <!-- ②アフター1 -->
+                <div class="relative">
+                    <span class="absolute top-2 left-2 bg-yellow-600 text-white text-xs font-bold px-2 py-1 rounded shadow">After パターンA</span>
+                    <!-- ↓↓ ここにアフター1画像のファイル名を入れる ↓↓ -->
+                    <img src="https://placehold.co/600x400/d4af37/000?text=After+Pattern+A" alt="完成イメージ1" class="pers-img">
+                </div>
 
-            // 単価テーブル（2024年1月版）
-            const priceTable = {
-                10: 11200, 11: 11200, 12: 11100, 13: 11000, 14: 11000, 15: 10900, 16: 10800, 17: 10700, 18: 10700,
-                19: 10600, 20: 10500, 21: 10400, 22: 10400, 23: 10300, 24: 10200, 25: 10200, 26: 10100, 27: 10100,
-                28: 10100, 29: 10100, 30: 10000, 31: 10000, 32: 9900, 33: 9900, 34: 9900, 35: 9900, 36: 9800,
-                37: 9800, 38: 9800, 39: 9800, 40: 9700, 41: 9700, 42: 9700, 43: 9700, 44: 9600, 45: 9600, 46: 9600,
-                47: 9600, 48: 9500, 49: 9500, 50: 9500, 51: 9500, 52: 9400, 53: 9400, 54: 9400, 55: 9400
-            };
+                <!-- ③アフター2 -->
+                <div class="relative">
+                    <span class="absolute top-2 left-2 bg-yellow-600 text-white text-xs font-bold px-2 py-1 rounded shadow">After パターンB</span>
+                    <!-- ↓↓ ここにアフター2画像のファイル名を入れる ↓↓ -->
+                    <img src="https://placehold.co/600x400/d4af37/000?text=After+Pattern+B" alt="完成イメージ2" class="pers-img">
+                </div>
+            </div>
 
-            const checkArea = Math.round(area);
-            if (checkArea >= 63) { unitPrice = 9200; }
-            else if (checkArea >= 56) { unitPrice = 9300; }
-            else if (priceTable[checkArea]) { unitPrice = priceTable[checkArea]; }
-            else { unitPrice = 11200; }
+            <!-- アクションボタン -->
+            <div class="space-y-3">
+                <a href="https://line.me/R/ti/p/@YOUR_LINE_ID" target="_blank" class="block w-full bg-[#06c755] text-white font-bold py-4 rounded-lg shadow-lg btn-hover flex items-center justify-center text-lg">
+                    LINEで写真を送る ＞
+                </a>
+                <a href="https://www.instagram.com/YOUR_INSTAGRAM_ID/" target="_blank" class="block w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold py-4 rounded-lg shadow-lg btn-hover flex items-center justify-center text-lg">
+                    Instagramで送る ＞
+                </a>
+            </div>
+        </div>
 
-            basePrice = area * unitPrice;
+    </div>
 
-            if (basePrice < 115900) {
-                basePrice = 115900;
-                isFixedPrice = true;
-                unitPrice = "一式工事";
-            }
+</main>
 
-            const tax = Math.floor(basePrice * 0.1);
-            const total = Math.floor(basePrice + tax);
-
-            // 保存（シェア用）
-            lastCalculation = { area: area, total: total };
-
-            // UI Update
-            const resultArea = document.getElementById('resultArea');
-            resultArea.classList.remove('hidden');
-            
-            document.getElementById('unitPrice').innerText = isFixedPrice ? "一式適用" : unitPrice.toLocaleString() + " 円";
-            document.getElementById('basePrice').innerText = Math.floor(basePrice).toLocaleString() + " 円";
-            document.getElementById('taxPrice').innerText = tax.toLocaleString() + " 円";
-            document.getElementById('totalPrice').innerText = "¥" + total.toLocaleString();
-
-            // Iconsの再レンダリング
-            lucide.createIcons();
-            
-            // スクロール
-            resultArea.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        }
-
-        function shareX() {
-            if (lastCalculation.total === 0) { alert("まずは見積もりを行ってください。"); return; }
-            const text = encodeURIComponent(`【ローラーストーン施工見積もり】\n施工面積：${lastCalculation.area}㎡\n概算費用：¥${lastCalculation.total.toLocaleString()}（税込）\n\n理想の外構費用を3秒でシミュレーション！\n#ローラーストーン #外構費用 #シミュレーター`);
-            const url = encodeURIComponent(window.location.href);
-            window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, '_blank');
-        }
-
-        function shareLine() {
-            if (lastCalculation.total === 0) { alert("まずは見積もりを行ってください。"); return; }
-            const text = encodeURIComponent(`【ローラーストーン施工見積もり】\n施工面積：${lastCalculation.area}㎡\n概算費用：¥${lastCalculation.total.toLocaleString()}（税込）\n${window.location.href}`);
-            window.open(`https://social-plugins.line.me/lineit/share?url=${text}`, '_blank');
-        }
-
-        // Initialize Icons
-        window.onload = () => lucide.createIcons();
-    </script>
+<script>
+    function calc() {
+        const area = parseFloat(document.getElementById('area').value);
+        if (!area || area <= 0) { alert("面積を入力してください"); return; }
+        
+        // 単価テーブル(2024/01版)
+        const t = {
+            10:11200,11:11200,12:11100,13:11000,14:11000,15:10900,16:10800,17:10700,18:10700,
+            19:10600,20:10500,21:10400,22:10400,23:10300,24:10200,25:10200,26:10100,27:10100,
+            28:10100,29:10100,30:10000,31:10000,32:9900,33:9900,34:9900,35:9900,36:9800,37:9800,
+            38:9800,39:9800,40:9700,41:9700,42:9700,43:9700,44:9600,45:9600,46:9600,47:9600,
+            48:9500,49:9500,50:9500,51:9500,52:9400,53:9400,54:9400,55:9400
+        };
+        let u = 0; const rA = Math.round(area);
+        if (rA >= 63) u = 9200; else if (rA >= 56) u = 9300; else if (t[rA]) u = t[rA]; else u = 11200;
+        let base = area * u;
+        if (base < 115900) base = 115900;
+        const tax = Math.floor(base * 0.1);
+        
+        document.getElementById('resultArea').classList.remove('hidden');
+        document.getElementById('total').innerText = (base + tax).toLocaleString() + " 円";
+    }
+</script>
 </body>
 </html>
