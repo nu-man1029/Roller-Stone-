@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ローラーストーン認定施工店 ぬーまん | 無料完成パース作成</title>
+    <!-- デザイン用ツール（Tailwind CSS） -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- アイコン用ツール（Lucide） -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- フォント読み込み -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Shippori+Mincho:wght@700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        /* 基本設定 */
+        body { font-family: 'Noto Sans JP', sans-serif; background-color: #ffffff; color: #111; overflow-x: hidden; scroll-behavior: smooth; }
+        .font-serif { font-family: 'Shippori Mincho', serif; }
+        
+        /* ゴールドの色味とグラデーション */
+        .text-gold { color: #D4AF37; }
+        .bg-gold { background-color: #D4AF37; }
+        .border-gold { border-color: #D4AF37; }
+        .bg-gold-gradient { background: linear-gradient(135deg, #D4AF37 0%, #F9EBAE 50%, #B8860B 100%); }
+        .text-gold-gradient {
+            background: linear-gradient(135deg, #D4AF37 0%, #F9EBAE 50%, #B8860B 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        /* インスタグラム風グラデーション */
+        .bg-insta { background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); }
+
+        /* アニメーション（ボタンの脈動） */
+        .pulse { animation: pulse-gold 2s infinite; }
+        @keyframes pulse-gold {
+            0% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(212, 175, 55, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0); }
+        }
+
+        /* ヒーロー画像のズーム効果 */
+        .hero-zoom { animation: zoom 20s infinite alternate; }
+        @keyframes zoom { 0% { transform: scale(1); } 100% { transform: scale(1.1); } }
+
+        /* 画像スタイル */
+        .case-img { width: 100%; height: 300px; object-fit: cover; transition: transform 0.5s; }
+        .case-card:hover .case-img { transform: scale(1.05); }
+    </style>
+</head>
+<body>
+
+    <!-- ヘッダー -->
+    <header class="fixed top-0 w-full z-50 bg-black/90 backdrop-blur border-b border-gold/30 py-3 px-4">
+        <div class="container mx-auto flex justify-between items-center">
+            <div class="text-white font-black leading-tight">
+                ROLLER <span class="text-gold">STONE</span><br>
+                <span class="text-[10px] text-gray-400 font-normal">認定施工店 ぬーまん</span>
+            </div>
+            <a href="#simulator" class="bg-gold-gradient text-black text-xs font-bold py-2 px-4 rounded-full shadow-lg hover:brightness-110">
+                費用計算
+            </a>
+        </div>
+    </header>
+
+    <!-- 1. ヒーローセクション（トップ画像） -->
+    <section class="relative h-screen flex items-center justify-center bg-black overflow-hidden">
+        <!-- 背景画像 (hero.jpg) -->
+        <div class="absolute inset-0 z-0">
+            <img src="hero.jpg" class="w-full h-full object-cover opacity-60 hero-zoom" alt="施工イメージ" 
+                 onerror="this.src='https://placehold.co/800x1200/333/fff?text=No+Image'">
+            <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/40"></div>
+        </div>
+
+        <div class="relative z-10 text-center px-4 max-w-2xl">
+            <p class="text-gold text-xs font-bold tracking-[0.3em] mb-4 animate-pulse">CEMENT ARTIST NU-MAN</p>
+            <h1 class="text-4xl md:text-6xl font-black text-white font-serif leading-tight mb-6 drop-shadow-lg">
+                「イメージと違う」<br>
+                そんな後悔は、<br>
+                <span class="text-gold-gradient">もうさせません。</span>
+            </h1>
+            <p class="text-gray-200 text-sm md:text-lg mb-8 leading-relaxed font-medium drop-shadow-md">
+                あなたの家の写真で、完成後の姿を<br>
+                <span class="border-b border-gold">『無料で』お見せします。</span>
+            </p>
+            
+            <a href="#simulator" class="bg-gold-gradient text-black font-black text-lg py-4 px-8 rounded-full inline-flex items-center gap-2 pulse shadow-xl hover:scale-105 transition-transform">
+                まずは費用を計算してみる
+                <i data-lucide="arrow-down" class="w-5 h-5"></i>
+            </a>
+        </div>
+    </section>
+
+    <!-- 2. 強みの強調（パース作成） -->
+    <section class="py-16 px-4 bg-[#111] text-white">
+        <div class="max-w-3xl mx-auto">
+            <h2 class="text-2xl font-bold font-serif mb-6 text-center">
+                なぜ、他の施工店は<br>
+                <span class="text-gold underline decoration-1 underline-offset-4">完成図</span>を見せてくれないのか？
+            </h2>
+            <div class="space-y-4 text-gray-400 text-sm leading-relaxed">
+                <p>
+                    ローラーストーンは既製品を貼るのとは違う「特殊施工」です。だからこそ、多くの業者は<strong class="text-white">「やってみないと分からない」</strong>と言います。
+                </p>
+                <p>
+                    でも、それはお客様にとって「賭け」でしかありません。高いお金を払って、気に入らない仕上がりになるなんてあってはならない。
+                </p>
+                <div class="bg-gray-900 border-l-4 border-gold p-4 my-6 rounded-r-lg">
+                    <p class="text-white font-bold mb-1">だから、私は決断しました。</p>
+                    <p class="text-gold font-bold text-lg">
+                        「契約前でも、あなたの家の写真を使って、<br>
+                        完成イメージ画像（パース）を無料で作る」と。
+                </div>
+                <p>
+                    これは手間がかかります。でも、お客様に100%納得して施工してほしいから、私はこの手間を惜しみません。
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. シミュレーターへの誘導 (CTA) -->
+    <section id="simulator" class="py-16 px-4 bg-[#F9F6ED] border-y border-gold/20">
+        <div class="max-w-xl mx-auto text-center">
+            <h2 class="text-2xl font-black mb-6 text-slate-900 font-serif">
+                でも、やっぱり<br>
+                <span class="text-gold">『値段』</span>が気になりますよね？
+            </h2>
+            <p class="text-gray-600 text-sm mb-8 font-bold">
+                いくらかかるか分からないまま問い合わせるのは不安だと思います。<br>
+                そこで、こっそりと概算費用を計算できるツールをご用意しました。
+            </p>
+
+            <div class="bg-white p-8 rounded-[2rem] shadow-xl border-4 border-gold/10">
+                <a href="https://nu-man1029.github.io/Roller-Stone-/index_v4.html" 
+                   target="_blank"
+                   class="block w-full bg-gold-gradient text-black font-black text-xl py-5 rounded-xl shadow-md hover:shadow-lg hover:-translate-y-1 transition-all pulse">
+                    【3秒見積もり】<br>シミュレーターを起動
+                </a>
+                <p class="text-xs text-gray-400 mt-4">※別ページで計算機が開きます</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. 施工事例ギャラリー (スマホ対応・縦並び) -->
+    <section class="py-16 px-4 bg-white">
+        <div class="max-w-4xl mx-auto">
+            <div class="text-center mb-10">
+                <p class="text-gold text-xs font-bold tracking-widest uppercase mb-2">WORKS</p>
+                <h2 class="text-3xl font-bold font-serif">施工事例</h2>
+            </div>
+
+            <div class="space-y-8">
+                <!-- 事例1 -->
+                <div class="case-card rounded-2xl overflow-hidden shadow-lg bg-gray-100">
+                    <img src="case1.jpg" class="case-img" alt="事例1" onerror="this.src='https://placehold.co/600x400/eee/999?text=Case+1'">
+                    <div class="p-4 bg-white">
+                        <p class="text-xs font-bold text-gold mb-1">PARKING</p>
+                        <h3 class="font-bold">駐車場リフォーム</h3>
+                    </div>
+                </div>
+                <!-- 事例2 -->
+                <div class="case-card rounded-2xl overflow-hidden shadow-lg bg-gray-100">
+                    <img src="case2.jpg" class="case-img" alt="事例2" onerror="this.src='https://placehold.co/600x400/eee/999?text=Case+2'">
+                    <div class="p-4 bg-white">
+                        <p class="text-xs font-bold text-gold mb-1">APPROACH</p>
+                        <h3 class="font-bold">玄関アプローチ</h3>
+                    </div>
+                </div>
+                <!-- 事例3 -->
+                <div class="case-card rounded-2xl overflow-hidden shadow-lg bg-gray-100">
+                    <img src="case3.jpg" class="case-img" alt="事例3" onerror="this.src='https://placehold.co/600x400/eee/999?text=Case+3'">
+                    <div class="p-4 bg-white">
+                        <p class="text-xs font-bold text-gold mb-1">WALL DESIGN</p>
+                        <h3 class="font-bold">デザインウォール</h3>
+                    </div>
+                </div>
+                <!-- 事例4 -->
+                <div class="case-card rounded-2xl overflow-hidden shadow-lg bg-gray-100">
+                    <img src="case4.jpg" class="case-img" alt="事例4" onerror="this.src='https://placehold.co/600x400/eee/999?text=Case+4'">
+                    <div class="p-4 bg-white">
+                        <p class="text-xs font-bold text-gold mb-1">ORIGINAL LOGO</p>
+                        <h3 class="font-bold">店舗・ロゴ施工</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. プロフィール -->
+    <section class="py-12 px-6 bg-gray-50 text-center">
+        <div class="max-w-md mx-auto">
+            <img src="profile.jpg" class="w-24 h-24 rounded-full mx-auto border-2 border-gold object-cover mb-4 shadow-md" alt="ぬーまん" onerror="this.src='https://placehold.co/200x200/ccc/999?text=Photo'">
+            <p class="text-gold text-xs font-bold tracking-widest uppercase mb-1">CEMENT ARTIST</p>
+            <h3 class="text-xl font-black font-serif mb-3">ぬーまん</h3>
+            <p class="text-sm text-gray-600 italic">「ただの床を『作品』に変える。それが私の仕事です。」</p>
+        </div>
+    </section>
+
+    <!-- 6. フッター (お問い合わせ) -->
+    <footer class="bg-black text-white py-12 px-4 border-t-4 border-gold">
+        <div class="max-w-md mx-auto text-center space-y-6">
+            <h2 class="text-2xl font-bold font-serif mb-4">お問い合わせ</h2>
+            
+            <!-- キャンペーン枠 -->
+            <div class="border border-gold rounded-xl p-4 bg-gold/10 relative">
+                <span class="absolute -top-3 left-1/2 -translate-x-1/2 bg-gold text-black text-[10px] font-bold px-3 py-1 rounded-full">期間限定</span>
+                <p class="text-sm font-bold mb-2">無料完成イメージ画像作成中！</p>
+                <p class="text-xs text-gray-400 mb-4">今の家の写真を送るだけで、完成図を作成します。</p>
+                
+                <a href="https://lin.ee/EAASJvg" class="bg-[#06C755] text-white font-bold py-3 px-4 rounded-xl flex items-center justify-center gap-2 hover:opacity-90 transition-all shadow-lg">
+                    <i data-lucide="message-circle" class="w-5 h-5"></i>
+                    LINEで写真を送って依頼
+                </a>
+            </div>
+
+            <div class="space-y-3">
+                <a href="tel:09016250897" class="bg-white text-black font-bold py-3 px-4 rounded-xl flex items-center justify-center gap-2 hover:bg-gray-200 transition-all">
+                    <i data-lucide="phone" class="w-5 h-5"></i>
+                    090-1625-0897 に電話
+                </a>
+                
+                <a href="https://www.instagram.com/cementart_numan/" target="_blank" class="bg-insta text-white font-bold py-3 px-4 rounded-xl flex items-center justify-center gap-2 hover:opacity-90 transition-all">
+                    <i data-lucide="instagram" class="w-5 h-5"></i>
+                    Instagramを見る
+                </a>
+            </div>
+
+            <p class="text-[10px] text-gray-500 mt-8">© Roller Stone Nu-Man. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <!-- アイコン初期化 -->
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>
