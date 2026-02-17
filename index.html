@@ -226,5 +226,90 @@
         </div>
     </div>
 
-    <script>
-        let lastCalculation = {<span class="cursor">█</span>
+   <script>
+        // 計算結果を保持する変数
+        let lastCalculation = { area: 0, total: 0 };
+
+        function calculate() {
+            const areaInput = document.getElementById('area');
+            const area = parseFloat(areaInput.value);
+            
+            if (!area || area <= 0) {
+                alert("正しい面積を入力してください");
+                return;
+            }
+
+            let unitPrice = 0;
+            let basePrice = 0;
+            let isFixedPrice = false;
+
+            // 単価テーブル（2024年1月版）
+            const priceTable = {
+                10: 11200, 11: 11200, 12: 11100, 13: 11000, 14: 11000, 15: 10900, 16: 10800, 17: 10700, 18: 10700,
+                19: 10600, 20: 10500, 21: 10400, 22: 10400, 23: 10300, 24: 10200, 25: 10200, 26: 10100, 27: 10100,
+                28: 10100, 29: 10100, 30: 10000, 31: 10000, 32: 9900, 33: 9900, 34: 9900, 35: 9900, 36: 9800,
+                37: 9800, 38: 9800, 39: 9800, 40: 9700, 41: 9700, 42: 9700, 43: 9700, 44: 9600, 45: 9600, 46: 9600,
+                47: 9600, 48: 9500, 49: 9500, 50: 9500, 51: 9500, 52: 9400, 53: 9400, 54: 9400, 55: 9400
+            };
+
+            const checkArea = Math.round(area);
+            if (checkArea >= 63) { unitPrice = 9200; }
+            else if (checkArea >= 56) { unitPrice = 9300; }
+            else if (priceTable[checkArea]) { unitPrice = priceTable[checkArea]; }
+            else { unitPrice = 11200; }
+
+            basePrice = area * unitPrice;
+
+            if (basePrice < 115900) {
+                basePrice = 115900;
+                isFixedPrice = true;
+                unitPrice = "一式工事";
+            }
+
+            const tax = Math.floor(basePrice * 0.1);
+            const total = Math.floor(basePrice + tax);
+
+            // 保存（シェア用）
+            lastCalculation = { area: area, total: total };
+
+            // UI Update
+            const resultArea = document.getElementById('resultArea');
+            resultArea.classList.remove('hidden');
+            
+            document.getElementById('unitPrice').innerText = isFixedPrice ? "一式適用" : unitPrice.toLocaleString() + " 円";
+            document.getElementById('basePrice').innerText = Math.floor(basePrice).toLocaleString() + " 円";
+            document.getElementById('taxPrice').innerText = tax.toLocaleString() + " 円";
+            document.getElementById('totalPrice').innerText = "¥" + total.toLocaleString();
+
+            // Iconsの再レンダリング
+            if (typeof lucide !== 'undefined' && lucide.createIcons) {
+                lucide.createIcons();
+            }
+            
+            // スクロール
+            resultArea.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        function shareX() {
+            if (lastCalculation.total === 0) { alert("まずは見積もりを行ってください。"); return; }
+            const text = encodeURIComponent(`【ローラーストーン施工見積もり】\n施工面積：${lastCalculation.area}㎡\n概算費用：¥${lastCalculation.total.toLocaleString()}（税込）\n\n理想の外構費用を3秒でシミュレーション！\n#ローラーストーン #外構費用 #シミュレーター`);
+            const url = encodeURIComponent(window.location.href);
+            window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, '_blank');
+        }
+
+        function shareLine() {
+            if (lastCalculation.total === 0) { alert("まずは見積もりを行ってください。"); return; }
+            const text = encodeURIComponent(`【ローラーストーン施工見積もり】\n施工面積：${lastCalculation.area}㎡\n概算費用：¥${lastCalculation.total.toLocaleString()}（税込）\n${window.location.href}`);
+            window.open(`https://social-plugins.line.me/lineit/share?url=${text}`, '_blank');
+        }
+
+        // Initialize Icons
+        window.onload = function() {
+            if (typeof lucide !== 'undefined' && lucide.createIcons) {
+                lucide.createIcons();
+            }
+        };
+    </script>
+</body>
+</html>
+
