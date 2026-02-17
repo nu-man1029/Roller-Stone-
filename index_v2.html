@@ -32,11 +32,7 @@
         }
     </script>
     <style>
-        body {
-            font-family: 'Noto Sans JP', sans-serif;
-            background-color: #ffffff;
-            color: #1a1a1a;
-        }
+        body { font-family: 'Noto Sans JP', sans-serif; background-color: #ffffff; color: #1a1a1a; overflow-x: hidden; }
         .gold-text {
             background: linear-gradient(135deg, #D4AF37 0%, #B8860B 100%);
             -webkit-background-clip: text;
@@ -46,25 +42,27 @@
             background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%);
         }
         .line-color { background-color: #06C755; }
+        .luxury-shadow { box-shadow: 0 20px 50px -12px rgba(212, 175, 55, 0.2); }
+        .pers-img { width: 100%; height: auto; object-fit: cover; border-radius: 12px; }
+        .faq-transition { transition: all 0.3s ease-in-out; }
         
-        .animate-slide-up {
-            animation: slideUp 0.5s ease-out forwards;
+        /* スクロールアニメーション用 */
+        .reveal { opacity: 0; transform: translateY(30px); transition: all 0.8s ease-out; }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+
+        /* スライダー用スタイル */
+        .slider-container { position: relative; width: 100%; height: 250px; border-radius: 12px; overflow: hidden; user-select: none; }
+        .slider-img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
+        .slider-overlay { position: absolute; top: 0; left: 0; width: 50%; height: 100%; overflow: hidden; border-right: 2px solid #fff; z-index: 10; }
+        .slider-handle { 
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); 
+            width: 40px; height: 40px; background: #fff; border-radius: 50%; 
+            display: flex; align-items: center; justify-content: center; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3); z-index: 20; cursor: ew-resize;
         }
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .luxury-shadow {
-            box-shadow: 0 20px 50px -12px rgba(212, 175, 55, 0.2);
-        }
-        .pers-img {
-            width: 100%;
-            height: auto;
-            object-fit: cover;
-            border-radius: 12px;
-        }
-        .faq-transition {
-            transition: all 0.3s ease-in-out;
+        input[type=range].slider-range {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+            opacity: 0; cursor: ew-resize; z-index: 30; margin: 0;
         }
     </style>
 </head>
@@ -72,7 +70,7 @@
 
     <div class="w-full max-w-xl space-y-8 mb-12">
         <!-- Header -->
-        <div class="text-center space-y-4">
+        <div class="text-center space-y-4 reveal active">
             <div class="inline-block px-4 py-1 border-2 border-gold-500 rounded-full bg-white shadow-sm">
                 <p class="text-[10px] font-black tracking-[0.2em] text-gold-600 uppercase">Professional Simulation Tool</p>
             </div>
@@ -84,7 +82,7 @@
         </div>
 
         <!-- Simulator Card -->
-        <div class="bg-white rounded-[2.5rem] p-8 luxury-shadow border border-slate-100 relative z-10">
+        <div class="bg-white rounded-[2.5rem] p-8 luxury-shadow border border-slate-100 relative z-10 reveal">
             <div class="space-y-8">
                 <div class="space-y-4">
                     <label for="area" class="block text-center text-xs font-black text-slate-400 uppercase tracking-widest">施工面積を入力 (㎡)</label>
@@ -96,18 +94,18 @@
 
                     <!-- Guide Buttons -->
                     <div class="grid grid-cols-3 gap-2">
-                        <button onclick="setArea(15)" class="flex flex-col items-center justify-center p-3 border-2 border-slate-100 rounded-xl hover:border-gold-400 hover:bg-gold-50 transition-all group">
+                        <button onclick="setArea(15)" class="flex flex-col items-center justify-center p-3 border-2 border-slate-100 rounded-xl hover:border-gold-400 hover:bg-gold-50 transition-all group active:scale-95">
                             <i data-lucide="car" class="w-5 h-5 text-slate-400 group-hover:text-gold-500 mb-1"></i>
                             <span class="text-[9px] font-black text-slate-500 group-hover:text-gold-600">車1台(15㎡)</span>
                         </button>
-                        <button onclick="setArea(30)" class="flex flex-col items-center justify-center p-3 border-2 border-slate-100 rounded-xl hover:border-gold-400 hover:bg-gold-50 transition-all group">
+                        <button onclick="setArea(30)" class="flex flex-col items-center justify-center p-3 border-2 border-slate-100 rounded-xl hover:border-gold-400 hover:bg-gold-50 transition-all group active:scale-95">
                             <div class="flex gap-0.5">
                                 <i data-lucide="car" class="w-4 h-4 text-slate-400 group-hover:text-gold-500 mb-1"></i>
                                 <i data-lucide="car" class="w-4 h-4 text-slate-400 group-hover:text-gold-500 mb-1"></i>
                             </div>
                             <span class="text-[9px] font-black text-slate-500 group-hover:text-gold-600">車2台(30㎡)</span>
                         </button>
-                        <button onclick="setArea(5)" class="flex flex-col items-center justify-center p-3 border-2 border-slate-100 rounded-xl hover:border-gold-400 hover:bg-gold-50 transition-all group text-center">
+                        <button onclick="setArea(5)" class="flex flex-col items-center justify-center p-3 border-2 border-slate-100 rounded-xl hover:border-gold-400 hover:bg-gold-50 transition-all group text-center active:scale-95">
                             <i data-lucide="bike" class="w-5 h-5 text-slate-400 group-hover:text-gold-500 mb-1"></i>
                             <span class="text-[9px] font-black text-slate-500 group-hover:text-gold-600 leading-tight">アプローチ<br>(一式工事)</span>
                         </button>
@@ -121,7 +119,7 @@
             </div>
 
             <!-- Result Area -->
-            <div id="resultArea" class="hidden mt-10 space-y-6 animate-slide-up">
+            <div id="resultArea" class="hidden mt-10 space-y-6">
                 <div class="border-t border-dashed border-slate-200 pt-6 space-y-4">
                     <div class="flex justify-between items-center text-sm font-bold">
                         <span class="text-slate-400">適用単価</span>
@@ -142,6 +140,7 @@
                         <i data-lucide="check-circle" class="w-32 h-32 text-gold-600"></i>
                     </div>
                     <p class="text-[10px] font-black text-gold-600 uppercase tracking-widest mb-1 relative z-10">Total Estimated Price</p>
+                    <!-- 金額表示 (カウントアップ用) -->
                     <div class="text-5xl font-black gold-text relative z-10 mb-2" id="totalPrice">¥0</div>
                     <p id="fixedPriceNotice" class="text-[10px] text-gold-600 font-bold hidden">※一式工事価格が適用されています</p>
                 </div>
@@ -152,277 +151,42 @@
             </div>
         </div>
 
-        <!-- Reinforced Photopars CTA Area -->
-        <div class="bg-black rounded-[3rem] p-8 text-white space-y-10 shadow-2xl relative overflow-hidden border border-white/10">
+        <!-- Before/After Slider & Gallery -->
+        <div class="bg-black rounded-[3rem] p-8 text-white space-y-10 shadow-2xl relative overflow-hidden border border-white/10 reveal">
             <div class="space-y-3 text-center relative z-10">
-                <div class="inline-block px-3 py-1 bg-gold-500 text-black text-[9px] font-black rounded-full uppercase tracking-widest mb-2">Free Proposal Service</div>
-                <h3 class="text-2xl sm:text-3xl font-black leading-tight">完成イメージ、<br/><span class="text-gold-400 underline decoration-gold-600 decoration-4 underline-offset-8">無料で作成します。</span></h3>
-                <p class="text-slate-400 text-sm leading-relaxed font-medium mt-4 px-4">
-                    施工場所の写真を送るだけ。あなたの家の「完成予想図」を<br class="hidden sm:block"/>
-                    プロのデザイナーが世界に一枚、作成します。
-                </p>
+                <div class="inline-block px-3 py-1 bg-gold-500 text-black text-[9px] font-black rounded-full uppercase tracking-widest mb-2">Visual Transformation</div>
+                <h3 class="text-2xl sm:text-3xl font-black leading-tight">劇的ビフォーアフター</h3>
+                <p class="text-slate-400 text-sm font-medium mt-4">中央のバーを左右に動かして比較してください。</p>
             </div>
 
-            <!-- Before/After Gallery -->
-            <div class="space-y-8 relative z-10">
-                <p class="text-center text-[10px] font-black text-gold-500 uppercase tracking-[0.2em]">Photopars Samples</p>
+            <!-- Slider Component -->
+            <div class="slider-container shadow-2xl border-2 border-gold-500/30">
+                <!-- 右側: After画像 (背景) -->
+                <img src="after1.jpg.JPG" class="slider-img" alt="After">
                 
-                <div class="flex flex-col items-center space-y-6">
-                    <div class="w-full space-y-2">
-                        <div class="relative rounded-xl overflow-hidden border border-white/10 group">
-                            <!-- 画像ファイル名を before.jpg.JPG に統一 -->
-                            <img src="before.jpg.JPG" alt="施工前" class="pers-img group-hover:scale-105 transition-transform duration-500">
-                            <div class="absolute top-4 left-4 bg-black/60 backdrop-blur-md px-3 py-1.5 rounded text-xs font-black text-white border border-white/20 shadow-lg">1. 施工前（現状）</div>
-                        </div>
-                    </div>
-                    <div class="flex justify-center -my-4 py-2"><i data-lucide="arrow-down-circle" class="w-10 h-10 text-gold-500 animate-bounce"></i></div>
-                    <div class="w-full space-y-2">
-                        <div class="relative rounded-xl overflow-hidden border-2 border-gold-500/50 shadow-[0_0_25px_rgba(212,175,55,0.2)]">
-                            <!-- 画像ファイル名を after1.jpg.JPG に統一 -->
-                            <img src="after1.jpg.JPG" alt="完成イメージ" class="pers-img">
-                            <div class="absolute top-4 left-4 bg-gold-500 px-3 py-1.5 rounded text-xs font-black text-black shadow-lg">2. 完成イメージ</div>
-                        </div>
-                    </div>
-                    <div class="flex justify-center -my-4 py-2"><i data-lucide="arrow-down-circle" class="w-10 h-10 text-gold-500 animate-bounce"></i></div>
-                    <div class="w-full space-y-2">
-                        <div class="relative rounded-xl overflow-hidden border-2 border-gold-500/50 shadow-[0_0_25px_rgba(212,175,55,0.2)]">
-                            <!-- 画像ファイル名を after2.jpg.JPG に統一 -->
-                            <img src="after2.jpg.JPG" alt="完成イメージ別アングル" class="pers-img">
-                            <div class="absolute top-4 left-4 bg-gold-600 px-3 py-1.5 rounded text-xs font-black text-white shadow-lg">3. 完成イメージ（別アングル）</div>
-                        </div>
-                    </div>
-                    <div class="flex justify-center -my-4 py-2"><i data-lucide="arrow-down-circle" class="w-10 h-10 text-gold-500 animate-bounce"></i></div>
-                    <div class="w-full space-y-2">
-                        <div class="relative rounded-xl overflow-hidden border border-white/20 bg-white/5 p-1">
-                            <!-- 画像ファイル名を material.jpg.JPG に統一 -->
-                            <img src="material.jpg.JPG" alt="使用素材" class="pers-img">
-                            <div class="absolute top-4 left-4 bg-white/90 px-3 py-1.5 rounded text-xs font-black text-black shadow-lg">4. 使用したRS素材</div>
-                        </div>
+                <!-- 左側: Before画像 (クリップされる側) -->
+                <div class="slider-overlay" id="sliderOverlay">
+                    <img src="before.jpg.JPG" class="slider-img" alt="Before" style="width: 200%; max-width: none;"> <!-- width 200% trick to keep aspect ratio -->
+                </div>
+
+                <!-- Handle -->
+                <div class="slider-handle" id="sliderHandle">
+                    <i data-lucide="code-2" class="w-5 h-5 text-black"></i>
+                </div>
+
+                <!-- Input Range (Invisible controller) -->
+                <input type="range" min="0" max="100" value="50" class="slider-range" oninput="updateSlider(this.value)">
+            </div>
+
+            <!-- Other Images Gallery -->
+            <div class="grid grid-cols-2 gap-4">
+                <div class="space-y-2">
+                    <div class="relative rounded-xl overflow-hidden border border-white/20">
+                        <img src="after2.jpg.JPG" class="pers-img hover:scale-110 transition-transform duration-500">
+                        <div class="absolute bottom-2 left-2 bg-black/70 px-2 py-1 rounded text-[10px] font-bold">別アングル</div>
                     </div>
                 </div>
-            </div>
-
-            <!-- FAQ Section -->
-            <div class="pt-8 space-y-4 relative z-10 border-t border-white/10">
-                <p class="text-center text-[10px] font-black text-gold-500 uppercase tracking-[0.2em] mb-6">Frequently Asked Questions</p>
-                <div class="space-y-3">
-                    <div class="border border-white/10 rounded-2xl overflow-hidden bg-white/5">
-                        <button onclick="toggleFaq(1)" class="w-full p-5 flex items-center justify-between text-left hover:bg-white/5 transition-colors">
-                            <span class="text-sm font-black">Q1: 工期はどれくらいですか？</span>
-                            <i data-lucide="chevron-down" id="faq-icon-1" class="w-5 h-5 text-gold-500 transition-transform"></i>
-                        </button>
-                        <div id="faq-answer-1" class="max-h-0 overflow-hidden faq-transition" style="max-height: 0px;">
-                            <div class="p-5 pt-0 text-xs text-slate-400 font-medium leading-relaxed">
-                                通常2〜3日で完了します（施工面積や下地の状況によります）。既存の床を壊さないため、短期間でのリフォームが可能です。
-                            </div>
-                        </div>
-                    </div>
-                    <div class="border border-white/10 rounded-2xl overflow-hidden bg-white/5">
-                        <button onclick="toggleFaq(2)" class="w-full p-5 flex items-center justify-between text-left hover:bg-white/5 transition-colors">
-                            <span class="text-sm font-black">Q2: 車が乗っても大丈夫ですか？</span>
-                            <i data-lucide="chevron-down" id="faq-icon-2" class="w-5 h-5 text-gold-500 transition-transform"></i>
-                        </button>
-                        <div id="faq-answer-2" class="max-h-0 overflow-hidden faq-transition" style="max-height: 0px;">
-                            <div class="p-5 pt-0 text-xs text-slate-400 font-medium leading-relaxed">
-                                はい、全く問題ありません。ローラーストーンは高強度コンクリート素材を使用しており、駐車場など大型車両が乗る場所でも長期間美しさと強度を保ちます。
-                            </div>
-                        </div>
-                    </div>
-                    <div class="border border-white/10 rounded-2xl overflow-hidden bg-white/5">
-                        <button onclick="toggleFaq(3)" class="w-full p-5 flex items-center justify-between text-left hover:bg-white/5 transition-colors">
-                            <span class="text-sm font-black">Q3: 既存の床を解体しますか？</span>
-                            <i data-lucide="chevron-down" id="faq-icon-3" class="w-5 h-5 text-gold-500 transition-transform"></i>
-                        </button>
-                        <div id="faq-answer-3" class="max-h-0 overflow-hidden faq-transition" style="max-height: 0px;">
-                            <div class="p-5 pt-0 text-xs text-slate-400 font-medium leading-relaxed">
-                                いいえ、解体は不要です。既存のタイル、アスファルト、コンクリートの上から直接施工できるため、廃材が出ず、解体費用を大幅にカットできます。
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Action Buttons -->
-            <div class="grid grid-cols-1 gap-4 relative z-10 pt-4">
-                <button onclick="contactLine()" class="line-color text-white py-6 rounded-2xl flex items-center justify-center gap-3 font-black text-lg hover:opacity-90 hover:scale-[1.02] transition-all shadow-xl active:scale-[0.98]">
-                    <i data-lucide="message-circle" class="w-6 h-6 fill-current"></i>
-                    <span>LINEで写真を送る</span>
-                </button>
-                <a href="https://www.instagram.com/cementart_numan/" target="_blank" class="insta-gradient text-white py-6 rounded-2xl flex items-center justify-center gap-3 font-black text-lg hover:opacity-90 hover:scale-[1.02] transition-all shadow-xl active:scale-[0.98]">
-                    <i data-lucide="instagram" class="w-6 h-6"></i>
-                    <span>Instagramで相談する</span>
-                </a>
-            </div>
-            
-            <p class="text-[9px] text-center text-slate-500 font-bold uppercase tracking-[0.3em]">No commitment required. Professional support.</p>
-        </div>
-
-        <!-- Footer Info -->
-        <div class="px-6 py-8 text-center space-y-6">
-            <div class="flex justify-center gap-8 text-slate-400">
-                <button onclick="shareX()" class="hover:text-black transition-colors flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest">
-                    <i data-lucide="twitter" class="w-4 h-4"></i> Share Result
-                </button>
-                <div class="w-px h-4 bg-slate-200"></div>
-                <button onclick="shareLine()" class="hover:text-green-500 transition-colors flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest">
-                    <i data-lucide="message-circle" class="w-4 h-4"></i> Send LINE
-                </button>
-            </div>
-            <p class="text-[9px] text-slate-300 font-black tracking-[0.5em] uppercase">Roller Stone Authorized Simulator</p>
-        </div>
-    </div>
-
-    <!-- ここにJavaScriptを直接記述 (修正版) -->
-    <script>
-        // 計算結果を保持する変数
-        let lastCalculation = { area: 0, total: 0, isFixed: false };
-
-        /**
-         * 面積を入力欄にセットして即座に計算する
-         * (目安ボタン用)
-         */
-        function setArea(val) {
-            const areaInput = document.getElementById('area');
-            if (areaInput) {
-                areaInput.value = val;
-                calculate();
-            }
-        }
-
-        /**
-         * FAQのアコーディオン開閉
-         */
-        function toggleFaq(id) {
-            const answer = document.getElementById(`faq-answer-${id}`);
-            const icon = document.getElementById(`faq-icon-${id}`);
-            
-            if (answer && icon) {
-                if (answer.style.maxHeight && answer.style.maxHeight !== '0px') {
-                    answer.style.maxHeight = '0px';
-                    icon.style.transform = 'rotate(0deg)';
-                } else {
-                    answer.style.maxHeight = answer.scrollHeight + 'px';
-                    icon.style.transform = 'rotate(180deg)';
-                }
-            }
-        }
-
-        /**
-         * 施工費用を計算し、UIを更新する関数
-         */
-        function calculate() {
-            const areaInput = document.getElementById('area');
-            if (!areaInput) {
-                console.error("Area input element not found");
-                return;
-            }
-
-            const area = parseFloat(areaInput.value);
-            
-            if (isNaN(area) || area <= 0) {
-                alert("施工面積を正しく入力してください（例: 15）");
-                return;
-            }
-
-            let unitPrice = 0;
-            let basePrice = 0;
-            let isFixedPrice = false;
-
-            // 単価テーブル（2024年1月版）
-            const priceTable = {
-                10: 11200, 11: 11200, 12: 11100, 13: 11000, 14: 11000, 15: 10900, 16: 10800, 17: 10700, 18: 10700,
-                19: 10600, 20: 10500, 21: 10400, 22: 10400, 23: 10300, 24: 10200, 25: 10200, 26: 10100, 27: 10100,
-                28: 10100, 29: 10100, 30: 10000, 31: 10000, 32: 9900, 33: 9900, 34: 9900, 35: 9900, 36: 9800,
-                37: 9800, 38: 9800, 39: 9800, 40: 9700, 41: 9700, 42: 9700, 43: 9700, 44: 9600, 45: 9600, 46: 9600,
-                47: 9600, 48: 9500, 49: 9500, 50: 9500, 51: 9500, 52: 9400, 53: 9400, 54: 9400, 55: 9400
-            };
-
-            const checkArea = Math.round(area);
-            if (checkArea >= 63) { unitPrice = 9200; }
-            else if (checkArea >= 56) { unitPrice = 9300; }
-            else if (priceTable[checkArea]) { unitPrice = priceTable[checkArea]; }
-            else { unitPrice = 11200; }
-
-            basePrice = area * unitPrice;
-
-            // 最低施工価格（一式価格）の設定: 115,900円
-            if (basePrice < 115900) {
-                basePrice = 115900;
-                isFixedPrice = true;
-                unitPrice = "一式工事";
-            }
-
-            const tax = Math.floor(basePrice * 0.1);
-            const total = Math.floor(basePrice + tax);
-
-            // 保存（シェア・問い合わせ用）
-            lastCalculation = { area: area, total: total, isFixed: isFixedPrice };
-
-            // UI Update
-            const resultArea = document.getElementById('resultArea');
-            const fixedNotice = document.getElementById('fixedPriceNotice');
-            
-            if (resultArea) {
-                resultArea.classList.remove('hidden');
-                
-                const unitPriceEl = document.getElementById('unitPrice');
-                const basePriceEl = document.getElementById('basePrice');
-                const taxPriceEl = document.getElementById('taxPrice');
-                const totalPriceEl = document.getElementById('totalPrice');
-
-                if (unitPriceEl) unitPriceEl.innerText = isFixedPrice ? "一式適用" : unitPrice.toLocaleString() + " 円";
-                if (basePriceEl) basePriceEl.innerText = Math.floor(basePrice).toLocaleString() + " 円";
-                if (taxPriceEl) taxPriceEl.innerText = tax.toLocaleString() + " 円";
-                if (totalPriceEl) totalPriceEl.innerText = "¥" + total.toLocaleString();
-
-                if (fixedNotice) {
-                    if (isFixedPrice) fixedNotice.classList.remove('hidden');
-                    else fixedNotice.classList.add('hidden');
-                }
-
-                // Iconsの再レンダリング
-                if (typeof lucide !== 'undefined' && lucide.createIcons) {
-                    lucide.createIcons();
-                }
-                
-                // スクロール
-                resultArea.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-            }
-        }
-
-        /**
-         * LINEへの問い合わせ（計算結果を自動入力）
-         */
-        function contactLine() {
-            const baseUrl = "https://lin.ee/BHVnDPk";
-            window.open(baseUrl, '_blank');
-        }
-
-        /**
-         * X（旧Twitter）へのシェア
-         */
-        function shareX() {
-            if (lastCalculation.total === 0) { alert("まずは見積もりを行ってください。"); return; }
-            const text = encodeURIComponent(`【ローラーストーン施工見積もり】\n施工面積：${lastCalculation.area}㎡\n概算費用：¥${lastCalculation.total.toLocaleString()}（税込）\n\n理想の外構費用を3秒でシミュレーション！\n#ローラーストーン #外構費用 #シミュレーター`);
-            const url = encodeURIComponent(window.location.href);
-            window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, '_blank');
-        }
-
-        /**
-         * LINEへの共有（タイムライン等）
-         */
-        function shareLine() {
-            if (lastCalculation.total === 0) { alert("まずは見積もりを行ってください。"); return; }
-            const text = encodeURIComponent(`【ローラーストーン施工見積もり】\n施工面積：${lastCalculation.area}㎡\n概算費用：¥${lastCalculation.total.toLocaleString()}（税込）\n${window.location.href}`);
-            window.open(`https://social-plugins.line.me/lineit/share?url=${text}`, '_blank');
-        }
-
-        // 初期化処理
-        window.onload = function() {
-            if (typeof lucide !== 'undefined' && lucide.createIcons) {
-                lucide.createIcons();
-            }
-        };
-    </script>
-</body>
-</html>
+                <div class="space-y-2">
+                    <div class="relative rounded-xl overflow-hidden border border-white/20">
+                        <img src="material.jpg.JPG" class="pers-img hover:scale-110 transition-transform duration-500">
+                        <div class="absolute bottom-2 left-2 bg-black/70 px-2 py-1 rounded text-[10px] font-bold">使用素材</div><span class="cursor">█</span>
