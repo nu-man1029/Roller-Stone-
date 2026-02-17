@@ -48,10 +48,21 @@
         .animate-slide-up { animation: slideUp 0.5s ease-out forwards; }
         @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* スライダー */
+        /* スライダー & 色味調整 */
         .comparison-slider { position: relative; width: 100%; padding-top: 66.66%; overflow: hidden; border-radius: 1.5rem; cursor: ew-resize; user-select: none; background: #333; }
         .comparison-slider img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
-        .comparison-slider .img-before { z-index: 10; clip-path: inset(0 50% 0 0); will-change: clip-path; }
+        
+        /* 【追加機能】Beforeは少し暗くグレーに、Afterはベージュ(暖色)っぽく鮮やかに */
+        .comparison-slider .img-before { 
+            z-index: 10; 
+            clip-path: inset(0 50% 0 0); 
+            will-change: clip-path;
+            filter: grayscale(30%) brightness(0.9); /* 少しグレーで暗く */
+        }
+        .comparison-slider .img-after {
+            filter: sepia(0.15) saturate(1.2) brightness(1.05); /* ベージュ・ゴールド感を強調 */
+        }
+
         .comparison-slider .slider-handle { position: absolute; top: 0; left: 50%; bottom: 0; width: 4px; background: white; z-index: 20; transform: translateX(-50%); box-shadow: 0 0 10px rgba(0,0,0,0.3); }
         .comparison-slider .slider-button { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 44px; height: 44px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 21; }
         
@@ -272,7 +283,7 @@
                 </div>
             </div>
 
-            <!-- FAQ Section (拡充・復元) -->
+            <!-- FAQ Section (拡充・追加) -->
             <div class="pt-8 space-y-4 relative z-10 border-t border-white/10">
                 <p class="text-center text-[10px] font-black text-gold-500 uppercase tracking-[0.2em] mb-6">Frequently Asked Questions</p>
                 <div class="space-y-3">
@@ -336,6 +347,30 @@
                             </div>
                         </div>
                     </div>
+                    <!-- Q6 (追加) -->
+                    <div class="border border-white/10 rounded-2xl overflow-hidden bg-white/5">
+                        <button onclick="toggleFaq(6)" class="w-full p-5 flex items-center justify-between text-left hover:bg-white/5 transition-colors">
+                            <span class="text-sm font-black">Q6: デザインによる値段の違いは？</span>
+                            <i data-lucide="chevron-down" id="faq-icon-6" class="w-5 h-5 text-gold-500 transition-transform"></i>
+                        </button>
+                        <div id="faq-answer-6" class="max-h-0 overflow-hidden faq-transition" style="max-height: 0px;">
+                            <div class="p-5 pt-0 text-xs text-slate-400 font-medium leading-relaxed">
+                                基本的にデザインによる追加料金は発生しません。ただし、ロゴ入れや極端に複雑な指定がある場合は別途ご相談となる場合がございます。
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Q7 (追加) -->
+                    <div class="border border-white/10 rounded-2xl overflow-hidden bg-white/5">
+                        <button onclick="toggleFaq(7)" class="w-full p-5 flex items-center justify-between text-left hover:bg-white/5 transition-colors">
+                            <span class="text-sm font-black">Q7: 耐久年数はどれくらいですか？</span>
+                            <i data-lucide="chevron-down" id="faq-icon-7" class="w-5 h-5 text-gold-500 transition-transform"></i>
+                        </button>
+                        <div id="faq-answer-7" class="max-h-0 overflow-hidden faq-transition" style="max-height: 0px;">
+                            <div class="p-5 pt-0 text-xs text-slate-400 font-medium leading-relaxed">
+                                施工場所の環境や使用頻度によりますが、一般的なコンクリートと同等の耐久性を有しています。定期的なメンテナンスでより長く美観を保つことが可能です。
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -345,10 +380,11 @@
                 <!-- キャンペーン枠 -->
                 <div class="border-2 border-gold-400 pulse-border rounded-xl p-4 bg-gold-400/10 mb-6 text-center">
                     <div class="inline-block bg-gold-500 text-black text-[10px] font-bold px-3 py-1 rounded-full mb-2">期間限定</div>
+                    <!-- 表記変更: パース図→完成イメージ画像 -->
                     <h4 class="text-lg font-black text-white mb-2">無料完成イメージ画像作成中！</h4>
                     <p class="text-xs text-slate-300 leading-relaxed">
                         あなたの家の写真（駐車場やアプローチ）を送ってください。<br>
-                        <span class="text-gold-400 underline decoration-2">無料で完成イメージ画像（パース）を作成します。</span><br>
+                        <span class="text-gold-400 underline decoration-2">無料で完成イメージ画像を作成します。</span><br>
                         契約前でもOK！まずはイメージを確認しましょう。
                     </p>
                 </div>
