@@ -38,15 +38,29 @@
         @keyframes pulse-border { 0% { border-color: rgba(212, 175, 55, 0.4); } 50% { border-color: rgba(212, 175, 55, 1); } 100% { border-color: rgba(212, 175, 55, 0.4); } }
         .pulse-border { animation: pulse-border 2s infinite; }
 
-        /* 追加：バナー画像のエフェクト */
+        /* バナー画像のエフェクト */
         .banner-card { overflow: hidden; position: relative; }
         .banner-bg { transition: transform 0.5s ease; width: 100%; height: 100%; object-fit: cover; }
         .banner-card:hover .banner-bg { transform: scale(1.1); }
+
+        /* スライダー用スタイル */
+        .comparison-slider { position: relative; width: 100%; padding-top: 66.66%; overflow: hidden; border-radius: 1.5rem; cursor: ew-resize; user-select: none; background: #333; }
+        .comparison-slider img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
+        .comparison-slider .img-before { z-index: 10; clip-path: inset(0 50% 0 0); will-change: clip-path; filter: grayscale(30%) brightness(0.9); }
+        .comparison-slider .img-after { filter: sepia(0.15) saturate(1.2) brightness(1.05); }
+        .comparison-slider .slider-handle { position: absolute; top: 0; left: 50%; bottom: 0; width: 2px; background: white; z-index: 20; transform: translateX(-50%); box-shadow: 0 0 10px rgba(0,0,0,0.5); }
+        .comparison-slider .slider-button { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 44px; height: 44px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(0,0,0,0.3); z-index: 21; }
+
+        /* FAQアニメーション */
+        .faq-content { transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out; max-height: 0; opacity: 0; overflow: hidden; }
+        .faq-content.open { max-height: 500px; opacity: 1; }
+        .faq-icon { transition: transform 0.3s ease; }
+        .faq-icon.rotate { transform: rotate(180deg); }
     </style>
 </head>
 <body class="min-h-screen flex flex-col items-center py-8 px-4 sm:px-6">
 
-    <div class="w-full max-w-lg space-y-10 mb-20">
+    <div class="w-full max-w-lg space-y-12 mb-20">
         
         <!-- ヘッダー -->
         <div class="text-center space-y-4">
@@ -108,18 +122,14 @@
                     <i data-lucide="share" class="w-4 h-4"></i>
                     <span>結果を保存・共有する</span>
                 </button>
-                
-                <!-- 注釈 -->
-                <div class="bg-red-50 p-4 rounded-xl border border-red-100 mt-4">
-                    <p class="text-[11px] text-red-600 font-bold leading-relaxed text-center">
-                        ※上記金額は概算シミュレーションです。<br>
-                        ※現地調査により、<strong>下地処理費</strong>や現場環境に応じた<strong>諸経費</strong>が別途計上される場合があります。
-                    </p>
-                </div>
+                <p class="text-[10px] text-slate-400 mt-4 text-center leading-relaxed font-bold">
+                    ※上記金額は概算シミュレーションです。<br>
+                    ※現地調査により、<span class="text-red-600">下地処理費</span>や現場環境に応じた<span class="text-red-600">諸経費</span>が別途計上される場合があります。
+                </p>
             </div>
         </div>
 
-        <!-- 【ここに追加】デザイン別施工事例バナー -->
+        <!-- 【追加】デザイン別施工事例バナー -->
         <div class="space-y-4">
             <div class="text-center">
                 <h3 class="text-lg font-black text-slate-800">デザイン別 施工事例</h3>
@@ -174,17 +184,159 @@
             </div>
         </div>
 
-        <!-- 問い合わせエリア (キャンペーン・PaaS) -->
+        <!-- 【復活】劇的ビフォーアフター (スライダー) -->
+        <div class="bg-black rounded-[2rem] p-6 sm:p-8 text-white space-y-8 shadow-2xl border border-white/10 relative overflow-hidden">
+            <div class="text-center relative z-10">
+                <span class="text-gold-500 text-[10px] font-black uppercase tracking-widest">Visual Comparison</span>
+                <h3 class="text-2xl font-black mt-2">劇的ビフォーアフター</h3>
+                <p class="text-xs text-gray-400 mt-2">スライダーを動かして違いを体験してください</p>
+            </div>
+
+            <div class="comparison-slider" id="comparison-slider">
+                <img src="after1.jpg.JPG" alt="After" class="img-after">
+                <img src="before.jpg.JPG" alt="Before" class="img-before" id="slider-img-before">
+                
+                <div class="slider-handle" id="slider-handle">
+                    <div class="slider-button">
+                         <i data-lucide="chevrons-left-right" class="text-black w-5 h-5"></i>
+                    </div>
+                </div>
+                <div class="absolute bottom-3 left-4 z-30 bg-black/60 backdrop-blur px-2 py-1 rounded text-[10px] font-bold border border-white/20">BEFORE</div>
+                <div class="absolute bottom-3 right-4 z-30 bg-gold-500/80 backdrop-blur px-2 py-1 rounded text-[10px] font-bold border border-white/20 text-black">AFTER</div>
+            </div>
+        </div>
+
+        <!-- 【復活】施工までの流れ (図解) -->
+        <div class="space-y-6">
+            <h3 class="text-center text-lg font-black text-slate-800">施工までの流れ</h3>
+            <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 space-y-6 relative overflow-hidden">
+                <div class="absolute left-[2.25rem] top-6 bottom-6 w-0.5 bg-slate-100"></div>
+                <!-- Step 1 -->
+                <div class="flex gap-4 relative">
+                    <div class="w-10 h-10 rounded-full bg-gold-500 flex items-center justify-center text-white font-bold shrink-0 z-10 shadow-md">1</div>
+                    <div class="pt-1">
+                        <h4 class="font-bold text-sm text-slate-800">お問い合わせ</h4>
+                        <p class="text-xs text-slate-500 mt-1">LINEまたはお電話で、面積や現状の写真をお送りください。</p>
+                    </div>
+                </div>
+                <!-- Step 2 -->
+                <div class="flex gap-4 relative">
+                    <div class="w-10 h-10 rounded-full bg-white border-2 border-gold-500 flex items-center justify-center text-gold-600 font-bold shrink-0 z-10">2</div>
+                    <div class="pt-1">
+                        <h4 class="font-bold text-sm text-slate-800">現地調査・お見積り</h4>
+                        <p class="text-xs text-slate-500 mt-1">正確な採寸を行い、正式な金額をご提示します。ここまでは無料です。</p>
+                    </div>
+                </div>
+                <!-- Step 3 -->
+                <div class="flex gap-4 relative">
+                    <div class="w-10 h-10 rounded-full bg-white border-2 border-gold-500 flex items-center justify-center text-gold-600 font-bold shrink-0 z-10">3</div>
+                    <div class="pt-1">
+                        <h4 class="font-bold text-sm text-slate-800">施工開始</h4>
+                        <p class="text-xs text-slate-500 mt-1">最短2〜3日で完了。騒音や廃材も少なく、近隣への配慮も万全です。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 【復活】お客様の声 (口コミ) -->
+        <div class="space-y-6">
+            <h3 class="text-center text-lg font-black text-slate-800">お客様の声</h3>
+            <div class="space-y-4">
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
+                    <div class="flex items-center gap-2 mb-2">
+                        <div class="flex text-gold-500 text-xs">★★★★★</div>
+                        <span class="text-xs font-bold text-slate-400">駐車場リフォーム</span>
+                    </div>
+                    <p class="text-sm font-bold text-slate-800">「新築のような仕上がりに感動！」</p>
+                    <p class="text-xs text-slate-500 mt-2 leading-relaxed">
+                        古くなったコンクリートが汚くて悩みでしたが、たった2日で高級ホテルの入り口みたいになりました。壊さなくていいのが本当に良かったです。
+                    </p>
+                </div>
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
+                    <div class="flex items-center gap-2 mb-2">
+                        <div class="flex text-gold-500 text-xs">★★★★★</div>
+                        <span class="text-xs font-bold text-slate-400">玄関アプローチ</span>
+                    </div>
+                    <p class="text-sm font-bold text-slate-800">「オリジナルデザインが嬉しい」</p>
+                    <p class="text-xs text-slate-500 mt-2 leading-relaxed">
+                        文字を入れたいという要望にも応えてくれて、世界に一つだけの床になりました。近所の人からも褒められます。
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 【復活】FAQセクション -->
+        <div class="space-y-4">
+            <p class="text-center text-[10px] font-black text-slate-400 uppercase tracking-widest">Frequently Asked Questions</p>
+            <div class="space-y-3">
+                <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
+                    <button onclick="toggleFaq(1)" class="w-full p-5 flex items-center justify-between text-left hover:bg-slate-50 transition-colors">
+                        <span class="text-sm font-bold text-slate-800">Q1: 車が乗っても割れませんか？</span>
+                        <i data-lucide="chevron-down" id="faq-icon-1" class="w-4 h-4 text-slate-400 faq-icon"></i>
+                    </button>
+                    <div id="faq-answer-1" class="faq-content bg-slate-50">
+                        <div class="p-5 pt-2 text-xs text-slate-500 font-medium leading-relaxed border-t border-slate-100">
+                            問題ありません。ローラーストーンは圧縮強度・曲げ強度・付着強度の全てにおいて基準数値をクリアした高強度な特殊材料を使用しています。大型車両が乗る場所でも安心してご利用いただけます。
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
+                    <button onclick="toggleFaq(2)" class="w-full p-5 flex items-center justify-between text-left hover:bg-slate-50 transition-colors">
+                        <span class="text-sm font-bold text-slate-800">Q2: どんな場所に施工できますか？</span>
+                        <i data-lucide="chevron-down" id="faq-icon-2" class="w-4 h-4 text-slate-400 faq-icon"></i>
+                    </button>
+                    <div id="faq-answer-2" class="faq-content bg-slate-50">
+                        <div class="p-5 pt-2 text-xs text-slate-500 font-medium leading-relaxed border-t border-slate-100">
+                            コンクリート、タイル、アスファルト、防水塗装などの上から施工可能です。<br>※砂利や土の上には直接施工できないため、コンクリート打設等の下地処理が必要です。
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
+                    <button onclick="toggleFaq(3)" class="w-full p-5 flex items-center justify-between text-left hover:bg-slate-50 transition-colors">
+                        <span class="text-sm font-bold text-slate-800">Q3: 今ある床の解体は必要ですか？</span>
+                        <i data-lucide="chevron-down" id="faq-icon-3" class="w-4 h-4 text-slate-400 faq-icon"></i>
+                    </button>
+                    <div id="faq-answer-3" class="faq-content bg-slate-50">
+                        <div class="p-5 pt-2 text-xs text-slate-500 font-medium leading-relaxed border-t border-slate-100">
+                            不要です。既存の床の上から施工できるため、解体・撤去費用やハツリ工事の騒音が出ません。コストを抑え、環境にも優しい工法です。
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
+                    <button onclick="toggleFaq(4)" class="w-full p-5 flex items-center justify-between text-left hover:bg-slate-50 transition-colors">
+                        <span class="text-sm font-bold text-slate-800">Q4: 工事は何日くらいかかりますか？</span>
+                        <i data-lucide="chevron-down" id="faq-icon-4" class="w-4 h-4 text-slate-400 faq-icon"></i>
+                    </button>
+                    <div id="faq-answer-4" class="faq-content bg-slate-50">
+                        <div class="p-5 pt-2 text-xs text-slate-500 font-medium leading-relaxed border-t border-slate-100">
+                            施工面積や天候によりますが、最短2日で施工可能です。歩行は施工翌日から、車の乗り入れは施工完了から数日後には可能です。
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
+                    <button onclick="toggleFaq(5)" class="w-full p-5 flex items-center justify-between text-left hover:bg-slate-50 transition-colors">
+                        <span class="text-sm font-bold text-slate-800">Q5: デザインによる値段の違いは？</span>
+                        <i data-lucide="chevron-down" id="faq-icon-5" class="w-4 h-4 text-slate-400 faq-icon"></i>
+                    </button>
+                    <div id="faq-answer-5" class="faq-content bg-slate-50">
+                        <div class="p-5 pt-2 text-xs text-slate-500 font-medium leading-relaxed border-t border-slate-100">
+                            基本的にデザインによる追加料金は発生しません。ただし、ロゴ入れや極端に複雑な指定がある場合は別途ご相談となる場合がございます。
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 問い合わせエリア (キャンペーン) -->
         <div class="mt-8 border-t-2 border-slate-100 pt-8 pb-4">
             <div class="text-center space-y-4 mb-6">
                 <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Contact Us</p>
                 <h3 class="text-2xl font-black text-slate-800 flex flex-col items-center justify-center gap-2"><span>お問い合わせはこちらから</span><i data-lucide="arrow-down" class="w-6 h-6 text-gold-500 animate-bounce mt-2"></i></h3>
             </div>
             
-            <!-- キャンペーン枠 -->
             <div class="border-2 border-gold-400 pulse-border rounded-2xl p-5 bg-gold-400/5 text-center relative overflow-hidden mb-6">
                 <div class="absolute top-0 right-0 bg-gold-500 text-white text-[9px] font-bold px-3 py-1 rounded-bl-lg">期間限定</div>
-                <h4 class="text-lg font-black text-black-pure mb-2 flex items-center justify-center gap-2"><i data-lucide="camera" class="w-5 h-5 text-gold-600"></i><span>無料パース作成中！</span></h4>
+                <h4 class="text-lg font-black text-black-pure mb-2 flex items-center justify-center gap-2"><i data-lucide="camera" class="w-5 h-5 text-gold-600"></i><span>無料完成イメージ画像作成中！</span></h4>
                 <p class="text-xs font-bold text-slate-600 leading-relaxed mb-4">
                     あなたの家の写真（駐車場やアプローチ）を送ってください。<br>
                     <span class="text-gold-600 underline decoration-2 underline-offset-2">無料で完成イメージ図（パース）を作成します。</span><br>
@@ -213,6 +365,30 @@
     <script>
         window.addEventListener('DOMContentLoaded', () => {
             if(window.lucide) lucide.createIcons();
+            
+            // スライダー制御
+            const slider = document.getElementById('comparison-slider');
+            const beforeImg = document.getElementById('slider-img-before');
+            const handle = document.getElementById('slider-handle');
+            
+            if (slider && beforeImg && handle) {
+                let isDragging = false;
+                const updateSliderPosition = (x) => {
+                    const rect = slider.getBoundingClientRect();
+                    let position = ((x - rect.left) / rect.width) * 100;
+                    position = Math.max(0, Math.min(100, position));
+                    beforeImg.style.clipPath = `inset(0 ${100 - position}% 0 0)`;
+                    handle.style.left = `${position}%`;
+                };
+
+                slider.addEventListener('mousedown', () => isDragging = true);
+                window.addEventListener('mouseup', () => isDragging = false);
+                window.addEventListener('mousemove', (e) => { if (!isDragging) return; updateSliderPosition(e.clientX); });
+                slider.addEventListener('touchstart', () => isDragging = true);
+                window.addEventListener('touchend', () => isDragging = false);
+                window.addEventListener('touchmove', (e) => { if (!isDragging) return; updateSliderPosition(e.touches[0].clientX); });
+                slider.addEventListener('click', (e) => { updateSliderPosition(e.clientX); });
+            }
         });
 
         function setArea(val) {
@@ -272,6 +448,18 @@
                 navigator.share({ title: '見積もり結果', text: 'ローラーストーン施工費用シミュレーション', url: window.location.href }).catch(console.error);
             } else {
                 alert("ブラウザのメニューから共有・保存してください");
+            }
+        }
+
+        function toggleFaq(id) {
+            const answer = document.getElementById(`faq-answer-${id}`);
+            const icon = document.getElementById(`faq-icon-${id}`);
+            if (answer.classList.contains('open')) {
+                answer.classList.remove('open');
+                icon.classList.remove('rotate');
+            } else {
+                answer.classList.add('open');
+                icon.classList.add('rotate');
             }
         }
     </script>
