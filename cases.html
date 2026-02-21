@@ -6,72 +6,29 @@
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-      gtag('config', 'G-9KY5C7XC36', { 'transport_type': 'beacon' }); // 計測漏れ防止設定
+      gtag('config', 'G-9KY5C7XC36', { 'transport_type': 'beacon' });
     </script>
 
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>施工事例へ移動中 | ROLLER STONE</title>
+    <title>REDIRECTING...</title>
     
-    <style>
-        body {
-            margin: 0;
-            background-color: #0a0a0a; /* ポータルと同じ黒 */
-            color: #ffffff;
-            font-family: 'Noto Sans JP', sans-serif;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            overflow: hidden;
-        }
-        .loader-container {
-            text-align: center;
-        }
-        .spinner {
-            width: 40px;
-            height: 40px;
-            border: 4px solid rgba(197, 160, 89, 0.2);
-            border-top: 4px solid #c5a059;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 20px;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        .text {
-            font-size: 0.9rem;
-            letter-spacing: 0.1em;
-            color: #c5a059;
-        }
-    </style>
-
     <script>
-        // 設定：遷移先のURL
-        const targetUrl = "https://www.notion.so/309e0041ddf4801fbdd9fc8740394fe9";
+        // 遷移先URL（Notion）
+        const target = "https://www.notion.so/309e0041ddf4801fbdd9fc8740394fe9";
 
-        window.onload = function() {
-            // GA4にイベントを送信してから遷移（1秒の猶予を持たせる）
-            gtag('event', 'redirect_to_notion', {
-                'event_callback': function() {
-                    console.log('Event sent');
-                }
-            });
+        // 即時実行：読み込みを待たずに転送命令を出す
+        window.location.replace(target);
 
-            // 1秒後に自動遷移
-            setTimeout(function() {
-                window.location.href = targetUrl;
-            }, 1000);
-        };
+        // 万が一、上記がブラウザに止められた場合の予備策
+        setTimeout(function() {
+            window.location.href = target;
+        }, 50);
     </script>
+
+    <style>
+        body { background-color: #0a0a0a; margin: 0; }
+    </style>
 </head>
 <body>
-    <div class="loader-container">
-        <div class="spinner"></div>
-        <div class="text">施工事例を開いています...</div>
-    </div>
-</body>
+    </body>
 </html>
