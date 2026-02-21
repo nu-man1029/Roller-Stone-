@@ -6,17 +6,17 @@
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-      gtag('config', 'G-9KY5C7XC36');
+      gtag('config', 'G-9KY5C7XC36', { 'transport_type': 'beacon' }); // 計測漏れ防止設定
     </script>
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>施工事例 | ROLLER STONE</title>
+    <title>施工事例へ移動中 | ROLLER STONE</title>
+    
     <style>
         body {
             margin: 0;
-            padding: 0;
-            background-color: #0a0a0a;
+            background-color: #0a0a0a; /* ポータルと同じ黒 */
             color: #ffffff;
             font-family: 'Noto Sans JP', sans-serif;
             display: flex;
@@ -24,48 +24,54 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
+            overflow: hidden;
+        }
+        .loader-container {
             text-align: center;
         }
-        .container {
-            width: 90%;
-            max-width: 400px;
-            padding: 30px;
-            border: 2px solid #c5a059;
-            border-radius: 15px;
-            background-color: #1a1a1a;
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(197, 160, 89, 0.2);
+            border-top: 4px solid #c5a059;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
         }
-        .btn {
-            display: block;
-            margin-top: 20px;
-            padding: 15px;
-            background-color: #c5a059;
-            color: #000;
-            text-decoration: none;
-            font-weight: bold;
-            border-radius: 8px;
-            font-size: 1.1rem;
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
-        .btn:active {
-            transform: scale(0.95);
-            background-color: #ffffff;
-        }
-        .msg {
+        .text {
             font-size: 0.9rem;
-            line-height: 1.6;
-            margin-bottom: 20px;
+            letter-spacing: 0.1em;
+            color: #c5a059;
         }
     </style>
+
+    <script>
+        // 設定：遷移先のURL
+        const targetUrl = "https://www.notion.so/309e0041ddf4801fbdd9fc8740394fe9";
+
+        window.onload = function() {
+            // GA4にイベントを送信してから遷移（1秒の猶予を持たせる）
+            gtag('event', 'redirect_to_notion', {
+                'event_callback': function() {
+                    console.log('Event sent');
+                }
+            });
+
+            // 1秒後に自動遷移
+            setTimeout(function() {
+                window.location.href = targetUrl;
+            }, 1000);
+        };
+    </script>
 </head>
 <body>
-    <div class="container">
-        <p class="msg">公式施工事例集（Notion）へ移動します。<br>下のボタンをタップしてください。</p>
-        
-        <a href="https://kindly-eater-20b.notion.site/309e0041ddf4801fbdd9fc8740394fe9?source=copy_link" class="btn">事例を見る (Notion)</a>
-        
-        <p style="margin-top: 20px; font-size: 0.7rem; color: #888;">
-            ※Notionアプリがインストールされている場合はアプリが起動します。
-        </p>
-        <a href="RS.Portalsite.html" style="color:#c5a059; font-size:0.8rem; text-decoration:none; display:block; margin-top:30px;">← ポータルへ戻る</a>
+    <div class="loader-container">
+        <div class="spinner"></div>
+        <div class="text">施工事例を開いています...</div>
     </div>
 </body>
 </html>
