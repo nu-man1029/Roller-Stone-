@@ -6,7 +6,6 @@
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-
       gtag('config', 'G-9KY5C7XC36');
     </script>
 
@@ -236,7 +235,7 @@
 
     <button class="share-btn" onclick="sh()">この概算結果を送信する</button>
 
-    <footer>ROLLER STONE BUSINESS TOOL Ver 3.2</footer>
+    <footer>ROLLER STONE BUSINESS TOOL Ver 3.3</footer>
 </div>
 
 <script>
@@ -275,7 +274,7 @@ function calc() {
     document.getElementById('out-b').innerText = Math.round(base).toLocaleString() + " 円";
     document.getElementById('out-t').innerText = "¥" + total.toLocaleString();
 
-    localStorage.setItem('rs_calc_pref_final_v32', JSON.stringify({area: a, oh: oh, type: type, mode: mode}));
+    localStorage.setItem('rs_calc_pref_final_v33', JSON.stringify({area: a, oh: oh, type: type, mode: mode}));
 }
 
 function sh() {
@@ -284,13 +283,13 @@ function sh() {
     const typeLabel = document.querySelector('input[name="type"]:checked').value == "random" ? "ランダム" : "タイル・SP";
     const modeLabel = document.querySelector('input[name="mode"]:checked').value == "0" ? "業販" : "定価";
     
-    // --- Google Analytics 計測 ---
+    // GA4 計測
     if (typeof gtag === 'function') {
         gtag('event', 'estimate_generated', {
             'event_category': 'App_Usage',
             'event_label': typeLabel,
             'value': parseFloat(area) || 0,
-            'mode_info': modeLabel // 内部分析用
+            'mode_info': modeLabel
         });
     }
 
@@ -301,20 +300,22 @@ function sh() {
                 `■概算合計　：${total} (税込)\n` +
                 `--------------------------\n` +
                 `※上記金額には諸経費が含まれています。\n` +
-                `※本計算は概算です。正確な金額には現地調査が必要となります。\n` +
-                `※下地補修、立ち上がり施工等により、別途費用が発生する場合があります。\n` +
+                `※本計算は概算です。正確な見積には現地調査が必要となります。\n` +
+                `※下地補修、立ち上がり施工等により、別途費用が発生する場合があります。\n\n` +
+                `▼施工事例・カタログはこちら\n` +
+                `https://rollerstone.com/catalog/\n\n` +
                 `まずはお気軽にご相談ください。`;
     
     if (navigator.share) {
         navigator.share({ text: msg });
     } else {
         navigator.clipboard.writeText(msg);
-        alert("概算見積メッセージをコピーしました。LINE等に貼り付けて送信してください。");
+        alert("概算見積メッセージ（カタログURL付）をコピーしました。");
     }
 }
 
 window.onload = () => {
-    const saved = localStorage.getItem('rs_calc_pref_final_v32');
+    const saved = localStorage.getItem('rs_calc_pref_final_v33');
     if (saved) {
         const d = JSON.parse(saved);
         document.getElementById('area').value = d.area || '';
