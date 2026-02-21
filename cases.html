@@ -10,25 +10,91 @@
     </script>
 
     <meta charset="UTF-8">
-    <title>REDIRECTING...</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>施工事例へ移動中 | ROLLER STONE</title>
     
-    <script>
-        // 遷移先URL（Notion）
-        const target = "https://www.notion.so/309e0041ddf4801fbdd9fc8740394fe9";
-
-        // 即時実行：読み込みを待たずに転送命令を出す
-        window.location.replace(target);
-
-        // 万が一、上記がブラウザに止められた場合の予備策
-        setTimeout(function() {
-            window.location.href = target;
-        }, 50);
-    </script>
-
     <style>
-        body { background-color: #0a0a0a; margin: 0; }
+        body {
+            margin: 0;
+            background-color: #0a0a0a;
+            color: #ffffff;
+            font-family: 'Noto Sans JP', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
+        }
+        .guide-container {
+            width: 85%;
+            max-width: 400px;
+            padding: 25px;
+            border: 1px solid #c5a059;
+            border-radius: 12px;
+            background-color: #1a1a1a;
+        }
+        .spinner {
+            width: 30px;
+            height: 30px;
+            border: 3px solid rgba(197, 160, 89, 0.2);
+            border-top: 3px solid #c5a059;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        .line-alert {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #333;
+            font-size: 0.85rem;
+            color: #ccc;
+            text-align: left;
+        }
+        .highlight {
+            color: #c5a059;
+            font-weight: bold;
+        }
+        .icon-guide {
+            display: inline-block;
+            background: #333;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            margin: 0 2px;
+        }
     </style>
+
+    <script>
+        const targetUrl = "https://www.notion.so/309e0041ddf4801fbdd9fc8740394fe9";
+
+        // 1. 即時遷移を試みる
+        window.location.replace(targetUrl);
+
+        // 2. 万が一止まった場合、0.5秒後にもう一度試みる
+        setTimeout(function() {
+            window.location.href = targetUrl;
+        }, 500);
+    </script>
 </head>
 <body>
-    </body>
+    <div class="guide-container">
+        <div class="spinner"></div>
+        <p style="margin-bottom: 10px; font-weight: bold;">Notionへ移動しています...</p>
+        <p style="font-size: 0.75rem; color: #888;">※画面が切り替わらない場合は以下をご確認ください</p>
+
+        <div class="line-alert">
+            <p>⚠️ <span class="highlight">LINEアプリで開いている方へ</span></p>
+            <p style="margin-top: 8px;">Notionが正常に表示されない場合があります。その際は：</p>
+            <p style="margin-top: 10px;">
+                画面右下の <span class="icon-guide">┇</span> または <span class="icon-guide">…</span> をタップし、<br>
+                <span class="highlight">「デフォルトのブラウザで開く」</span><br>
+                （または「ブラウザで開く」）を選択してください。
+            </p>
+        </div>
+        
+        <a href="https://www.notion.so/309e0041ddf4801fbdd9fc8740394fe9" style="display:inline-block; margin-top:20px; color:#c5a059; font-size:0.8rem;">手動でNotionを開く</a>
+    </div>
+</body>
 </html>
