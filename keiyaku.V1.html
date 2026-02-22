@@ -55,16 +55,17 @@
 
         /* --- PDF出力用コンテナ --- */
         #content-to-export {
-            width: 794px; /* A4固定幅 */
+            width: 794px;
             margin: 0 auto;
             background: #fff; 
         }
 
-        /* --- A4ページ定義（白紙対策済み） --- */
+        /* --- A4ページ定義 --- */
         .a4-page {
             width: 794px;
-            height: 1120px; /* 【重要】1123px(A4)より3px小さくして、はみ出し防止 */
-            margin: 0 auto; /* 余白ゼロ */
+            height: 1120px; /* A4(1123px)より少し小さく */
+            max-height: 1120px; /* 【重要】これ以上伸びないようにする */
+            margin: 0 auto;
             background: #fff;
             color: #000;
             padding: 45px 60px;
@@ -73,13 +74,14 @@
             font-size: 12pt;
             line-height: 1.4;
             position: relative;
-            overflow: hidden; /* 万が一のはみ出しもカット */
+            overflow: hidden; /* はみ出し厳禁 */
             
-            /* 改ページ設定：最後のページ以外に適用 */
+            /* 改ページ設定 */
             page-break-after: always;
+            page-break-inside: avoid;
         }
 
-        /* 最後のページだけ改ページを無効化 */
+        /* 【重要】最後のページだけは改ページさせない */
         .a4-page:last-child {
             page-break-after: auto;
             margin-bottom: 0;
