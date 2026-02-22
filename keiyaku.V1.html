@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
+    <!-- GA4タグ -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-9KY5C7XC36"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -16,6 +17,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     
     <style>
+        /* --- 入力画面スタイル --- */
         :root {
             --bg-dark: #0a0a0a;
             --rs-gold: #c5a059;
@@ -23,14 +25,13 @@
             --text-gray: #aaaaaa;
             --border-gray: #333333;
         }
-
         body {
             font-family: 'Helvetica Neue', Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
             background-color: var(--bg-dark);
             color: var(--text-white);
             margin: 0; padding: 0;
+            line-height: 1.6;
         }
-
         .container { max-width: 800px; margin: 0 auto; padding: 20px; }
         header { text-align: center; padding: 30px 0; border-bottom: 2px solid var(--rs-gold); margin-bottom: 20px; }
         h1 { font-size: 1.4rem; color: var(--rs-gold); margin: 0; }
@@ -38,16 +39,13 @@
         h2 { font-size: 1rem; border-left: 4px solid var(--rs-gold); padding-left: 15px; color: var(--rs-gold); margin-bottom: 15px; }
         .form-group { margin-bottom: 15px; }
         label { display: block; font-size: 0.8rem; margin-bottom: 5px; color: var(--text-gray); }
-
         input[type="text"], input[type="number"], input[type="date"], textarea {
             width: 100%; padding: 10px; box-sizing: border-box;
             background-color: #222; border: 1px solid var(--border-gray);
             border-radius: 4px; color: #fff; font-size: 15px;
         }
-
         .btn-row { display: flex; gap: 10px; margin-top: 8px; }
         button.sub-btn { background: #333; color: #fff; border: none; padding: 8px 12px; cursor: pointer; border-radius: 4px; font-size: 0.8rem; }
-
         .main-btn {
             display: block; width: 100%; padding: 18px;
             background: linear-gradient(135deg, #d4af37, #c5a059);
@@ -55,46 +53,48 @@
             font-size: 1.1rem; font-weight: bold; cursor: pointer; margin-top: 30px;
         }
 
-        /* --- PDF用レイアウト設定（文字サイズ調整版） --- */
+        /* --- PDFプレビュー画面（厳密なA4固定） --- */
         #preview-screen { display: none; background-color: #444; padding: 20px 0; }
         
-        /* A4ページ定義 */
         .a4-page {
             width: 210mm;
-            min-height: 297mm;
-            padding: 15mm 20mm;
-            margin: 0 auto 10mm; /* 画面表示時の隙間 */
+            height: 297mm;      /* 高さを厳密に固定 */
+            padding: 12mm 18mm; /* 余白を少し詰める */
+            margin: 0 auto 10mm;
             background: #fff;
             color: #000;
             box-sizing: border-box;
             font-family: "MS Mincho", "Hiragino Mincho ProN", serif;
             
-            /* ▼▼▼ 修正箇所：文字サイズを9ptに縮小 ▼▼▼ */
-            font-size: 9pt;
-            line-height: 1.6; /* 行間を少し広げて読みやすく */
+            /* ▼▼▼ 修正箇所：8pt / 行間1.4 ▼▼▼ */
+            font-size: 8pt;
+            line-height: 1.4;
+            /* ▲▲▲ 修正箇所 ▲▲▲ */
+            
             position: relative;
+            overflow: hidden; /* はみ出しを強制カット（ページ増殖防止） */
         }
 
         .page-break-after { page-break-after: always; }
 
         .stamp-box {
-            position: absolute; top: 15mm; right: 15mm;
-            border: 0.5px solid #000; width: 22mm; height: 28mm;
+            position: absolute; top: 12mm; right: 12mm;
+            border: 0.5px solid #000; width: 22mm; height: 25mm;
             font-size: 7pt; display: flex; align-items: center; justify-content: center; text-align: center;
         }
 
-        .paper-title { text-align: center; font-size: 16pt; font-weight: bold; margin: 10mm 0 8mm; text-decoration: underline; }
+        .paper-title { text-align: center; font-size: 16pt; font-weight: bold; margin: 8mm 0 6mm; text-decoration: underline; }
         
         .clause-title { 
             font-weight: bold; 
-            margin-top: 8px; 
-            margin-bottom: 2px; 
-            font-size: 9.5pt; /* 見出しも少し小さく */
+            margin-top: 6px; 
+            margin-bottom: 1px; 
+            font-size: 8.5pt;
             border-bottom: 0.5px solid #000; 
             display: block; 
         }
         
-        .indent-1 { padding-left: 1.5em; text-indent: -1.5em; margin-bottom: 1px; }
+        .indent-1 { padding-left: 1.5em; text-indent: -1.5em; margin-bottom: 0; }
         .indent-2 { padding-left: 2.5em; text-indent: -1.5em; margin-bottom: 0; }
         
         .preview-controls {
@@ -102,11 +102,11 @@
             display: flex; justify-content: center; gap: 15px; z-index: 1000;
         }
 
-        .sign-area { margin-top: 20mm; }
-        .sign-row { display: flex; border-bottom: 0.5px solid #000; margin-bottom: 10px; padding-bottom: 1px; }
+        .sign-area { margin-top: 15mm; }
+        .sign-row { display: flex; border-bottom: 0.5px solid #000; margin-bottom: 8px; padding-bottom: 1px; }
         .sign-label { width: 80px; }
         .sign-data { flex-grow: 1; min-height: 1.2em; }
-        .seal-mark { width: 30px; text-align: right; font-size: 10pt; }
+        .seal-mark { width: 30px; text-align: right; font-size: 9pt; }
 
         .page-num { position: absolute; bottom: 8mm; width: 100%; text-align: center; left: 0; font-size: 8pt; }
 
@@ -132,7 +132,7 @@
                     <input type="text" id="ko_name" placeholder="例：佐藤 一郎 様" required>
                 </div>
                 <div class="form-group">
-                    <label>【甲】郵便番号（7桁）</label>
+                    <label>【甲】郵便番号（ハイフンなし7桁）</label>
                     <input type="text" class="p-postal-code" size="8" maxlength="8" placeholder="1234567">
                 </div>
                 <div class="form-group">
@@ -148,8 +148,8 @@
                     <input type="text" id="otsu_name" placeholder="例：株式会社 ローラースタイル">
                 </div>
                 <div class="form-group">
-                    <label>【乙】郵便番号（7桁）</label>
-                    <input type="text" class="p-postal-code" size="8" maxlength="8" placeholder="1234567">
+                    <label>【乙】郵便番号（ハイフンなし7桁）</label>
+                    <input type="text" id="otsu_zip" class="p-postal-code" size="8" maxlength="8" placeholder="1234567">
                 </div>
                 <div class="form-group">
                     <label>【乙】住所</label>
@@ -306,13 +306,13 @@
             <div style="margin-top: 15mm;">以上の合意を証するため、本契約書の正本2通を作成し、甲乙各1通ずつ保有する。</div>
 
             <div class="sign-area">
-                <div>甲(発注者)</div>
-                <div class="sign-row"><div class="sign-label">住所:</div><div class="sign-data"><span id="s_ko_addr"></span></div></div>
-                <div class="sign-row"><div class="sign-label">会社名/氏名:</div><div class="sign-data"><span id="s_ko_name"></span></div><div class="seal-mark">印</div></div>
+                <div>甲（発注者）</div>
+                <div class="sign-row"><div class="sign-label">住　　所：</div><div class="sign-data"><span id="s_ko_addr"></span></div></div>
+                <div class="sign-row"><div class="sign-label">会社名/氏名：</div><div class="sign-data"><span id="s_ko_name"></span></div><div class="seal-mark">印</div></div>
 
-                <div style="margin-top: 10mm;">乙(施工者)</div>
-                <div class="sign-row"><div class="sign-label">住所:</div><div class="sign-data"><span id="s_otsu_addr"></span></div></div>
-                <div class="sign-row"><div class="sign-label">会社名/氏名:</div><div class="sign-data"><span id="s_otsu_name"></span></div><div class="seal-mark">印</div></div>
+                <div style="margin-top: 10mm;">乙（施工者）</div>
+                <div class="sign-row"><div class="sign-label">住　　所：</div><div class="sign-data"><span id="s_otsu_addr"></span></div></div>
+                <div class="sign-row"><div class="sign-label">会社名/氏名：</div><div class="sign-data"><span id="s_otsu_name"></span></div><div class="seal-mark">印</div></div>
             </div>
             
             <div class="page-num">3 / 3</div>
@@ -369,7 +369,7 @@
     async function generatePDF() {
         const element = document.getElementById('content-to-export');
         const opt = {
-            margin: 0, /* CSSで余白設定済みのためゼロ */
+            margin: 0, 
             filename: '工事請負契約書_' + document.getElementById('ko_name').value + '.pdf',
             image: { type: 'jpeg', quality: 0.98 },
             html2canvas: { scale: 2, useCORS: true, scrollY: 0 },
