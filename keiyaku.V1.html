@@ -39,48 +39,59 @@
         /* --- PDF出力用コンテナ --- */
         #content-to-export {
             width: 210mm;
-            margin: 0 auto; /* 画面上では中央寄せ */
+            margin: 0 auto;
             background: #555;
         }
 
-        /* --- A4ページ定義 --- */
+        /* --- A4ページ定義（サイズ調整版） --- */
         .a4-page {
             width: 210mm;
-            height: 296mm; /* 白紙防止のため少し小さく */
+            height: 296mm;
             margin: 0 auto 10mm;
             background: #fff;
             color: #000;
             padding: 15mm 20mm;
             box-sizing: border-box;
             font-family: "MS Mincho", "Hiragino Mincho ProN", serif;
-            font-size: 9pt; 
-            line-height: 1.45;
+            
+            /* ▼▼▼ 修正：文字サイズを大きく(10.5pt)・行間標準(1.5) ▼▼▼ */
+            font-size: 10.5pt; 
+            line-height: 1.5;
+            /* ▲▲▲ 修正完了 ▲▲▲ */
+            
             position: relative;
             overflow: hidden; 
         }
         
         .page-break { page-break-after: always; }
 
-        /* ▼▼▼ 重要：PDF生成時の強制左寄せスタイル ▼▼▼ */
-        /* これにより「左余白が大きくなる」問題を解決します */
-        body.generating-pdf #preview-screen {
-            padding: 0 !important;
-            margin: 0 !important;
-            width: 210mm !important;
-        }
-        body.generating-pdf #content-to-export {
-            margin: 0 !important; /* 中央寄せを解除し、左端(0)に寄せる */
-            width: 210mm !important;
-        }
+        /* PDF生成時の強制左寄せ設定 */
+        body.generating-pdf #preview-screen,
+        body.generating-pdf #content-to-export,
         body.generating-pdf .a4-page {
-            margin: 0 !important; /* ページ間の隙間もゼロにする */
+            margin: 0 !important;
+            padding: 0 !important;
+            width: 210mm !important;
             box-shadow: none !important;
         }
-        /* ▲▲▲ ここまで ▲▲▲ */
+        /* ページ内パディングは維持 */
+        body.generating-pdf .a4-page {
+            padding: 15mm 20mm !important;
+        }
 
         .stamp-box { position: absolute; top: 15mm; right: 20mm; border: 0.5px solid #000; width: 22mm; height: 28mm; font-size: 7pt; display: flex; align-items: center; justify-content: center; text-align: center; }
-        .paper-title { text-align: center; font-size: 16pt; font-weight: bold; margin: 5mm 0 8mm; text-decoration: underline; }
-        .clause-title { font-weight: bold; margin-top: 8px; margin-bottom: 2px; border-bottom: 0.5px solid #000; font-size: 9.5pt; }
+        
+        /* ▼▼▼ 修正：タイトル上の余白を大きく確保 ▼▼▼ */
+        .paper-title { 
+            text-align: center; 
+            font-size: 18pt; 
+            font-weight: bold; 
+            margin-top: 35mm; /* ここを広げました */
+            margin-bottom: 10mm; 
+            text-decoration: underline; 
+        }
+        
+        .clause-title { font-weight: bold; margin-top: 8px; margin-bottom: 2px; border-bottom: 0.5px solid #000; font-size: 11pt; }
         .indent-1 { padding-left: 1.5em; text-indent: -1.5em; margin-bottom: 1px; }
         .indent-2 { padding-left: 2.5em; text-indent: -1.5em; margin-bottom: 0; }
         
@@ -173,7 +184,7 @@
             <div>発注者（以下「甲」という。）</div>
             <div class="indent-1">住　　所：<span id="p_ko_addr"></span></div>
             <div class="indent-1">会社名／氏名：<span id="p_ko_name"></span></div>
-            <div style="margin-top:2px;">施工者（以下「乙」という。）</div>
+            <div style="margin-top:5px;">施工者（以下「乙」という。）</div>
             <div class="indent-1">住　　所：<span id="p_otsu_addr"></span></div>
             <div class="indent-1">会社名／氏名：<span id="p_otsu_name"></span></div>
 
@@ -318,7 +329,6 @@
     }
 
     async function generatePDF() {
-        // PDF生成中は強制的に左寄せ・余白ゼロのクラスを付与
         document.body.classList.add('generating-pdf');
         
         const element = document.getElementById('content-to-export');
@@ -335,7 +345,6 @@
         } catch (e) {
             alert('PDF生成中にエラーが発生しました。');
         } finally {
-            // クラスを外して画面を元に戻す
             document.body.classList.remove('generating-pdf');
         }
     }
