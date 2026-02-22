@@ -11,17 +11,18 @@
     </script>
 
     <meta charset="UTF-8">
+    <!-- スマホ表示の最適化 -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>工事請負契約書 作成システム</title>
     <script src="https://yubinbango.github.io/yubinbango/yubinbango.js" charset="UTF-8"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     
     <style>
-        /* --- 共通設定 --- */
+        /* --- 入力画面 (黒×金) --- */
         :root { --bg-dark: #0a0a0a; --rs-gold: #c5a059; --text-white: #ffffff; --text-gray: #aaaaaa; --border-gray: #333333; }
         body { font-family: sans-serif; background: var(--bg-dark); color: var(--text-white); margin: 0; line-height: 1.6; }
         
-        /* --- 警告モーダル（ブラウザ誘導用） --- */
+        /* 警告モーダル */
         #browser-warning {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.95); z-index: 9999;
@@ -32,14 +33,11 @@
             background: #222; border: 2px solid var(--rs-gold); border-radius: 10px;
             padding: 25px; max-width: 500px; text-align: center;
         }
-        .warning-title { color: var(--rs-gold); font-size: 1.2rem; font-weight: bold; margin-bottom: 15px; }
-        .warning-text { font-size: 0.95rem; margin-bottom: 20px; text-align: left; line-height: 1.8; }
         .close-warning-btn {
             background: var(--rs-gold); color: #000; border: none; padding: 12px 30px;
-            font-weight: bold; border-radius: 5px; cursor: pointer; font-size: 1rem;
+            font-weight: bold; border-radius: 5px; cursor: pointer; font-size: 1rem; margin-top: 15px;
         }
 
-        /* --- 入力画面 --- */
         .container { max-width: 800px; margin: 0 auto; padding: 20px; }
         header { text-align: center; padding: 30px 0; border-bottom: 2px solid var(--rs-gold); margin-bottom: 20px; }
         h1 { font-size: 1.4rem; color: var(--rs-gold); margin: 0; }
@@ -77,19 +75,6 @@
         
         .page-break { page-break-after: always; }
 
-        /* PDF生成時の強制左寄せ */
-        body.generating-pdf #preview-screen,
-        body.generating-pdf #content-to-export,
-        body.generating-pdf .a4-page {
-            margin: 0 !important;
-            padding: 0 !important;
-            width: 210mm !important;
-            box-shadow: none !important;
-        }
-        body.generating-pdf .a4-page {
-            padding: 12mm 18mm !important; 
-        }
-
         .stamp-box { position: absolute; top: 12mm; right: 18mm; border: 0.5px solid #000; width: 22mm; height: 28mm; font-size: 8pt; display: flex; align-items: center; justify-content: center; text-align: center; }
         
         .paper-title { text-align: center; font-size: 20pt; font-weight: bold; margin: 8mm 0 6mm; text-decoration: underline; }
@@ -113,16 +98,15 @@
 </head>
 <body>
 
-<!-- ブラウザ起動警告モーダル -->
+<!-- ブラウザ起動警告 -->
 <div id="browser-warning">
     <div class="warning-box">
-        <div class="warning-title">⚠️ 必ずブラウザで開いてください</div>
-        <div class="warning-text">
-            LINEやFacebook等のアプリ内ブラウザでは、<br>
-            <span style="color:var(--rs-gold); font-weight:bold;">PDFが正常に保存できない</span>場合があります。<br><br>
-            お手数ですが、画面右下のメニュー（︙）などから<br>
+        <div style="color:var(--rs-gold); font-size:1.2rem; font-weight:bold; margin-bottom:10px;">⚠️ PDF保存の注意</div>
+        <div style="font-size:0.95rem; text-align:left; line-height:1.6;">
+            LINEやFacebook等のアプリ内ブラウザでは、PDFが正常に保存できない場合があります。<br><br>
+            必ず右下のメニュー等から<br>
             <strong>「ブラウザで開く（Safari / Chrome）」</strong><br>
-            を選択して開き直してください。
+            を選択して操作してください。
         </div>
         <button class="close-warning-btn" onclick="document.getElementById('browser-warning').style.display='none'">確認しました</button>
     </div>
@@ -346,6 +330,7 @@
     }
 
     async function generatePDF() {
+        // PDF生成中は一時的にクラスを付与してレイアウトを強制
         document.body.classList.add('generating-pdf');
         
         const element = document.getElementById('content-to-export');
@@ -353,7 +338,14 @@
             margin: 0,
             filename: '工事請負契約書_' + document.getElementById('ko_name').value + '.pdf',
             image: { type: 'jpeg', quality: 1.0 },
-            html2canvas: { scale: 3, useCORS: true }, 
+            html2canvas: { 
+                scale: 3, 
+                useCORS: true, 
+                scrollY: 0, 
+                // 【重要】スマホでもPC幅（1200px）として描画させる
+                windowWidth: 1200, 
+                width: 800 // A4幅相当を指定
+            }, 
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
         
