@@ -36,27 +36,23 @@
         #preview-screen { display: none; background-color: #555; padding: 20px 0; min-height: 100vh; }
         .preview-controls { position: sticky; top: 0; background: rgba(0,0,0,0.9); padding: 12px; display: flex; justify-content: center; gap: 15px; z-index: 1000; }
 
-        /* --- PDF出力用コンテナ --- */
-        #content-to-export {
-            width: 210mm;
-            margin: 0 auto;
-            background: #555;
-        }
+        /* --- PDF出力用レイアウト --- */
+        #content-to-export { width: 210mm; margin: 0 auto; background: #555; }
 
-        /* --- A4ページ定義（サイズ調整版） --- */
         .a4-page {
             width: 210mm;
             height: 296mm;
             margin: 0 auto 10mm;
             background: #fff;
             color: #000;
-            padding: 15mm 20mm;
+            /* 文字サイズ11ptに合わせて余白を微調整 */
+            padding: 12mm 18mm; 
             box-sizing: border-box;
-            font-family: "MS Mincho", "Hiragino Mincho ProN", serif;
             
-            /* ▼▼▼ 修正：文字サイズを大きく(10.5pt)・行間標準(1.5) ▼▼▼ */
-            font-size: 10.5pt; 
-            line-height: 1.5;
+            /* ▼▼▼ 修正：フォントMS明朝 & サイズ11pt ▼▼▼ */
+            font-family: "MS Mincho", "Hiragino Mincho ProN", serif;
+            font-size: 11pt; 
+            line-height: 1.4; /* 11ptに合わせて行間を最適化 */
             /* ▲▲▲ 修正完了 ▲▲▲ */
             
             position: relative;
@@ -65,7 +61,7 @@
         
         .page-break { page-break-after: always; }
 
-        /* PDF生成時の強制左寄せ設定 */
+        /* PDF生成時の強制左寄せ */
         body.generating-pdf #preview-screen,
         body.generating-pdf #content-to-export,
         body.generating-pdf .a4-page {
@@ -74,24 +70,13 @@
             width: 210mm !important;
             box-shadow: none !important;
         }
-        /* ページ内パディングは維持 */
         body.generating-pdf .a4-page {
-            padding: 15mm 20mm !important;
+            padding: 12mm 18mm !important; /* 印刷時のパディング */
         }
 
-        .stamp-box { position: absolute; top: 15mm; right: 20mm; border: 0.5px solid #000; width: 22mm; height: 28mm; font-size: 7pt; display: flex; align-items: center; justify-content: center; text-align: center; }
-        
-        /* ▼▼▼ 修正：タイトル上の余白を大きく確保 ▼▼▼ */
-        .paper-title { 
-            text-align: center; 
-            font-size: 18pt; 
-            font-weight: bold; 
-            margin-top: 35mm; /* ここを広げました */
-            margin-bottom: 10mm; 
-            text-decoration: underline; 
-        }
-        
-        .clause-title { font-weight: bold; margin-top: 8px; margin-bottom: 2px; border-bottom: 0.5px solid #000; font-size: 11pt; }
+        .stamp-box { position: absolute; top: 12mm; right: 18mm; border: 0.5px solid #000; width: 22mm; height: 28mm; font-size: 8pt; display: flex; align-items: center; justify-content: center; text-align: center; }
+        .paper-title { text-align: center; font-size: 18pt; font-weight: bold; margin: 8mm 0 8mm; text-decoration: underline; }
+        .clause-title { font-weight: bold; margin-top: 8px; margin-bottom: 2px; border-bottom: 0.5px solid #000; font-size: 11.5pt; }
         .indent-1 { padding-left: 1.5em; text-indent: -1.5em; margin-bottom: 1px; }
         .indent-2 { padding-left: 2.5em; text-indent: -1.5em; margin-bottom: 0; }
         
@@ -100,7 +85,7 @@
         .sign-label { width: 80px; }
         .sign-data { flex-grow: 1; min-height: 1.2em; }
         .seal-mark { width: 30px; text-align: right; font-size: 10pt; }
-        .page-num { position: absolute; bottom: 10mm; width: 100%; text-align: center; left: 0; font-size: 9pt; }
+        .page-num { position: absolute; bottom: 8mm; width: 100%; text-align: center; left: 0; font-size: 9pt; }
 
         @media print {
             body { background: none; }
@@ -184,7 +169,7 @@
             <div>発注者（以下「甲」という。）</div>
             <div class="indent-1">住　　所：<span id="p_ko_addr"></span></div>
             <div class="indent-1">会社名／氏名：<span id="p_ko_name"></span></div>
-            <div style="margin-top:5px;">施工者（以下「乙」という。）</div>
+            <div style="margin-top:2px;">施工者（以下「乙」という。）</div>
             <div class="indent-1">住　　所：<span id="p_otsu_addr"></span></div>
             <div class="indent-1">会社名／氏名：<span id="p_otsu_name"></span></div>
 
