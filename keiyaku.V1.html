@@ -11,13 +11,13 @@
     </script>
 
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>工事請負契約書 作成システム</title>
     <script src="https://yubinbango.github.io/yubinbango/yubinbango.js" charset="UTF-8"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     
     <style>
-        /* --- 共通設定 --- */
+        /* --- 基本設定 --- */
         :root { --bg-dark: #0a0a0a; --rs-gold: #c5a059; --text-white: #ffffff; --text-gray: #aaaaaa; --border-gray: #333333; }
         body { font-family: sans-serif; background: var(--bg-dark); color: var(--text-white); margin: 0; line-height: 1.6; }
         
@@ -53,60 +53,28 @@
         #preview-screen { display: none; background-color: #555; padding: 20px 0; min-height: 100vh; }
         .preview-controls { position: sticky; top: 0; background: rgba(0,0,0,0.9); padding: 12px; display: flex; justify-content: center; gap: 15px; z-index: 1000; }
 
-        /* --- PDF出力用コンテナ --- */
+        /* --- PDF出力用コンテナ (A4固定) --- */
         #content-to-export {
             width: 210mm;
             margin: 0 auto;
-            background: #555;
+            background: #fff; /* ここを白に明示 */
         }
 
-        /* --- A4ページ定義 --- */
         .a4-page {
             width: 210mm;
             height: 296mm;
-            margin: 0 auto 10mm;
+            margin: 0 auto;
             background: #fff;
             color: #000;
             padding: 12mm 18mm;
             box-sizing: border-box;
             font-family: "MS Mincho", "Hiragino Mincho ProN", serif;
-            font-size: 12pt; 
+            font-size: 12pt;
             line-height: 1.35;
             position: relative;
-            overflow: hidden; 
+            overflow: hidden;
+            page-break-after: always; /* 改ページ */
         }
-        
-        .page-break { page-break-after: always; }
-
-        /* ▼▼▼ 【最重要】スマホ白紙・ズレ防止の強制スタイル ▼▼▼ */
-        /* PDF生成中(.printingクラス付与時)だけ、画面表示を無視してA4サイズを強制確保する */
-        body.printing {
-            overflow: visible !important;
-            height: auto !important;
-        }
-        
-        body.printing #preview-screen {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 210mm !important; /* 横幅を強制 */
-            margin: 0 !important;
-            padding: 0 !important;
-            background: #fff !important; /* 背景を白に */
-            z-index: 99999;
-            visibility: visible !important;
-            display: block !important;
-        }
-
-        body.printing #content-to-export {
-            width: 210mm !important;
-            margin: 0 !important;
-        }
-
-        body.printing .preview-controls {
-            display: none !important; /* ボタンは消す */
-        }
-        /* ▲▲▲ ここまで ▲▲▲ */
 
         .stamp-box { position: absolute; top: 12mm; right: 18mm; border: 0.5px solid #000; width: 22mm; height: 28mm; font-size: 8pt; display: flex; align-items: center; justify-content: center; text-align: center; }
         .paper-title { text-align: center; font-size: 20pt; font-weight: bold; margin: 8mm 0 6mm; text-decoration: underline; }
@@ -135,7 +103,8 @@
     <div class="warning-box">
         <div style="color:var(--rs-gold); font-size:1.2rem; font-weight:bold; margin-bottom:10px;">⚠️ 必ずブラウザで開いてください</div>
         <div style="font-size:0.95rem; text-align:left; line-height:1.6;">
-            LINEやFacebook等のアプリ内ブラウザでは、PDFが正常に保存できない場合があります。<br><br>
+            LINEやFacebook等のアプリ内ブラウザでは、<br>
+            <span style="color:var(--rs-gold); font-weight:bold;">PDFが保存できない</span>場合があります。<br><br>
             必ず右下のメニュー等から<br>
             <strong>「ブラウザで開く（Safari / Chrome）」</strong><br>
             を選択して操作してください。
@@ -208,7 +177,7 @@
 
     <div id="content-to-export">
         <!-- ■ 1ページ目 ■ -->
-        <div class="a4-page page-break">
+        <div class="a4-page">
             <div class="stamp-box">印紙</div>
             <div class="paper-title">工事請負契約書</div>
             
@@ -247,7 +216,7 @@
         </div>
 
         <!-- ■ 2ページ目 ■ -->
-        <div class="a4-page page-break">
+        <div class="a4-page">
             <div class="clause-title">第5条（材料の調達および危険負担）</div>
             <div class="indent-1">1 乙は、本工事に必要な材料を自己の責任と費用負担にて調達する。</div>
             <div class="indent-1">2 乙が持ち込んだ材料が完成前に滅失または損傷した場合、その原因が甲の責めに帰すときを除き、その危険は乙が負担する。</div>
@@ -362,25 +331,29 @@
     }
 
     async function generatePDF() {
-        // PDF生成モード開始：class付与
-        document.body.classList.add('printing');
+        // ★ここが修正ポイント：スマホでもPC幅(1200px)として描画させる設定★
+        window.scrollTo(0, 0);
         
         const element = document.getElementById('content-to-export');
         const opt = {
             margin: 0,
             filename: '工事請負契約書_' + document.getElementById('ko_name').value + '.pdf',
             image: { type: 'jpeg', quality: 1.0 },
-            html2canvas: { scale: 2, useCORS: true, scrollY: 0 },
+            html2canvas: { 
+                scale: 3, 
+                useCORS: true, 
+                scrollY: 0,
+                // スマホで「左に余白・右切れ」を防ぐための設定
+                windowWidth: 1200, 
+                width: 800
+            }, 
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
         
         try {
             await html2pdf().set(opt).from(element).save();
         } catch (e) {
-            alert('PDF生成エラー');
-        } finally {
-            // PDF生成モード終了：class削除
-            document.body.classList.remove('printing');
+            alert('PDF生成中にエラーが発生しました。');
         }
     }
 </script>
