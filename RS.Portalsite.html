@@ -140,9 +140,13 @@
         .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.9); overflow-y: auto; }
         .modal-content { background-color: #1a1a1a; margin: 5% auto; padding: 25px; border: 1px solid var(--accent-gold); width: 92%; max-width: 500px; border-radius: 12px; position: relative; }
         .close-btn { float: right; font-size: 28px; font-weight: bold; color: var(--accent-gold); cursor: pointer; }
-        .modal-body h3 { color: var(--accent-gold); margin: 20px 0 10px; font-size: 1.1rem; border-left: 4px solid var(--accent-gold); padding-left: 10px;}
-        .modal-body p { font-size: 0.85rem; color: #ccc; line-height: 1.6; margin-bottom: 8px;}
-        .highlight { color: var(--accent-gold); font-weight: bold; }
+        
+        /* モーダル内テキスト装飾 */
+        .modal-body h3 { color: var(--accent-gold); margin: 25px 0 12px; font-size: 1.1rem; border-left: 4px solid var(--accent-gold); padding-left: 10px; }
+        .modal-body h4 { color: #fff; margin: 15px 0 5px; font-size: 0.95rem; font-weight: bold; }
+        .modal-body p { font-size: 0.85rem; color: #ccc; line-height: 1.6; margin-bottom: 8px; }
+        .highlight { color: #c5a059; font-weight: bold; }
+        .alert-box { background: rgba(255, 0, 0, 0.1); border: 1px solid #ff4444; padding: 10px; border-radius: 5px; margin: 10px 0; font-size: 0.8rem; }
 
         footer { padding: 40px; text-align: center; font-size: 0.65rem; color: #555; }
     </style>
@@ -162,7 +166,7 @@
     <main>
         <section class="site-about">
             <p><strong>RSW DX PORTAL</strong> は、現場のデジタル化を支援する専用ポータルです。</p>
-            <span class="roadmap-link" onclick="openModal()">🛠 ツールマニュアルと今後の予定</span>
+            <span class="roadmap-link" onclick="openModal()">🛠 ツールマニュアルと操作方法</span>
         </section>
 
         <h2 class="section-title">Menu List</h2>
@@ -182,8 +186,8 @@
                 <div class="icon">📝</div>
                 <div class="label-group">
                     <span class="label-en">CONTRACT CHECK</span>
-                    <span class="label-jp">契約・規約確認ツール</span>
-                    <span class="label-desc">重要事項の説明や規約承諾をスムーズに。</span>
+                    <span class="label-jp">工事請負契約書アプリ</span>
+                    <span class="label-desc">本部推奨フォーマットで契約書をPDF発行。</span>
                 </div>
             </a>
 
@@ -202,11 +206,7 @@
         <section class="update-log">
             <div class="log-item">
                 <span class="log-date">2026.02.22</span>
-                <span class="log-content">「契約・規約確認ツール Ver 1.0.0」を新規追加。</span>
-            </div>
-            <div class="log-item">
-                <span class="log-date">2026.02.21</span>
-                <span class="log-content">ポータル正式公開。リンク安定性とLINEブラウザ対策。</span>
+                <span class="log-content">「工事請負契約書アプリ」を追加。操作マニュアルを更新。</span>
             </div>
         </section>
     </main>
@@ -215,18 +215,33 @@
         <div class="modal-content">
             <span class="close-btn" onclick="closeModal()">&times;</span>
             <div class="modal-body">
-                <h2 style="color:var(--accent-gold); font-size:1.3rem;">INFO & MANUAL</h2>
+                <h2 style="color:var(--accent-gold); font-size:1.3rem; text-align:center;">TOOL INFO & MANUAL</h2>
                 
-                <h3>📝 契約・規約確認ツール</h3>
-                <p>施工前のトラブルを防ぐための重要事項説明や、お客様への規約送付を迅速に行うためのツールです。</p>
+                <hr style="border:none; border-top:1px solid #333; margin:20px 0;">
 
-                <h3>🧮 RS計算ツール</h3>
-                <p>面積入力だけで概算見積を作成。LINE等へのコピー機能付き。<br><span class="highlight">⚠️注意:</span> あくまで概算です。正確な見積には現調が必要です。</p>
+                <h3>📝 工事請負契約書アプリ</h3>
+                <p>スマホだけで「本部推奨フォーマット」の契約書を作成・PDF発行できます。</p>
+                
+                <div class="alert-box">
+                    ⚠️ <span style="color:#ff4444; font-weight:bold;">【重要】ブラウザで開いてください</span><br>
+                    LINE内のブラウザではPDFが保存できない場合があります。必ず<span class="highlight">Safari</span>や<span class="highlight">Chrome</span>で開き直してください。
+                </div>
+                
+                <h4>① 住所は自動入力</h4>
+                <p>郵便番号を入力するだけで住所が補完されます。「乙（施工店）」の情報は<span class="highlight">スマホに自動保存</span>されるため、次回から入力不要です。</p>
+                
+                <h4>② 確認してPDF化</h4>
+                <p>入力後、プレビュー画面で内容を確認し、<span class="highlight">「PDF保存」</span>ボタンを押すと、契約書ファイルがダウンロードされます。</p>
+
+                <hr style="border:none; border-top:1px solid #333; margin:20px 0;">
+
+                <h3>🧮 簡易計算ツール</h3>
+                <p>面積と単価を入力。8.0㎡までは「1式工事」を自動適用。LINE共有機能付き。</p>
 
                 <h3>🚀 今後の予定</h3>
-                <p>・車両経費の自動算出機能<br>・公式PDF見積書の自動発行<br>・デザインバリエーション・プレビュー</p>
+                <p>・Googleマップ連携による車両経費算出<br>・公式見積書PDF発行機能</p>
                 
-                <button onclick="closeModal()" style="margin-top:20px; width:100%; padding:12px; background:var(--accent-gold); border:none; border-radius:5px; font-weight:bold; cursor:pointer;">閉じる</button>
+                <button onclick="closeModal()" style="margin-top:30px; width:100%; padding:15px; background:var(--accent-gold); border:none; border-radius:8px; font-weight:bold; cursor:pointer; color:#000;">マニュアルを閉じる</button>
             </div>
         </div>
     </div>
