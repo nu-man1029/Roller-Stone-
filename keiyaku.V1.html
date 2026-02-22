@@ -17,9 +17,29 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     
     <style>
-        /* --- 入力画面 (黒×金) --- */
+        /* --- 共通設定 --- */
         :root { --bg-dark: #0a0a0a; --rs-gold: #c5a059; --text-white: #ffffff; --text-gray: #aaaaaa; --border-gray: #333333; }
         body { font-family: sans-serif; background: var(--bg-dark); color: var(--text-white); margin: 0; line-height: 1.6; }
+        
+        /* --- 警告モーダル（ブラウザ誘導用） --- */
+        #browser-warning {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95); z-index: 9999;
+            display: flex; justify-content: center; align-items: center;
+            padding: 20px; box-sizing: border-box;
+        }
+        .warning-box {
+            background: #222; border: 2px solid var(--rs-gold); border-radius: 10px;
+            padding: 25px; max-width: 500px; text-align: center;
+        }
+        .warning-title { color: var(--rs-gold); font-size: 1.2rem; font-weight: bold; margin-bottom: 15px; }
+        .warning-text { font-size: 0.95rem; margin-bottom: 20px; text-align: left; line-height: 1.8; }
+        .close-warning-btn {
+            background: var(--rs-gold); color: #000; border: none; padding: 12px 30px;
+            font-weight: bold; border-radius: 5px; cursor: pointer; font-size: 1rem;
+        }
+
+        /* --- 入力画面 --- */
         .container { max-width: 800px; margin: 0 auto; padding: 20px; }
         header { text-align: center; padding: 30px 0; border-bottom: 2px solid var(--rs-gold); margin-bottom: 20px; }
         h1 { font-size: 1.4rem; color: var(--rs-gold); margin: 0; }
@@ -39,7 +59,7 @@
         /* --- PDF出力用コンテナ --- */
         #content-to-export { width: 210mm; margin: 0 auto; background: #555; }
 
-        /* --- A4ページ定義（12pt対応版） --- */
+        /* --- A4ページ定義（12pt / 3ページ完全固定） --- */
         .a4-page {
             width: 210mm;
             height: 296mm;
@@ -87,11 +107,26 @@
         @media print {
             body { background: none; }
             #preview-screen { padding: 0; }
-            .preview-controls, #input-screen { display: none; }
+            .preview-controls, #input-screen, #browser-warning { display: none; }
         }
     </style>
 </head>
 <body>
+
+<!-- ブラウザ起動警告モーダル -->
+<div id="browser-warning">
+    <div class="warning-box">
+        <div class="warning-title">⚠️ 必ずブラウザで開いてください</div>
+        <div class="warning-text">
+            LINEやFacebook等のアプリ内ブラウザでは、<br>
+            <span style="color:var(--rs-gold); font-weight:bold;">PDFが正常に保存できない</span>場合があります。<br><br>
+            お手数ですが、画面右下のメニュー（︙）などから<br>
+            <strong>「ブラウザで開く（Safari / Chrome）」</strong><br>
+            を選択して開き直してください。
+        </div>
+        <button class="close-warning-btn" onclick="document.getElementById('browser-warning').style.display='none'">確認しました</button>
+    </div>
+</div>
 
 <div id="input-screen" class="container">
     <header><h1>工事請負契約書 作成システム</h1></header>
@@ -108,7 +143,7 @@
             <hr style="border-color:#333; margin:20px 0;">
             <div class="h-adr">
                 <span class="p-country-name" style="display:none;">Japan</span>
-                <div class="form-group"><label>【乙】施工者 氏名/会社名</label><input type="text" id="otsu_name" placeholder="例：株式会社 ローラースタイル"></div>
+                <div class="form-group"><label>【乙】施工者 氏名/会社名</label><input type="text" id="otsu_name" placeholder="例：株式会社ローラースタイル"></div>
                 <div class="form-group"><label>【乙】郵便番号</label><input type="text" class="p-postal-code" size="8" maxlength="8" placeholder="1234567"></div>
                 <div class="form-group"><label>【乙】住所</label><input type="text" id="otsu_addr" class="p-region p-locality p-street-address p-extended-address" placeholder="自動入力されます"></div>
                 <button type="button" class="sub-btn" onclick="alert('【プレビュー版】\n保存機能は次回アップデートで実装予定です。')">乙の情報を保存</button>
@@ -117,7 +152,7 @@
         <!-- 第2条 -->
         <section>
             <h2>第2条：工事内容</h2>
-            <div class="form-group"><label>工事名</label><input type="text" id="work_name" placeholder="例：佐藤様邸 外構リフォーム工事" required></div>
+            <div class="form-group"><label>工事名</label><input type="text" id="work_name" placeholder="例：佐藤様邸 外構リフォーム工事"></div>
             <div class="h-adr">
                 <span class="p-country-name" style="display:none;">Japan</span>
                 <div class="form-group"><label>工事場所 住所 (郵便番号入力可)</label>
@@ -141,9 +176,7 @@
             <h2>第4条：金額・支払</h2>
             <div class="form-group"><label>請負代金 (税込)</label><input type="number" id="total_price" placeholder="1100000"></div>
             <div class="form-group"><label>契約時 金額</label><input type="number" id="pay_sign" placeholder="300000"></div>
-            <!-- ▼▼▼ 修正：入力例を追加 ▼▼▼ -->
             <div class="form-group"><label>中間金 条件</label><input type="text" id="mid_term_cond" placeholder="例：下地工事完了時、打設終了時など"></div>
-            <!-- ▲▲▲ 修正完了 ▲▲▲ -->
             <div class="form-group"><label>中間金 金額</label><input type="number" id="pay_mid" placeholder="400000"></div>
             <div class="form-group"><label>引渡時 金額</label><input type="number" id="pay_end" placeholder="400000"></div>
         </section>
@@ -313,7 +346,6 @@
     }
 
     async function generatePDF() {
-        // PDF生成中は一時的にクラスを付与してレイアウトを強制
         document.body.classList.add('generating-pdf');
         
         const element = document.getElementById('content-to-export');
