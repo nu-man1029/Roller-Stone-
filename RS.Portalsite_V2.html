@@ -6,7 +6,7 @@
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-      gtag('config', 'G-9KY5C7XC36');
+      gtag('config', 'G-9KY5C7XC36', { 'transport_type': 'beacon' });
     </script>
 
     <meta charset="UTF-8">
@@ -25,7 +25,6 @@
             --wall-yellow: #d8e000;
         }
 
-        /* 全体の初期化 */
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
         body {
@@ -74,7 +73,7 @@
             font-weight: 700;
             text-decoration: underline;
             cursor: pointer;
-            padding: 5px 0; /* タップしやすく */
+            padding: 5px 0;
         }
 
         .section-title {
@@ -88,9 +87,8 @@
             padding-bottom: 5px;
         }
 
-        .menu-list { display: grid; gap: 20px; margin-bottom: 40px; }
+        .menu-list { display: grid; gap: 15px; margin-bottom: 40px; }
 
-        /* カード型ボタンの安定化 */
         .menu-item {
             display: flex;
             align-items: center;
@@ -99,53 +97,52 @@
             border-radius: 12px;
             text-decoration: none;
             color: var(--text-white);
-            min-height: 125px;
-            padding: 20px;
+            min-height: 110px;
+            padding: 15px 20px;
             position: relative;
-            /* タップ時の反応を爆速にする */
-            cursor: pointer;
             overflow: hidden;
             z-index: 1;
+            transition: 0.2s;
         }
 
-        /* 判定エリアをカード全体に広げるための擬似要素 */
-        .menu-item::before {
+        .menu-item::after {
             content: "";
             position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            z-index: 2;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 10;
         }
 
-        .menu-item:active { transform: scale(0.98); background-color: #222; }
+        .menu-item:active { transform: scale(0.98); background-color: #222; border-color: #fff; }
 
         .version-badge {
             position: absolute; top: 10px; right: 10px;
             background: #333; color: var(--accent-gold);
-            font-size: 0.65rem; padding: 2px 8px; border-radius: 4px;
+            font-size: 0.6rem; padding: 2px 6px; border-radius: 4px;
             border: 1px solid var(--accent-gold);
-            z-index: 3;
+            z-index: 5;
         }
 
-        .icon { font-size: 2.8rem; margin-right: 20px; flex-shrink: 0; z-index: 3; }
+        .icon { font-size: 2.2rem; margin-right: 18px; flex-shrink: 0; z-index: 5; }
 
-        .label-group { display: flex; flex-direction: column; z-index: 3; }
+        .label-group { display: flex; flex-direction: column; z-index: 5; }
 
-        .label-en { font-family: 'Roboto', sans-serif; font-size: 1.1rem; font-weight: 900; color: var(--accent-gold); }
+        .label-en { font-family: 'Roboto', sans-serif; font-size: 1.05rem; font-weight: 900; color: var(--accent-gold); }
 
-        .label-jp { font-size: 0.95rem; font-weight: 700; margin: 2px 0; }
+        .label-jp { font-size: 0.9rem; font-weight: 700; margin: 1px 0; }
 
-        .label-desc { font-size: 0.75rem; color: #aaa; line-height: 1.4; }
+        .label-desc { font-size: 0.7rem; color: #aaa; line-height: 1.3; }
 
         .update-log { background-color: #111; border-radius: 8px; padding: 15px; font-size: 0.8rem; }
-
         .log-item { display: flex; gap: 15px; margin-bottom: 10px; border-bottom: 1px solid #222; padding-bottom: 8px; }
-
-        .log-date { color: var(--accent-gold); font-family: 'Roboto', sans-serif; }
+        .log-date { color: var(--accent-gold); font-family: 'Roboto', sans-serif; min-width: 85px; }
 
         /* モーダル */
         .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.9); overflow-y: auto; }
-        .modal-content { background-color: #1a1a1a; margin: 5% auto; padding: 25px; border: 1px solid var(--accent-gold); width: 90%; max-width: 500px; border-radius: 12px; position: relative; }
+        .modal-content { background-color: #1a1a1a; margin: 5% auto; padding: 25px; border: 1px solid var(--accent-gold); width: 92%; max-width: 500px; border-radius: 12px; position: relative; }
         .close-btn { float: right; font-size: 28px; font-weight: bold; color: var(--accent-gold); cursor: pointer; }
+        .modal-body h3 { color: var(--accent-gold); margin: 20px 0 10px; font-size: 1.1rem; border-left: 4px solid var(--accent-gold); padding-left: 10px;}
+        .modal-body p { font-size: 0.85rem; color: #ccc; line-height: 1.6; margin-bottom: 8px;}
+        .highlight { color: var(--accent-gold); font-weight: bold; }
 
         footer { padding: 40px; text-align: center; font-size: 0.65rem; color: #555; }
     </style>
@@ -165,12 +162,12 @@
     <main>
         <section class="site-about">
             <p><strong>RSW DX PORTAL</strong> は、現場のデジタル化を支援する専用ポータルです。</p>
-            <span class="roadmap-link" onclick="openModal()">🛠 ツールマニュアルと今後のアップデート予定</span>
+            <span class="roadmap-link" onclick="openModal()">🛠 ツールマニュアルと今後の予定</span>
         </section>
 
-        <h2 class="section-title">Menu</h2>
+        <h2 class="section-title">Menu List</h2>
         <nav class="menu-list">
-            <a href="keisanV1.html?v=1.0.0" class="menu-item">
+            <a href="keisanV1.html?v=20260222" class="menu-item">
                 <span class="version-badge">Ver 1.0.0</span>
                 <div class="icon">🧮</div>
                 <div class="label-group">
@@ -180,13 +177,23 @@
                 </div>
             </a>
 
-            <a href="cases.html?v=1.0.1" class="menu-item">
+            <a href="keiyaku.V1.html?v=20260222" class="menu-item">
+                <span class="version-badge">Ver 1.0.0</span>
+                <div class="icon">📝</div>
+                <div class="label-group">
+                    <span class="label-en">CONTRACT CHECK</span>
+                    <span class="label-jp">契約・規約確認ツール</span>
+                    <span class="label-desc">重要事項の説明や規約承諾をスムーズに。</span>
+                </div>
+            </a>
+
+            <a href="cases.html?v=20260222" class="menu-item">
                 <span class="version-badge">Ver 1.0.1</span>
                 <div class="icon">📷</div>
                 <div class="label-group">
                     <span class="label-en">PERSPECTIVE CASES</span>
                     <span class="label-jp">パース制作事例</span>
-                    <span class="label-desc">提案に役立つ最新事例を随時アップデート。</span>
+                    <span class="label-desc">提案に役立つ事例集（Notion）。</span>
                 </div>
             </a>
         </nav>
@@ -194,8 +201,12 @@
         <h2 class="section-title">Update Log</h2>
         <section class="update-log">
             <div class="log-item">
+                <span class="log-date">2026.02.22</span>
+                <span class="log-content">「契約・規約確認ツール Ver 1.0.0」を新規追加。</span>
+            </div>
+            <div class="log-item">
                 <span class="log-date">2026.02.21</span>
-                <span class="log-content">ポータルサイト正式公開。リンク安定性を向上。</span>
+                <span class="log-content">ポータル正式公開。リンク安定性とLINEブラウザ対策。</span>
             </div>
         </section>
     </main>
@@ -204,9 +215,18 @@
         <div class="modal-content">
             <span class="close-btn" onclick="closeModal()">&times;</span>
             <div class="modal-body">
-                <h2 style="color:var(--accent-gold); font-size:1.3rem; margin-bottom:15px;">TOOL INFO</h2>
-                <p style="font-size:0.85rem; color:#ccc;">（ここにマニュアルとロードマップの内容が入ります...）</p>
-                <button onclick="closeModal()" style="margin-top:20px; width:100%; padding:12px; background:var(--accent-gold); border:none; border-radius:5px; font-weight:bold;">閉じる</button>
+                <h2 style="color:var(--accent-gold); font-size:1.3rem;">INFO & MANUAL</h2>
+                
+                <h3>📝 契約・規約確認ツール</h3>
+                <p>施工前のトラブルを防ぐための重要事項説明や、お客様への規約送付を迅速に行うためのツールです。</p>
+
+                <h3>🧮 RS計算ツール</h3>
+                <p>面積入力だけで概算見積を作成。LINE等へのコピー機能付き。<br><span class="highlight">⚠️注意:</span> あくまで概算です。正確な見積には現調が必要です。</p>
+
+                <h3>🚀 今後の予定</h3>
+                <p>・車両経費の自動算出機能<br>・公式PDF見積書の自動発行<br>・デザインバリエーション・プレビュー</p>
+                
+                <button onclick="closeModal()" style="margin-top:20px; width:100%; padding:12px; background:var(--accent-gold); border:none; border-radius:5px; font-weight:bold; cursor:pointer;">閉じる</button>
             </div>
         </div>
     </div>
