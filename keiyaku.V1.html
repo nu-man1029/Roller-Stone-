@@ -11,7 +11,6 @@
     </script>
 
     <meta charset="UTF-8">
-    <!-- ビューポート設定（スマホ対応） -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>工事請負契約書 作成システム</title>
     <script src="https://yubinbango.github.io/yubinbango/yubinbango.js" charset="UTF-8"></script>
@@ -79,34 +78,6 @@
         
         .page-break { page-break-after: always; }
 
-        /* ▼▼▼ 【重要】スマホ縦画面でのズレ防止CSS ▼▼▼ */
-        /* PDF生成中のみ、強制的にPC幅(800px以上)として振る舞わせる */
-        body.generating-pdf {
-            width: 1200px !important; /* 仮想的な横幅 */
-            overflow: hidden !important;
-        }
-        
-        body.generating-pdf #preview-screen,
-        body.generating-pdf #content-to-export,
-        body.generating-pdf .a4-page {
-            margin: 0 !important;
-            padding: 0 !important;
-            width: 210mm !important;
-            min-width: 800px !important; /* ここが重要 */
-            box-shadow: none !important;
-            
-            /* 画面左上に固定してズレを防ぐ */
-            position: absolute !important;
-            top: 0 !important;
-            left: 0 !important;
-        }
-        
-        body.generating-pdf .a4-page {
-            padding: 12mm 18mm !important; /* 内部の余白は維持 */
-            position: relative !important; /* ページごとの相対位置は維持 */
-        }
-        /* ▲▲▲ ここまで ▲▲▲ */
-
         .stamp-box { position: absolute; top: 12mm; right: 18mm; border: 0.5px solid #000; width: 22mm; height: 28mm; font-size: 8pt; display: flex; align-items: center; justify-content: center; text-align: center; }
         
         .paper-title { text-align: center; font-size: 20pt; font-weight: bold; margin: 8mm 0 6mm; text-decoration: underline; }
@@ -136,7 +107,7 @@
         <div style="color:var(--rs-gold); font-size:1.2rem; font-weight:bold; margin-bottom:10px;">⚠️ 必ずブラウザで開いてください</div>
         <div style="font-size:0.95rem; text-align:left; line-height:1.6;">
             LINEやFacebook等のアプリ内ブラウザでは、<br>
-            <span style="color:var(--rs-gold); font-weight:bold;">PDFのレイアウトが崩れる</span>場合があります。<br><br>
+            <span style="color:var(--rs-gold); font-weight:bold;">PDFが正常に保存できない</span>場合があります。<br><br>
             必ず右下のメニュー等から<br>
             <strong>「ブラウザで開く（Safari / Chrome）」</strong><br>
             を選択して操作してください。
@@ -363,9 +334,7 @@
     }
 
     async function generatePDF() {
-        // ▼▼▼ ここが魔法のコードです ▼▼▼
-        // スマホだろうが何だろうが、「私は今、幅1200pxのPCです」と強制的に振る舞わせる
-        document.body.classList.add('generating-pdf');
+        window.scrollTo(0, 0); // 念のためスクロールリセット
         
         const element = document.getElementById('content-to-export');
         const opt = {
@@ -376,8 +345,9 @@
                 scale: 3, 
                 useCORS: true, 
                 scrollY: 0,
-                windowWidth: 1200, // ★ここがミソ！仮想的にPCの幅でレンダリング
-                width: 800         // コンテンツ幅も明示
+                // ▼▼▼ 魔法のコード：スマホでもPC幅(1200px)として描画させる ▼▼▼
+                windowWidth: 1200, 
+                width: 800
             }, 
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
@@ -386,8 +356,6 @@
             await html2pdf().set(opt).from(element).save();
         } catch (e) {
             alert('PDF生成中にエラーが発生しました。');
-        } finally {
-            document.body.classList.remove('generating-pdf');
         }
     }
 </script>
