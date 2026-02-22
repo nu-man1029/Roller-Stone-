@@ -3,184 +3,172 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>施工事例ポートフォリオ作成ツール | Premium Builder</title>
+    <title>施工事例ビルダー | One-File Edition</title>
     <style>
         :root { --gold: #D4AF37; --dark-bg: #1a1a1a; --input-bg: #2a2a2a; --text-color: #ffffff; }
-        body { font-family: 'serif', 'Helvetica Neue', Arial, sans-serif; background-color: #000; color: var(--text-color); margin: 0; display: flex; height: 100vh; overflow: hidden; }
+        body { font-family: 'Helvetica Neue', Arial, sans-serif; background-color: #000; color: var(--text-color); margin: 0; display: block; overflow-x: hidden; }
 
-        /* 左側：編集パネル */
-        .editor-side { width: 420px; background-color: var(--dark-bg); border-right: 1px solid var(--gold); padding: 25px; overflow-y: auto; z-index: 10; box-sizing: border-box; }
-        .step-num { background: var(--gold); color: #000; width: 22px; height: 22px; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; font-weight: bold; margin-right: 8px; font-size: 0.7rem; }
-        h1 { color: var(--gold); font-size: 1rem; border-bottom: 1px solid var(--gold); padding-bottom: 15px; margin-bottom: 30px; letter-spacing: 2px; }
-        h2 { color: var(--gold); font-size: 0.8rem; margin-top: 30px; letter-spacing: 1px; display: flex; align-items: center; }
-        
+        /* 編集エリア（上部） */
+        .editor-container { max-width: 800px; margin: 0 auto; padding: 25px; background: var(--dark-bg); border-bottom: 2px solid var(--gold); }
+        h1 { color: var(--gold); font-size: 1.2rem; text-align: center; letter-spacing: 3px; margin-bottom: 30px; }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        @media (max-width: 600px) { .form-grid { grid-template-columns: 1fr; } }
+
         .form-group { margin-bottom: 20px; }
-        label { display: block; font-size: 0.7rem; color: #888; margin-bottom: 8px; text-transform: uppercase; }
-        input[type="text"], textarea, select { width: 100%; background: var(--input-bg); border: 1px solid #444; color: white; padding: 12px; box-sizing: border-box; border-radius: 4px; font-size: 0.9rem; transition: 0.3s; }
-        input:focus { border-color: var(--gold); outline: none; }
-        input[type="file"] { font-size: 0.7rem; color: #ccc; background: #222; padding: 8px; width: 100%; border-radius: 4px; border: 1px dashed #555; cursor: pointer; }
+        label { display: block; font-size: 0.75rem; color: var(--gold); margin-bottom: 8px; font-weight: bold; }
+        input[type="text"], textarea { width: 100%; background: var(--input-bg); border: 1px solid #444; color: white; padding: 12px; box-sizing: border-box; border-radius: 4px; }
+        input[type="file"] { font-size: 0.7rem; color: #ccc; width: 100%; border: 1px dashed #555; padding: 10px; border-radius: 4px; }
 
-        /* 右側：プレビューエリア */
-        .preview-side { flex-grow: 1; background: #222; display: flex; flex-direction: column; align-items: center; padding: 20px; position: relative; }
+        .btn-main { background: linear-gradient(45deg, #B8860B, #D4AF37); color: #000; border: none; padding: 18px; font-weight: bold; cursor: pointer; border-radius: 4px; width: 100%; font-size: 1rem; margin-top: 10px; }
         
-        .device-switcher { margin-bottom: 25px; background: #111; padding: 5px; border-radius: 50px; border: 1px solid #444; }
-        .device-btn { background: none; border: none; color: #666; padding: 10px 20px; cursor: pointer; font-size: 0.75rem; letter-spacing: 1px; transition: 0.3s; }
-        .device-btn.active { color: var(--gold); font-weight: bold; background: #2a2a2a; border-radius: 50px; }
+        /* プレビューエリア（下部） */
+        .preview-header { text-align: center; padding: 40px 0 20px; background: #222; }
+        .device-switcher { display: inline-flex; background: #111; padding: 5px; border-radius: 50px; border: 1px solid var(--gold); margin-bottom: 20px; }
+        .device-btn { background: none; border: none; color: #666; padding: 10px 20px; cursor: pointer; font-size: 0.75rem; border-radius: 50px; }
+        .device-btn.active { color: #000; background: var(--gold); font-weight: bold; }
 
-        #preview-container { transition: all 0.5s cubic-bezier(0.165, 0.84, 0.44, 1); box-shadow: 0 30px 60px rgba(0,0,0,0.8); border: 4px solid #333; border-radius: 10px; overflow: hidden; background: #000; }
-        .view-pc { width: 95%; height: 85%; }
-        .view-tablet { width: 768px; height: 90%; }
-        .view-mobile { width: 375px; height: 667px; border-radius: 30px; border-width: 12px; }
-
+        .preview-wrapper { background: #222; padding: 0 20px 60px; display: flex; justify-content: center; }
+        #preview-frame-container { transition: 0.5s; box-shadow: 0 30px 60px rgba(0,0,0,0.8); background: #000; overflow: hidden; }
+        .view-pc { width: 100%; max-width: 1200px; height: 800px; }
+        .view-tablet { width: 768px; height: 1024px; border: 8px solid #333; border-radius: 20px; }
+        .view-mobile { width: 375px; height: 667px; border: 12px solid #333; border-radius: 30px; }
         iframe { width: 100%; height: 100%; border: none; }
-
-        /* モーダル */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 100; justify-content: center; align-items: center; }
-        .modal-content { background: #1a1a1a; padding: 40px; border: 1px solid var(--gold); border-radius: 12px; max-width: 550px; text-align: center; }
-        .url-guide { font-size: 0.85rem; color: #bbb; line-height: 1.6; margin-bottom: 20px; }
-        .btn-action { background: var(--gold); color: #000; border: none; padding: 15px 30px; font-weight: bold; cursor: pointer; border-radius: 4px; margin: 10px; font-size: 0.9rem; transition: 0.3s; }
-        .btn-action:hover { opacity: 0.8; transform: translateY(-2px); }
     </style>
 </head>
 <body>
 
-<div class="editor-side">
-    <h1>施工事例ビルダー</h1>
+<div class="editor-container">
+    <h1>PREMIUM CASE STUDY BUILDER</h1>
     
-    <h2><span class="step-num">1</span>情報の入力</h2>
-    <div class="form-group">
-        <label>キャッチコピー（サブタイトル）</label>
-        <select id="catch-preset" onchange="document.getElementById('catch').value = this.value; updatePreview();">
-            <option value="BLOCK FENCE TO LUXURY STONE">1. 英語・スタイリッシュ（BLOCK FENCE TO LUXURY STONE）</option>
-            <option value="塗り替えたのは、住まいの品格。">2. 日本語・高級感（塗り替えたのは、住まいの品格。）</option>
-            <option value="既存を活かし、価値を再定義する。">3. コンセプト重視（既存を活かし、価値を再定義する。）</option>
-        </select>
-        <input type="text" id="catch" value="BLOCK FENCE TO LUXURY STONE" style="margin-top:8px;" oninput="updatePreview()">
+    <div class="form-grid">
+        <div class="form-group">
+            <label>施工タイトル</label>
+            <input type="text" id="title" value="M様邸 擁壁リノベーション" oninput="updatePreview()">
+        </div>
+        <div class="form-group">
+            <label>キャッチコピー</label>
+            <input type="text" id="catch" value="BLOCK FENCE TO LUXURY STONE" oninput="updatePreview()">
+        </div>
+        <div class="form-group">
+            <label>メイン（Hero）画像</label>
+            <input type="file" onchange="processImg(this, 'hero')">
+        </div>
+        <div class="form-group">
+            <label>施工後アトモスフィア画像</label>
+            <input type="file" onchange="processImg(this, 'atmo')">
+        </div>
+        <div class="form-group">
+            <label>比較セット1（左:Before / 右:After）</label>
+            <input type="file" onchange="processImg(this, 'b1')">
+            <input type="file" onchange="processImg(this, 'a1')" style="margin-top:5px;">
+        </div>
+        <div class="form-group">
+            <label>比較セット2（左:Before / 右:After）</label>
+            <input type="file" onchange="processImg(this, 'b2')">
+            <input type="file" onchange="processImg(this, 'a2')" style="margin-top:5px;">
+        </div>
     </div>
     <div class="form-group">
-        <label>施工タイトル（メイン）</label>
-        <input type="text" id="title" value="M様邸 擁壁リノベーション" oninput="updatePreview()">
+        <label>施工コメント</label>
+        <textarea id="comment" rows="3" oninput="updatePreview()">ここに施工の詳細や想いを入力してください。</textarea>
     </div>
 
-    <h2><span class="step-num">2</span>施工画像</h2>
-    <div class="form-group"><label>メイン（Hero）</label><input type="file" onchange="previewImg(this, 'hero')"></div>
-    <div class="form-group"><label>B/Aセット 01</label><input type="file" onchange="previewImg(this, 'b1')"><input type="file" onchange="previewImg(this, 'a1')" style="margin-top:8px;"></div>
-    <div class="form-group"><label>B/Aセット 02</label><input type="file" onchange="previewImg(this, 'b2')"><input type="file" onchange="previewImg(this, 'a2')" style="margin-top:8px;"></div>
-    <div class="form-group"><label>アトモスフィア（夜景等）</label><input type="file" onchange="previewImg(this, 'atmo')"></div>
-    <div class="form-group"><label>詳細コメント</label><textarea id="comment" rows="4" oninput="updatePreview()">ここに施工のこだわりや使用した石材、期間などを入力してください。</textarea></div>
-
-    <button class="btn-action" style="width:100%; margin-top:20px;" onclick="showExport()">出力・共有用URLを作成</button>
+    <button class="btn-main" onclick="downloadHTML()">この内容でHTMLファイルを保存する</button>
+    <p style="text-align:center; font-size:0.7rem; color:#888; margin-top:10px;">※保存したファイルは、1枚で完結。画像フォルダの作成は不要です！</p>
 </div>
 
-<div class="preview-side">
+<div class="preview-header">
     <div class="device-switcher">
-        <button class="device-btn" onclick="changeView('mobile', this)">MOBILE</button>
+        <button class="device-btn active" onclick="changeView('pc', this)">PC VIEW</button>
         <button class="device-btn" onclick="changeView('tablet', this)">TABLET</button>
-        <button class="device-btn active" onclick="changeView('pc', this)">PC</button>
+        <button class="device-btn" onclick="changeView('mobile', this)">MOBILE</button>
     </div>
-    <div id="preview-container" class="view-pc">
+</div>
+
+<div class="preview-wrapper">
+    <div id="preview-frame-container" class="view-pc">
         <iframe id="output-iframe"></iframe>
     </div>
 </div>
 
-<div id="shareModal" class="modal">
-    <div class="modal-content">
-        <h2 style="margin-top:0; font-size:1.5rem;">URLを発行しましょう</h2>
-        <div class="url-guide">
-            1. まず下のボタンから<b>HTMLファイルを保存</b>します。<br>
-            2. 公開サービス（<a href="https://app.netlify.com/drop" target="_blank" style="color:var(--gold);">Netlify Drop</a>など）にそのファイルを投げ込みます。<br>
-            3. 発行されたURLをコピーして共有してください。
-        </div>
-        <button class="btn-action" onclick="downloadHTML()">1. HTMLをダウンロード</button>
-        <button class="btn-action" style="background:#444; color:#fff;" onclick="shareLine()">2. LINEで送る準備</button>
-        <p style="font-size:0.75rem; color:#666; margin-top:20px; cursor:pointer;" onclick="this.parentElement.parentElement.style.display='none'">[ 編集に戻る ]</p>
-    </div>
-</div>
-
 <script>
+    // 画像データをBase64（HTML埋め込み形式）で保持
     const images = { hero:'', b1:'', a1:'', b2:'', a2:'', atmo:'' };
-    function previewImg(input, key) { 
-        if(input.files[0]) {
-            images[key] = URL.createObjectURL(input.files[0]);
-            updatePreview();
+
+    function processImg(input, key) {
+        if (input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                images[key] = e.target.result;
+                updatePreview();
+            };
+            reader.readAsDataURL(input.files[0]);
         }
     }
 
     function changeView(type, btn) {
-        const container = document.getElementById('preview-container');
+        const container = document.getElementById('preview-frame-container');
         container.className = 'view-' + type;
         document.querySelectorAll('.device-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
     }
 
-    function generateHTML(isDownload) {
+    function generateHTML() {
         const title = document.getElementById('title').value;
         const catchphrase = document.getElementById('catch').value;
         const comment = document.getElementById('comment').value;
-        const getImg = (k, f) => isDownload ? `img/${f}` : (images[k] || 'https://via.placeholder.com/1200x800/111/D4AF37?text=NO+IMAGE');
+        const getImg = (k) => images[k] || 'https://via.placeholder.com/800x600/111/D4AF37?text=NO+IMAGE';
 
         return `<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><style>
-            body { margin: 0; background: #000; color: #fff; font-family: "Times New Roman", "Shippori Mincho", serif; }
-            .hero { position: relative; height: 100vh; display: flex; align-items: center; justify-content: center; text-align: center; overflow: hidden; }
-            .hero-img { position: absolute; width:100%; height:100%; object-fit:cover; z-index:1; opacity: 0.7; }
-            .hero::after { content:''; position:absolute; inset:0; background: radial-gradient(circle, transparent 20%, #000 100%); z-index:2; }
-            .hero-content { position: relative; z-index: 3; padding: 20px; }
+            body { margin: 0; background: #000; color: #fff; font-family: "Times New Roman", serif; }
+            .hero { height: 80vh; display: flex; align-items: center; justify-content: center; text-align: center; background: url('${getImg('hero')}') center/cover; position: relative; }
+            .hero::after { content:''; position:absolute; inset:0; background: rgba(0,0,0,0.5); }
+            .hero-content { position: relative; z-index: 10; padding: 20px; border: 1px solid #D4AF37; background: rgba(0,0,0,0.4); backdrop-filter: blur(5px); }
             .gold { color: #D4AF37; }
-            .catch { font-size: 0.85rem; letter-spacing: 6px; text-transform: uppercase; margin-bottom: 15px; opacity: 0.9; }
-            h1 { font-size: 2.2rem; margin: 0; letter-spacing: 4px; font-weight: normal; }
-            
-            .sec-title { font-size: 0.7rem; letter-spacing: 5px; color: #D4AF37; text-align: center; margin: 80px 0 30px; text-transform: uppercase; }
-            .ba-wrapper { position: relative; width: 90%; max-width: 600px; margin: 0 auto; aspect-ratio: 1/1; overflow: hidden; border: 1px solid #D4AF37; }
+            .catch { font-size: 0.8rem; letter-spacing: 5px; margin-bottom: 10px; text-transform: uppercase; }
+            h1 { font-size: 1.8rem; margin: 0; letter-spacing: 2px; }
+            .ba-wrapper { position: relative; width: 90%; max-width: 600px; margin: 40px auto; aspect-ratio: 1/1; overflow: hidden; border: 1px solid #D4AF37; }
             .ba-img { position: absolute; width: 100%; height: 100%; object-fit: cover; }
             .after { clip-path: inset(0 0 0 50%); }
             .handle { position: absolute; top:0; bottom:0; left:50%; width:1px; background:#D4AF37; z-index:5; }
-            .handle::after { content:''; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:40px; height:40px; border:1px solid #D4AF37; border-radius:50%; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); }
-
-            .desc { width: 80%; max-width: 600px; margin: 60px auto; line-height: 2.2; font-size: 0.95rem; color: #ccc; text-align: justify; }
-            .atmo-img { width: 100%; height: auto; margin-top: 100px; filter: grayscale(0.3); }
-            footer { padding: 100px 0 50px; text-align: center; font-size: 0.6rem; color: #444; letter-spacing: 4px; }
+            .handle::after { content:'◀▶'; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); background:#D4AF37; color:#000; padding:8px; border-radius:4px; font-size:10px; font-family: sans-serif; font-weight: bold; }
+            .desc { width: 85%; max-width: 600px; margin: 60px auto; line-height: 2; color: #ccc; border-left: 2px solid #D4AF37; padding-left: 20px; }
+            footer { background: #0a0a0a; border-top: 1px solid #D4AF37; padding: 60px 20px; text-align: center; color: #666; font-size: 0.7rem; }
         </style></head><body>
-            <div class="hero"><img src="${getImg('hero','hero.jpg')}" class="hero-img"><div class="hero-content"><div class="catch gold">${catchphrase}</div><h1>${title}</h1></div></div>
-            <div class="sec-title">Comparison 01</div>
-            <div class="ba-wrapper" id="s1"><img src="${getImg('b1','before1.jpg')}" class="ba-img"><img src="${getImg('a1','after1.jpg')}" class="ba-img after"><div class="handle"></div></div>
-            <div class="sec-title">Comparison 02</div>
-            <div class="ba-wrapper" id="s2"><img src="${getImg('b2','before2.jpg')}" class="ba-img"><img src="${getImg('a2','after2.jpg')}" class="ba-img after"><div class="handle"></div></div>
+            <div class="hero"><div class="hero-content"><div class="catch gold">${catchphrase}</div><h1>${title}</h1></div></div>
+            <div class="ba-wrapper"><img src="${getImg('b1')} " class="ba-img"><img src="${getImg('a1')}" class="ba-img after"><div class="handle"></div></div>
+            <div class="ba-wrapper"><img src="${getImg('b2')} " class="ba-img"><img src="${getImg('a2')}" class="ba-img after"><div class="handle"></div></div>
             <div class="desc">${comment.replace(/\n/g,'<br>')}</div>
-            <img src="${getImg('atmo','atmosphere.jpg')}" class="atmo-img">
-            <footer>&copy; ROLLER STONE PORTFOLIO PRODUCTION</footer>
+            <img src="${getImg('atmo')}" style="width:100%; margin-top:40px;">
+            <footer>PREMIUM ROLLER STONE PRODUCTION<br>&copy; 2026</footer>
             <script>
                 document.querySelectorAll('.ba-wrapper').forEach(s => {
                     const move = (e) => {
                         const r = s.getBoundingClientRect();
                         const x = (e.touches ? e.touches[0].clientX : e.clientX) - r.left;
-                        let p = (x / r.width) * 100;
-                        p = Math.max(0, Math.min(100, p));
+                        let p = Math.max(0, Math.min(100, (x / r.width) * 100));
                         s.querySelector('.after').style.clipPath = "inset(0 0 0 "+p+"%)";
                         s.querySelector('.handle').style.left = p + "%";
                     };
-                    s.addEventListener('mousemove', move);
-                    s.addEventListener('touchmove', move, {passive: true});
+                    s.addEventListener('mousemove', move); s.addEventListener('touchmove', move);
                 });
             <\/script></body></html>`;
     }
 
     function updatePreview() {
         const iframe = document.getElementById('output-iframe');
-        const blob = new Blob([generateHTML(false)], { type: 'text/html' });
-        iframe.src = URL.createObjectURL(blob);
+        const doc = iframe.contentWindow.document;
+        doc.open(); doc.write(generateHTML()); doc.close();
     }
 
-    function showExport() { document.getElementById('shareModal').style.display = 'flex'; }
     function downloadHTML() {
-        const blob = new Blob([generateHTML(true)], { type: 'text/html' });
+        const blob = new Blob([generateHTML()], { type: 'text/html' });
         const a = document.createElement('a');
         a.href = URL.createObjectURL(blob);
-        a.download = 'index.html';
+        a.download = 'sekou_case.html';
         a.click();
     }
-    function shareLine() {
-        alert('先にHTMLを保存し、公開サービスにアップロードしてURLを取得してください。そのURLをLINEで共有できます。');
-    }
+    
     window.onload = updatePreview;
 </script>
 </body>
