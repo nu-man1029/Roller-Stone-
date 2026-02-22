@@ -53,64 +53,66 @@
         #preview-screen { display: none; background-color: #555; padding: 20px 0; min-height: 100vh; }
         .preview-controls { position: sticky; top: 0; background: rgba(0,0,0,0.9); padding: 12px; display: flex; justify-content: center; gap: 15px; z-index: 1000; }
 
-        /* --- PDF出力用コンテナ (A4固定) --- */
+        /* --- PDF出力用コンテナ --- */
         #content-to-export {
-            width: 210mm;
+            width: 794px; /* 【重要】mmではなくpxでA4幅を指定 */
             margin: 0 auto;
             background: #fff; 
         }
 
+        /* --- A4ページ定義 --- */
         .a4-page {
-            width: 210mm;
-            height: 296mm;
-            margin: 0 auto;
+            width: 794px;  /* A4横幅 (96dpi換算) */
+            height: 1123px; /* A4縦幅 (96dpi換算) */
+            margin: 0 auto 20px;
             background: #fff;
             color: #000;
-            padding: 12mm 18mm;
+            padding: 45px 60px; /* 余白もpx指定 */
             box-sizing: border-box;
             font-family: "MS Mincho", "Hiragino Mincho ProN", serif;
             font-size: 12pt;
-            line-height: 1.35;
+            line-height: 1.4;
             position: relative;
             overflow: hidden;
             page-break-after: always;
         }
 
-        /* ▼▼▼ 【ここが修正の肝】PDF生成時の強制スタイル ▼▼▼ */
-        /* bodyに .pdf-mode がついている間だけ、画面幅を強制的に広げて左寄せにする */
-        body.pdf-mode {
-            width: 1200px !important; /* スマホでもPC幅があるフリをする */
-            min-width: 1200px !important;
-            overflow-x: visible !important;
-        }
-
-        body.pdf-mode #preview-screen {
-            width: 100% !important;
+        /* ▼▼▼ スマホ強制補正CSS ▼▼▼ */
+        body.generating-pdf {
+            width: 794px !important; /* 画面全体をA4幅に固定 */
+            min-width: 794px !important;
+            margin: 0 !important;
             padding: 0 !important;
+            overflow: hidden !important;
+        }
+        
+        body.generating-pdf #preview-screen {
+            position: absolute; top: 0; left: 0;
+            width: 794px !important;
+            margin: 0 !important; padding: 0 !important;
             background: #fff !important;
-            position: absolute;
-            top: 0;
-            left: 0;
         }
 
-        body.pdf-mode #content-to-export {
-            margin: 0 !important; /* 中央寄せ解除 → 左寄せ */
-            transform: none !important;
+        body.generating-pdf #content-to-export {
+            margin: 0 !important; 
+            width: 794px !important;
         }
+        
+        body.generating-pdf .preview-controls { display: none !important; }
         /* ▲▲▲ ここまで ▲▲▲ */
 
-        .stamp-box { position: absolute; top: 12mm; right: 18mm; border: 0.5px solid #000; width: 22mm; height: 28mm; font-size: 8pt; display: flex; align-items: center; justify-content: center; text-align: center; }
-        .paper-title { text-align: center; font-size: 20pt; font-weight: bold; margin: 8mm 0 6mm; text-decoration: underline; }
-        .clause-title { font-weight: bold; margin-top: 8px; margin-bottom: 2px; border-bottom: 0.5px solid #000; font-size: 13pt; }
-        .indent-1 { padding-left: 1.5em; text-indent: -1.5em; margin-bottom: 1px; }
+        .stamp-box { position: absolute; top: 45px; right: 60px; border: 1px solid #000; width: 80px; height: 100px; font-size: 10px; display: flex; align-items: center; justify-content: center; text-align: center; }
+        .paper-title { text-align: center; font-size: 24px; font-weight: bold; margin: 30px 0; text-decoration: underline; }
+        .clause-title { font-weight: bold; margin-top: 15px; margin-bottom: 5px; border-bottom: 1px solid #000; font-size: 14px; }
+        .indent-1 { padding-left: 1.5em; text-indent: -1.5em; margin-bottom: 2px; }
         .indent-2 { padding-left: 2.5em; text-indent: -1.5em; margin-bottom: 0; }
         
-        .sign-area { margin-top: 10mm; }
-        .sign-row { display: flex; border-bottom: 0.5px solid #000; margin-bottom: 10px; padding-bottom: 1px; }
-        .sign-label { width: 90px; }
-        .sign-data { flex-grow: 1; min-height: 1.2em; }
-        .seal-mark { width: 30px; text-align: right; font-size: 11pt; }
-        .page-num { position: absolute; bottom: 8mm; width: 100%; text-align: center; left: 0; font-size: 9pt; }
+        .sign-area { margin-top: 40px; }
+        .sign-row { display: flex; border-bottom: 1px solid #000; margin-bottom: 15px; padding-bottom: 2px; }
+        .sign-label { width: 100px; }
+        .sign-data { flex-grow: 1; min-height: 1.2em; font-weight:bold; }
+        .seal-mark { width: 40px; text-align: right; font-size: 12px; }
+        .page-num { position: absolute; bottom: 30px; width: 100%; text-align: center; left: 0; font-size: 12px; }
 
         @media print {
             body { background: none; }
@@ -124,10 +126,10 @@
 <!-- ブラウザ起動警告 -->
 <div id="browser-warning">
     <div class="warning-box">
-        <div style="color:var(--rs-gold); font-size:1.2rem; font-weight:bold; margin-bottom:10px;">⚠️ 必ずブラウザで開いてください</div>
+        <div style="color:var(--rs-gold); font-size:1.2rem; font-weight:bold; margin-bottom:10px;">⚠️ PDF保存の注意</div>
         <div style="font-size:0.95rem; text-align:left; line-height:1.6;">
             LINEやFacebook等のアプリ内ブラウザでは、<br>
-            <span style="color:var(--rs-gold); font-weight:bold;">PDFが保存できない</span>場合があります。<br><br>
+            PDFが正常に保存できない場合があります。<br><br>
             必ず右下のメニュー等から<br>
             <strong>「ブラウザで開く（Safari / Chrome）」</strong><br>
             を選択して操作してください。
@@ -209,7 +211,7 @@
             <div>発注者（以下「甲」という。）</div>
             <div class="indent-1">住　　所：<span id="p_ko_addr"></span></div>
             <div class="indent-1">会社名／氏名：<span id="p_ko_name"></span></div>
-            <div style="margin-top:2px;">施工者（以下「乙」という。）</div>
+            <div style="margin-top:5px;">施工者（以下「乙」という。）</div>
             <div class="indent-1">住　　所：<span id="p_otsu_addr"></span></div>
             <div class="indent-1">会社名／氏名：<span id="p_otsu_name"></span></div>
 
@@ -354,9 +356,8 @@
     }
 
     async function generatePDF() {
-        // ▼▼▼ 修正の核心 ▼▼▼
-        // CSSクラス(.pdf-mode)を追加し、強制的にPC幅(1200px)のレイアウトに切り替える
-        document.body.classList.add('pdf-mode');
+        // ▼▼▼ 【重要】スマホ強制補正 ▼▼▼
+        document.body.classList.add('generating-pdf');
         window.scrollTo(0, 0);
         
         const element = document.getElementById('content-to-export');
@@ -365,12 +366,12 @@
             filename: '工事請負契約書_' + document.getElementById('ko_name').value + '.pdf',
             image: { type: 'jpeg', quality: 1.0 },
             html2canvas: { 
-                scale: 2, // 白紙防止のためスケールを少し落とす(2=十分綺麗)
+                scale: 3, 
                 useCORS: true, 
                 scrollY: 0,
-                // スマホでもPC幅で描画するよう指定
-                windowWidth: 1200, 
-                width: 800
+                // mmを使わず、pxで794(A4幅)に固定。windowWidthも合わせて固定。
+                windowWidth: 794, 
+                width: 794
             }, 
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
@@ -380,8 +381,7 @@
         } catch (e) {
             alert('PDF生成中にエラーが発生しました。');
         } finally {
-            // 処理が終わったらクラスを外して元に戻す
-            document.body.classList.remove('pdf-mode');
+            document.body.classList.remove('generating-pdf');
         }
     }
 </script>
