@@ -17,7 +17,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     
     <style>
-        /* --- 入力画面 (黒×金) --- */
+        /* --- 共通設定 --- */
         :root { --bg-dark: #0a0a0a; --rs-gold: #c5a059; --text-white: #ffffff; --text-gray: #aaaaaa; --border-gray: #333333; }
         body { font-family: sans-serif; background: var(--bg-dark); color: var(--text-white); margin: 0; line-height: 1.6; }
         
@@ -78,8 +78,37 @@
         
         .page-break { page-break-after: always; }
 
-        .stamp-box { position: absolute; top: 12mm; right: 18mm; border: 0.5px solid #000; width: 22mm; height: 28mm; font-size: 8pt; display: flex; align-items: center; justify-content: center; text-align: center; }
+        /* ▼▼▼ 【最重要】スマホ白紙・ズレ防止の強制スタイル ▼▼▼ */
+        /* PDF生成中(.printingクラス付与時)だけ、画面表示を無視してA4サイズを強制確保する */
+        body.printing {
+            overflow: visible !important;
+            height: auto !important;
+        }
         
+        body.printing #preview-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 210mm !important; /* 横幅を強制 */
+            margin: 0 !important;
+            padding: 0 !important;
+            background: #fff !important; /* 背景を白に */
+            z-index: 99999;
+            visibility: visible !important;
+            display: block !important;
+        }
+
+        body.printing #content-to-export {
+            width: 210mm !important;
+            margin: 0 !important;
+        }
+
+        body.printing .preview-controls {
+            display: none !important; /* ボタンは消す */
+        }
+        /* ▲▲▲ ここまで ▲▲▲ */
+
+        .stamp-box { position: absolute; top: 12mm; right: 18mm; border: 0.5px solid #000; width: 22mm; height: 28mm; font-size: 8pt; display: flex; align-items: center; justify-content: center; text-align: center; }
         .paper-title { text-align: center; font-size: 20pt; font-weight: bold; margin: 8mm 0 6mm; text-decoration: underline; }
         .clause-title { font-weight: bold; margin-top: 8px; margin-bottom: 2px; border-bottom: 0.5px solid #000; font-size: 13pt; }
         .indent-1 { padding-left: 1.5em; text-indent: -1.5em; margin-bottom: 1px; }
@@ -106,8 +135,7 @@
     <div class="warning-box">
         <div style="color:var(--rs-gold); font-size:1.2rem; font-weight:bold; margin-bottom:10px;">⚠️ 必ずブラウザで開いてください</div>
         <div style="font-size:0.95rem; text-align:left; line-height:1.6;">
-            LINEやFacebook等のアプリ内ブラウザでは、<br>
-            <span style="color:var(--rs-gold); font-weight:bold;">PDFが正常に保存できない</span>場合があります。<br><br>
+            LINEやFacebook等のアプリ内ブラウザでは、PDFが正常に保存できない場合があります。<br><br>
             必ず右下のメニュー等から<br>
             <strong>「ブラウザで開く（Safari / Chrome）」</strong><br>
             を選択して操作してください。
@@ -334,28 +362,25 @@
     }
 
     async function generatePDF() {
-        window.scrollTo(0, 0); // 念のためスクロールリセット
+        // PDF生成モード開始：class付与
+        document.body.classList.add('printing');
         
         const element = document.getElementById('content-to-export');
         const opt = {
             margin: 0,
             filename: '工事請負契約書_' + document.getElementById('ko_name').value + '.pdf',
             image: { type: 'jpeg', quality: 1.0 },
-            html2canvas: { 
-                scale: 3, 
-                useCORS: true, 
-                scrollY: 0,
-                // ▼▼▼ 魔法のコード：スマホでもPC幅(1200px)として描画させる ▼▼▼
-                windowWidth: 1200, 
-                width: 800
-            }, 
+            html2canvas: { scale: 2, useCORS: true, scrollY: 0 },
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
         
         try {
             await html2pdf().set(opt).from(element).save();
         } catch (e) {
-            alert('PDF生成中にエラーが発生しました。');
+            alert('PDF生成エラー');
+        } finally {
+            // PDF生成モード終了：class削除
+            document.body.classList.remove('printing');
         }
     }
 </script>
