@@ -55,31 +55,39 @@
 
         /* --- PDF出力用コンテナ --- */
         #content-to-export {
-            width: 794px; /* 【重要】mmではなくpxでA4幅を指定 */
+            width: 794px; /* A4固定幅 */
             margin: 0 auto;
             background: #fff; 
         }
 
-        /* --- A4ページ定義 --- */
+        /* --- A4ページ定義（白紙対策済み） --- */
         .a4-page {
-            width: 794px;  /* A4横幅 (96dpi換算) */
-            height: 1123px; /* A4縦幅 (96dpi換算) */
-            margin: 0 auto 20px;
+            width: 794px;
+            height: 1120px; /* 【重要】1123px(A4)より3px小さくして、はみ出し防止 */
+            margin: 0 auto; /* 余白ゼロ */
             background: #fff;
             color: #000;
-            padding: 45px 60px; /* 余白もpx指定 */
+            padding: 45px 60px;
             box-sizing: border-box;
             font-family: "MS Mincho", "Hiragino Mincho ProN", serif;
             font-size: 12pt;
             line-height: 1.4;
             position: relative;
-            overflow: hidden;
+            overflow: hidden; /* 万が一のはみ出しもカット */
+            
+            /* 改ページ設定：最後のページ以外に適用 */
             page-break-after: always;
+        }
+
+        /* 最後のページだけ改ページを無効化 */
+        .a4-page:last-child {
+            page-break-after: auto;
+            margin-bottom: 0;
         }
 
         /* ▼▼▼ スマホ強制補正CSS ▼▼▼ */
         body.generating-pdf {
-            width: 794px !important; /* 画面全体をA4幅に固定 */
+            width: 794px !important;
             min-width: 794px !important;
             margin: 0 !important;
             padding: 0 !important;
@@ -126,7 +134,7 @@
 <!-- ブラウザ起動警告 -->
 <div id="browser-warning">
     <div class="warning-box">
-        <div style="color:var(--rs-gold); font-size:1.2rem; font-weight:bold; margin-bottom:10px;">⚠️ PDF保存の注意</div>
+        <div style="color:var(--rs-gold); font-size:1.2rem; font-weight:bold; margin-bottom:10px;">⚠️ 必ずブラウザで開いてください</div>
         <div style="font-size:0.95rem; text-align:left; line-height:1.6;">
             LINEやFacebook等のアプリ内ブラウザでは、<br>
             PDFが正常に保存できない場合があります。<br><br>
@@ -202,7 +210,7 @@
 
     <div id="content-to-export">
         <!-- ■ 1ページ目 ■ -->
-        <div class="a4-page page-break">
+        <div class="a4-page">
             <div class="stamp-box">印紙</div>
             <div class="paper-title">工事請負契約書</div>
             
@@ -211,7 +219,7 @@
             <div>発注者（以下「甲」という。）</div>
             <div class="indent-1">住　　所：<span id="p_ko_addr"></span></div>
             <div class="indent-1">会社名／氏名：<span id="p_ko_name"></span></div>
-            <div style="margin-top:5px;">施工者（以下「乙」という。）</div>
+            <div style="margin-top:2px;">施工者（以下「乙」という。）</div>
             <div class="indent-1">住　　所：<span id="p_otsu_addr"></span></div>
             <div class="indent-1">会社名／氏名：<span id="p_otsu_name"></span></div>
 
@@ -241,7 +249,7 @@
         </div>
 
         <!-- ■ 2ページ目 ■ -->
-        <div class="a4-page page-break">
+        <div class="a4-page">
             <div class="clause-title">第5条（材料の調達および危険負担）</div>
             <div class="indent-1">1 乙は、本工事に必要な材料を自己の責任と費用負担にて調達する。</div>
             <div class="indent-1">2 乙が持ち込んだ材料が完成前に滅失または損傷した場合、その原因が甲の責めに帰すときを除き、その危険は乙が負担する。</div>
@@ -356,9 +364,8 @@
     }
 
     async function generatePDF() {
-        // ▼▼▼ 【重要】スマホ強制補正 ▼▼▼
+        // ▼▼▼ 白紙対策・完結編 ▼▼▼
         document.body.classList.add('generating-pdf');
-        window.scrollTo(0, 0);
         
         const element = document.getElementById('content-to-export');
         const opt = {
@@ -369,7 +376,6 @@
                 scale: 3, 
                 useCORS: true, 
                 scrollY: 0,
-                // mmを使わず、pxで794(A4幅)に固定。windowWidthも合わせて固定。
                 windowWidth: 794, 
                 width: 794
             }, 
