@@ -24,7 +24,7 @@
 
         /* 左側：入力フォーム */
         .editor-side {
-            width: 400px;
+            width: 420px;
             background-color: var(--dark-bg);
             border-right: 1px solid var(--gold);
             padding: 20px;
@@ -34,7 +34,7 @@
         }
 
         h1 { color: var(--gold); font-size: 1.1rem; border-bottom: 1px solid var(--gold); padding-bottom: 10px; margin-top: 0; }
-        h2 { color: var(--gold); font-size: 0.9rem; margin-top: 20px; text-transform: uppercase; }
+        h2 { color: var(--gold); font-size: 0.9rem; margin-top: 25px; text-transform: uppercase; border-left: 3px solid var(--gold); padding-left: 8px; }
         
         .form-group { margin-bottom: 15px; }
         label { display: block; font-size: 0.75rem; color: #aaa; margin-bottom: 5px; }
@@ -49,7 +49,6 @@
             border-radius: 4px;
             font-size: 0.9rem;
         }
-        input:focus, textarea:focus { border-color: var(--gold); outline: none; }
 
         input[type="file"] {
             font-size: 0.7rem;
@@ -68,11 +67,10 @@
             padding: 15px;
             font-weight: bold;
             cursor: pointer;
-            margin-top: 20px;
+            margin: 30px 0;
             border-radius: 4px;
             font-size: 1rem;
         }
-        .btn-download:hover { opacity: 0.9; }
 
         /* 右側：プレビュー */
         .preview-side {
@@ -82,12 +80,11 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            position: relative;
         }
 
         #preview-frame {
             width: 375px; 
-            height: 667px; /* iPhone 6/7/8 size */
+            height: 80vh;
             background: white;
             border: 12px solid #222;
             border-radius: 30px;
@@ -95,19 +92,8 @@
             box-shadow: 0 20px 50px rgba(0,0,0,0.5);
         }
 
-        iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-            background: #000;
-        }
-
-        .preview-label {
-            margin-bottom: 15px;
-            color: var(--gold);
-            font-size: 0.8rem;
-            letter-spacing: 2px;
-        }
+        iframe { width: 100%; height: 100%; border: none; background: #000; }
+        .preview-label { margin-bottom: 10px; color: var(--gold); font-size: 0.8rem; letter-spacing: 2px; }
     </style>
 </head>
 <body>
@@ -125,22 +111,33 @@
         <input type="text" id="catch" value="ブロック塀が、重厚な石積みへ。" oninput="updatePreview()">
     </div>
 
-    <h2>画像設定</h2>
+    <h2>メイン設定</h2>
     <div class="form-group">
         <label>メイン画像 (hero.jpg)</label>
         <input type="file" id="img-hero" accept="image/*" onchange="previewImage(this, 'hero')">
     </div>
 
+    <h2>比較セット 1</h2>
     <div class="form-group">
         <label>Before (before1.jpg)</label>
         <input type="file" id="img-b1" accept="image/*" onchange="previewImage(this, 'b1')">
     </div>
-
     <div class="form-group">
         <label>After (after1.jpg)</label>
         <input type="file" id="img-a1" accept="image/*" onchange="previewImage(this, 'a1')">
     </div>
 
+    <h2>比較セット 2</h2>
+    <div class="form-group">
+        <label>Before (before2.jpg)</label>
+        <input type="file" id="img-b2" accept="image/*" onchange="previewImage(this, 'b2')">
+    </div>
+    <div class="form-group">
+        <label>After (after2.jpg)</label>
+        <input type="file" id="img-a2" accept="image/*" onchange="previewImage(this, 'a2')">
+    </div>
+
+    <h2>仕上げ</h2>
     <div class="form-group">
         <label>アトモスフィア (atmosphere.jpg)</label>
         <input type="file" id="img-atmo" accept="image/*" onchange="previewImage(this, 'atmo')">
@@ -155,14 +152,14 @@
 </div>
 
 <div class="preview-side">
-    <div class="preview-label">LIVE PREVIEW</div>
+    <div class="preview-label">PREVIEW</div>
     <div id="preview-frame">
         <iframe id="output-iframe"></iframe>
     </div>
 </div>
 
 <script>
-    const images = { hero: '', b1: '', a1: '', atmo: '' };
+    const images = { hero: '', b1: '', a1: '', b2: '', a2: '', atmo: '' };
 
     function previewImage(input, key) {
         if (input.files && input.files[0]) {
@@ -178,38 +175,44 @@
 
         const getImg = (key, fileName) => {
             if (isDownload) return `img/${fileName}`;
-            return images[key] || 'https://via.placeholder.com/800x600/222/D4AF37?text=NO+IMAGE';
+            return images[key] || 'https://via.placeholder.com/800x800/222/D4AF37?text=NO+IMAGE';
         };
 
         return `
 <!DOCTYPE html>
-<html>
+<html lang="ja">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        body { margin: 0; background: #000; color: #fff; font-family: "Helvetica Neue", Arial, sans-serif; }
-        .hero { position: relative; height: 80vh; background: url('${getImg('hero', 'hero.jpg')}') center/cover no-repeat; display: flex; align-items: flex-end; }
-        .hero::after { content:''; position:absolute; top:0; left:0; width:100%; height:100%; background:linear-gradient(to bottom, transparent 50%, #000); }
-        .hero-content { position: relative; z-index: 1; padding: 30px 20px; }
+        body { margin: 0; background: #000; color: #fff; font-family: "Helvetica Neue", Arial, sans-serif; -webkit-font-smoothing: antialiased; }
+        /* スマホで見やすく調整したヒーローエリア */
+        .hero { position: relative; min-height: 100vh; width: 100%; display: flex; flex-direction: column; justify-content: flex-end; overflow: hidden; }
+        .hero-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: -1; }
+        .hero::after { content:''; position:absolute; top:0; left:0; width:100%; height:100%; background:linear-gradient(to bottom, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.8) 100%); }
+        .hero-content { position: relative; z-index: 1; padding: 40px 20px; }
         .gold { color: #D4AF37; }
-        h1 { font-size: 1.5rem; margin: 0; letter-spacing: 1px; }
-        .catch { font-size: 0.9rem; margin-top: 8px; opacity: 0.9; }
+        h1 { font-size: 1.6rem; margin: 0; letter-spacing: 1px; line-height: 1.3; }
+        .catch { font-size: 0.95rem; margin-top: 10px; opacity: 0.9; }
         
-        .content { padding: 40px 20px; text-align: center; }
-        .ba-wrapper { position: relative; width: 100%; max-width: 400px; margin: 20px auto; aspect-ratio: 1/1; overflow: hidden; border: 1px solid #D4AF37; }
-        .ba-img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; }
-        #after-layer { clip-path: inset(0 0 0 50%); }
-        .handle { position: absolute; top: 0; bottom: 0; left: 50%; width: 2px; background: #D4AF37; z-index: 5; }
-        .handle::after { content: '↔'; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #D4AF37; color: #000; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+        .content { padding: 40px 0; text-align: center; }
+        h2.sec-title { font-size: 0.8rem; letter-spacing: 3px; color: #D4AF37; margin: 40px 0 20px; text-transform: uppercase; }
 
-        .desc { font-size: 0.9rem; line-height: 1.8; color: #ccc; text-align: left; margin-top: 30px; }
+        /* Before After Slider CSS */
+        .ba-wrapper { position: relative; width: 90%; max-width: 500px; margin: 0 auto 30px; aspect-ratio: 1/1; overflow: hidden; border: 1px solid #D4AF37; touch-action: pan-y; }
+        .ba-img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
+        .after-layer { clip-path: inset(0 0 0 50%); }
+        .handle { position: absolute; top: 0; bottom: 0; left: 50%; width: 2px; background: #D4AF37; z-index: 5; pointer-events: none; }
+        .handle::after { content: '◀▶'; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #D4AF37; color: #000; padding: 6px; font-size: 12px; border-radius: 4px; font-weight: bold; }
+
+        .desc-box { width: 85%; margin: 20px auto; font-size: 0.9rem; line-height: 1.8; color: #ccc; text-align: left; }
         .atmo-img { width: 100%; height: auto; margin-top: 40px; border-top: 1px solid #D4AF37; }
-        footer { padding: 50px 0; text-align: center; font-size: 0.7rem; color: #666; letter-spacing: 2px; }
+        footer { padding: 60px 0; text-align: center; font-size: 0.7rem; color: #666; letter-spacing: 2px; }
     </style>
 </head>
 <body>
     <div class="hero">
+        <img src="${getImg('hero', 'hero.jpg')}" class="hero-bg">
         <div class="hero-content">
             <h1 class="gold">${title}</h1>
             <p class="catch">${catchphrase}</p>
@@ -217,34 +220,49 @@
     </div>
 
     <div class="content">
-        <div class="ba-wrapper" id="slider">
+        <h2 class="sec-title">Case Study 01</h2>
+        <div class="ba-wrapper slider-node">
             <img src="${getImg('b1', 'before1.jpg')}" class="ba-img">
-            <img src="${getImg('a1', 'after1.jpg')}" class="ba-img" id="after-layer">
-            <div class="handle" id="handle"></div>
+            <img src="${getImg('a1', 'after1.jpg')}" class="ba-img after-layer">
+            <div class="handle"></div>
         </div>
-        <div class="desc">${comment.replace(/\n/g, '<br>')}</div>
+
+        <h2 class="sec-title">Case Study 02</h2>
+        <div class="ba-wrapper slider-node">
+            <img src="${getImg('b2', 'before2.jpg')}" class="ba-img">
+            <img src="${getImg('a2', 'after2.jpg')}" class="ba-img after-layer">
+            <div class="handle"></div>
+        </div>
+
+        <div class="desc-box">
+            <p class="gold" style="margin-bottom: 5px;">[ 施工詳細 ]</p>
+            ${comment.replace(/\n/g, '<br>')}
+        </div>
+        
         <img src="${getImg('atmo', 'atmosphere.jpg')}" class="atmo-img">
     </div>
 
-    <footer>ROLLER STONE PORTFOLIO</footer>
+    <footer>&copy; ROLLER STONE PORTFOLIO</footer>
 
     <script>
-        const slider = document.getElementById('slider');
-        const after = document.getElementById('after-layer');
-        const handle = document.getElementById('handle');
+        document.querySelectorAll('.slider-node').forEach(slider => {
+            const after = slider.querySelector('.after-layer');
+            const handle = slider.querySelector('.handle');
 
-        const moveSlider = (e) => {
-            const rect = slider.getBoundingClientRect();
-            const x = (e.touches ? e.touches[0].pageX : e.pageX) - rect.left;
-            let percent = (x / rect.width) * 100;
-            if (percent < 0) percent = 0;
-            if (percent > 100) percent = 100;
-            after.style.clipPath = "inset(0 0 0 " + percent + "%)";
-            handle.style.left = percent + "%";
-        };
+            const moveSlider = (e) => {
+                const rect = slider.getBoundingClientRect();
+                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                const x = clientX - rect.left;
+                let percent = (x / rect.width) * 100;
+                if (percent < 0) percent = 0;
+                if (percent > 100) percent = 100;
+                after.style.clipPath = "inset(0 0 0 " + percent + "%)";
+                handle.style.left = percent + "%";
+            };
 
-        slider.addEventListener('mousemove', moveSlider);
-        slider.addEventListener('touchmove', moveSlider);
+            slider.addEventListener('mousemove', moveSlider);
+            slider.addEventListener('touchmove', moveSlider, { passive: true });
+        });
     <\/script>
 </body>
 </html>`;
