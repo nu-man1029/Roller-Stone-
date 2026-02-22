@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>提案パース・ビルダー | Final Presentation</title>
+    <title>提案パース・ビルダー | Analytics Integrated</title>
     <style>
         :root { --gold: #D4AF37; --dark-bg: #1a1a1a; --input-bg: #2a2a2a; --text-color: #ffffff; }
         body { font-family: 'Helvetica Neue', Arial, 'Hiragino Mincho ProN', serif; background-color: #000; color: var(--text-color); margin: 0; padding-bottom: 50px; }
@@ -27,10 +27,7 @@
 
         .btn-publish { background: linear-gradient(45deg, #B8860B, #D4AF37); color: #000; border: none; padding: 16px; font-weight: bold; cursor: pointer; border-radius: 4px; width: 100%; font-size: 1rem; margin-top: 15px; letter-spacing: 2px; }
         
-        /* プレビュー */
-        .preview-header { text-align: center; padding: 20px 0; background: #222; }
-        .preview-wrapper { background: #222; padding: 0 10px 100px; display: flex; justify-content: center; }
-        #preview-frame-container { width: 100%; max-width: 1000px; height: 750px; background: #000; overflow: hidden; box-shadow: 0 40px 80px rgba(0,0,0,1); }
+        #preview-frame-container { width: 100%; max-width: 1000px; height: 800px; margin: 20px auto; background: #000; overflow: hidden; border: 1px solid #333; }
         iframe { width: 100%; height: 100%; border: none; }
     </style>
 </head>
@@ -43,7 +40,7 @@
             <input type="text" id="title" value="M-RESIDENCE EXTERIOR PLAN" oninput="updatePreview()">
         </div>
         <div class="form-group">
-            <label>1. STYLE SELECTION</label>
+            <label>1. STYLE（AIコピー連動）</label>
             <div class="style-selector">
                 <button class="style-btn active" onclick="setStyle('luxury', this)">重厚・高級</button>
                 <button class="style-btn" onclick="setStyle('modern', this)">洗練・モダン</button>
@@ -51,42 +48,41 @@
             </div>
         </div>
         <div class="form-group">
-            <label>2. MAIN VISUAL（完成予想）</label>
+            <label>2. MAIN VISUAL</label>
             <input type="file" accept="image/*" onchange="processImg(this, 'hero', true)">
         </div>
         <div class="form-group">
-            <label>CATCH COPY（編集可能）</label>
-            <input type="text" id="catch" value="画像を選択すると候補が表示されます" oninput="updatePreview()">
+            <label>CATCH COPY（自動生成）</label>
+            <input type="text" id="catch" value="画像をアップすると候補が出ます" oninput="updatePreview()">
         </div>
-        <div id="ai-box" class="ai-suggestion-box">
-            <div id="ai-chips"></div>
-        </div>
-        <div class="form-group"><label>BEFORE / AFTER SET</label>
+        <div id="ai-box" class="ai-suggestion-box"><div id="ai-chips"></div></div>
+
+        <div class="form-group"><label>3. BEFORE / AFTER セット 01</label>
             <input type="file" accept="image/*" onchange="processImg(this, 'b1')">
             <input type="file" accept="image/*" onchange="processImg(this, 'a1')" style="margin-top:5px;">
         </div>
-        <div class="form-group"><label>NIGHT VIEW（夜の演出パース）</label>
-            <input type="file" accept="image/*" onchange="processImg(this, 'night')">
-        </div>
-        <div class="form-group"><label>BIRD'S EYE VIEW（俯瞰パース）</label>
-            <input type="file" accept="image/*" onchange="processImg(this, 'bird')">
+        <div class="form-group"><label>4. BEFORE / AFTER セット 02</label>
+            <input type="file" accept="image/*" onchange="processImg(this, 'b2')">
+            <input type="file" accept="image/*" onchange="processImg(this, 'a2')" style="margin-top:5px;">
         </div>
         <div class="form-group">
-            <label>PROPOSAL CONCEPT</label>
+            <label>5. LAST VISUAL（俯瞰 または 夜景）</label>
+            <input type="file" accept="image/*" onchange="processImg(this, 'footer_img')">
+        </div>
+        <div class="form-group" style="grid-column: 1 / -1;">
+            <label>DESIGN CONCEPT</label>
             <textarea id="comment" rows="2" oninput="updatePreview()">邸宅の価値を再定義する、特別な提案です。</textarea>
         </div>
     </div>
     <button class="btn-publish" onclick="preparePublish()">公開用ファイルを生成してLINE共有の準備をする</button>
 </div>
 
-<div class="preview-header"><span style="color:var(--gold); font-size:0.7rem; letter-spacing:2px;">LIVE PREVIEW</span></div>
-<div class="preview-wrapper">
-    <div id="preview-frame-container"><iframe id="output-iframe"></iframe></div>
-</div>
+<div id="preview-frame-container"><iframe id="output-iframe"></iframe></div>
 
 <script>
-    const images = { hero:'', b1:'', a1:'', night:'', bird:'' };
+    const images = { hero:'', b1:'', a1:'', b2:'', a2:'', footer_img:'' };
     let currentStyle = 'luxury';
+    const ANALYTICS_ID = "G-Y9GXLQ3624"; // ご指定の測定ID
 
     function setStyle(style, btn) {
         currentStyle = style;
@@ -98,17 +94,14 @@
     function generateAICopy() {
         const box = document.getElementById('ai-box');
         const chips = document.getElementById('ai-chips');
-        box.style.display = 'block';
-        chips.innerHTML = '';
+        box.style.display = 'block'; chips.innerHTML = '';
         const lib = {
             luxury: ["既存を凌駕する、邸宅の風格を再現する。", "歳月を重ねるほどに深まる、石積みの品格。", "威風堂々。住まいの価値を再定義する。"],
             modern: ["日常をアートに変える、洗練のテクスチャ。", "無駄を削ぎ落とし、本質的な美しさを描く。", "都市の風景に、新たなリズムを刻むデザイン。"],
             nature: ["光と影が織りなす、自然の移ろいを感じる場所。", "優しく迎え入れ、心地よい安らぎを醸成する。", "この場所でしか味わえない、上質な日常。"]
         };
         lib[currentStyle].forEach(text => {
-            const chip = document.createElement('span');
-            chip.className = 'copy-chip';
-            chip.innerText = text;
+            const chip = document.createElement('span'); chip.className = 'copy-chip'; chip.innerText = text;
             chip.onclick = () => { document.getElementById('catch').value = text; updatePreview(); };
             chips.appendChild(chip);
         });
@@ -132,43 +125,52 @@
         const title = document.getElementById('title').value;
         const catchphrase = document.getElementById('catch').value;
         const comment = document.getElementById('comment').value;
-        const getImg = (k) => images[k] || '';
+        const img = (k) => images[k] || 'https://via.placeholder.com/1200x800/111/222?text=NO+IMAGE';
 
-        return `<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><style>
-            body { margin: 0; background: #000; color: #fff; font-family: "serif"; }
-            .hero { height: 95vh; display: flex; align-items: center; justify-content: center; text-align: center; background: url('${getImg('hero')}') center/cover; position: relative; }
-            .hero::after { content:''; position:absolute; inset:0; background: linear-gradient(rgba(0,0,0,0), #000); }
-            .hero-content { position: relative; z-index: 10; padding: 40px; border: 1px solid #D4AF37; background: rgba(0,0,0,0.4); backdrop-filter: blur(10px); }
-            .gold { color: #D4AF37; }
-            h1 { font-size: 2.2rem; margin: 0; letter-spacing: 12px; font-weight: 200; text-transform: uppercase; border-top: 1px solid rgba(212,175,55,0.2); padding-top: 20px; }
-            .ba-wrapper { position: relative; width: 90%; max-width: 850px; margin: 60px auto; aspect-ratio: 16/9; overflow: hidden; border: 1px solid #333; }
-            .ba-img { position: absolute; width: 100%; height: 100%; object-fit: cover; }
-            .after { clip-path: inset(0 0 0 50%); }
-            .handle { position: absolute; top:0; bottom:0; left:50%; width:1px; background:#D4AF37; z-index:10; }
-            .handle::after { content:'SLIDE'; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); background:#000; color:#D4AF37; padding:5px 10px; border:1px solid #D4AF37; font-size:9px; letter-spacing:2px; }
-            .full-img { width: 100%; margin-top: 20px; filter: brightness(0.8); }
-            .desc { width: 85%; max-width: 800px; margin: 80px auto; line-height: 2.2; color: #bbb; border-left: 1px solid #D4AF37; padding-left: 25px; }
-            .sec-label { color: #D4AF37; text-align: center; font-size: 0.7rem; letter-spacing: 5px; margin-top: 100px; text-transform: uppercase; }
-        </style></head><body>
-            <div class="hero"><div class="hero-content"><div class="gold" style="letter-spacing:5px; margin-bottom:20px;">${catchphrase}</div><h1>${title}</h1></div></div>
-            <div class="sec-label">Comparison View</div>
-            <div class="ba-wrapper"><img src="${getImg('b1')}"><img src="${getImg('a1')}" class="ba-img after"><div class="handle"></div></div>
-            <div class="desc">${comment.replace(/\n/g,'<br>')}</div>
-            ${getImg('night') ? `<div class="sec-label">Night Atmosphere</div><img src="${getImg('night')}" class="full-img">` : ''}
-            ${getImg('bird') ? `<div class="sec-label">Bird's Eye View</div><img src="${getImg('bird')}" class="full-img">` : ''}
-            <footer style="padding:100px 0; text-align:center; color:#333; font-size:0.7rem; letter-spacing:3px;">PREMIUM EXTERIOR PROPOSAL</footer>
-            <script>
-                document.querySelectorAll('.ba-wrapper').forEach(s => {
-                    const update = (e) => {
-                        const r = s.getBoundingClientRect();
-                        const x = (e.touches ? e.touches[0].clientX : e.clientX) - r.left;
-                        let p = Math.max(0, Math.min(100, (x / r.width) * 100));
-                        s.querySelector('.after').style.clipPath = "inset(0 0 0 "+p+"%)";
-                        s.querySelector('.handle').style.left = p + "%";
-                    };
-                    s.addEventListener('mousemove', update); s.addEventListener('touchmove', update);
-                });
-            <\/script></body></html>`;
+        return `<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <script async src="https://www.googletagmanager.com/gtag/js?id=${ANALYTICS_ID}"><\/script>
+            <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${ANALYTICS_ID}');<\/script>
+            <style>
+                body { margin: 0; background: #000; color: #fff; font-family: "serif"; overflow-x: hidden; }
+                .hero { height: 95vh; display: flex; align-items: center; justify-content: center; text-align: center; background: url('${img('hero')}') center/cover no-repeat; position: relative; }
+                .hero::after { content:''; position:absolute; inset:0; background: linear-gradient(to bottom, transparent 50%, #000); }
+                .hero-content { position: relative; z-index: 10; padding: 50px; border: 1px solid rgba(212,175,55,0.4); background: rgba(0,0,0,0.4); backdrop-filter: blur(10px); width: 80%; max-width: 600px; }
+                .gold { color: #D4AF37; }
+                h1 { font-size: 2.2rem; margin: 0; letter-spacing: 12px; font-weight: 200; text-transform: uppercase; border-top: 1px solid rgba(212,175,55,0.2); padding-top: 20px; }
+                .section-label { color: #D4AF37; text-align: center; font-size: 0.7rem; letter-spacing: 6px; margin: 100px 0 40px; text-transform: uppercase; }
+                .ba-container { position: relative; width: 92%; max-width: 900px; margin: 0 auto 80px; aspect-ratio: 16/9; overflow: hidden; border: 1px solid #333; }
+                .ba-img { position: absolute; top:0; left:0; width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
+                .after-img { clip-path: inset(0 0 0 50%); z-index: 2; }
+                .handle { position: absolute; top:0; bottom:0; left:50%; width:2px; background:#D4AF37; z-index:10; cursor: ew-resize; }
+                .handle::after { content:'SLIDE'; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); background:#000; color:#D4AF37; padding:8px 15px; border:1px solid #D4AF37; font-size:10px; letter-spacing:3px; white-space:nowrap; }
+                .desc { width: 85%; max-width: 800px; margin: 100px auto; line-height: 2.4; color: #bbb; border-left: 2px solid #D4AF37; padding-left: 30px; font-size: 1.1rem; }
+                .last-visual { width: 100%; display: block; filter: contrast(1.1); margin-top:40px; }
+                footer { padding: 120px 0; text-align: center; background: #050505; color: #333; letter-spacing: 5px; font-size: 0.7rem; border-top: 1px solid #111; }
+            </style></head><body>
+                <div class="hero"><div class="hero-content"><div class="gold" style="letter-spacing:5px; margin-bottom:25px; font-size:0.9rem;">${catchphrase}</div><h1>${title}</h1></div></div>
+                <div class="section-label">Perspective Comparison 01</div>
+                <div class="ba-container"><img src="${img('b1')}" class="ba-img"><img src="${img('a1')}" class="ba-img after-img"><div class="handle"></div></div>
+                <div class="section-label">Perspective Comparison 02</div>
+                <div class="ba-container"><img src="${img('b2')}" class="ba-img"><img src="${img('a2')}" class="ba-img after-img"><div class="handle"></div></div>
+                <div class="desc"><p class="gold" style="font-size:0.75rem; letter-spacing:3px; margin-bottom:15px;">PROPOSAL CONCEPT</p>${comment.replace(/\n/g,'<br>')}</div>
+                <div class="section-label">Detail Atmosphere</div>
+                <img src="${img('footer_img')}" class="last-visual">
+                <footer>ROLLER STONE PREMIUM PRESENTATION</footer>
+                <script>
+                    document.querySelectorAll('.ba-container').forEach(container => {
+                        const handle = container.querySelector('.handle');
+                        const afterImg = container.querySelector('.after-img');
+                        const update = (e) => {
+                            const rect = container.getBoundingClientRect();
+                            const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+                            let pos = Math.max(0, Math.min(100, (x / rect.width) * 100));
+                            afterImg.style.clipPath = "inset(0 0 0 " + pos + "%)";
+                            handle.style.left = pos + "%";
+                        };
+                        container.addEventListener('mousemove', update);
+                        container.addEventListener('touchmove', update, {passive: true});
+                    });
+                <\/script></body></html>`;
     }
 
     function updatePreview() {
@@ -179,8 +181,7 @@
     function preparePublish() {
         const blob = new Blob([generateHTML()], { type: 'text/html' });
         const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'index.html'; a.click();
-        
-        alert("【次のステップ】\n1. 今ダウンロードされた 'index.html' を確認してください。\n2. 次に開くサイトの「画面中央」に、このファイルを投げ込むだけでURLが発行されます。\n3. そのURLをコピーしてLINEで送ってください。");
+        alert("1. index.htmlが保存されました。\n2. 次に開くTiiny Hostの画面へこのファイルをドラッグ＆ドロップしてください。\n3. 生成されたURLをLINEで共有すれば完了です。");
         window.open('https://tiiny.host/', '_blank');
     }
     window.onload = updatePreview;
