@@ -5,95 +5,40 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>施工事例ポートフォリオ作成ツール | Premium Builder</title>
     <style>
-        :root {
-            --gold: #D4AF37;
-            --dark-bg: #1a1a1a;
-            --input-bg: #2a2a2a;
-            --text-color: #ffffff;
-        }
+        :root { --gold: #D4AF37; --dark-bg: #1a1a1a; --input-bg: #2a2a2a; --text-color: #ffffff; }
+        body { font-family: 'Helvetica Neue', Arial, sans-serif; background-color: #000; color: var(--text-color); margin: 0; display: flex; height: 100vh; overflow: hidden; }
 
-        body {
-            font-family: 'Helvetica Neue', Arial, sans-serif;
-            background-color: #000;
-            color: var(--text-color);
-            margin: 0;
-            display: flex;
-            height: 100vh;
-            overflow: hidden;
-        }
-
-        /* 左側：入力フォーム */
-        .editor-side {
-            width: 420px;
-            background-color: var(--dark-bg);
-            border-right: 1px solid var(--gold);
-            padding: 20px;
-            overflow-y: auto;
-            box-shadow: 5px 0 15px rgba(0,0,0,0.5);
-            z-index: 10;
-        }
-
-        h1 { color: var(--gold); font-size: 1.1rem; border-bottom: 1px solid var(--gold); padding-bottom: 10px; margin-top: 0; }
-        h2 { color: var(--gold); font-size: 0.9rem; margin-top: 25px; text-transform: uppercase; border-left: 3px solid var(--gold); padding-left: 8px; }
+        /* 左側：編集パネル */
+        .editor-side { width: 420px; background-color: var(--dark-bg); border-right: 1px solid var(--gold); padding: 20px; overflow-y: auto; z-index: 10; }
+        .step-num { background: var(--gold); color: #000; width: 24px; height: 24px; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; font-weight: bold; margin-right: 8px; font-size: 0.8rem; }
+        h1 { color: var(--gold); font-size: 1rem; border-bottom: 1px solid var(--gold); padding-bottom: 10px; margin-bottom: 20px; }
+        h2 { color: var(--gold); font-size: 0.85rem; margin-top: 25px; text-transform: uppercase; display: flex; align-items: center; }
         
         .form-group { margin-bottom: 15px; }
         label { display: block; font-size: 0.75rem; color: #aaa; margin-bottom: 5px; }
+        input[type="text"], textarea, select { width: 100%; background: var(--input-bg); border: 1px solid #444; color: white; padding: 10px; box-sizing: border-box; border-radius: 4px; font-size: 0.9rem; }
+        input[type="file"] { font-size: 0.7rem; color: #ccc; background: #222; padding: 5px; width: 100%; border-radius: 4px; }
+
+        /* 右側：プレビューエリア */
+        .preview-side { flex-grow: 1; background: #333; display: flex; flex-direction: column; align-items: center; padding: 20px; }
         
-        input[type="text"], textarea {
-            width: 100%;
-            background: var(--input-bg);
-            border: 1px solid #444;
-            color: white;
-            padding: 10px;
-            box-sizing: border-box;
-            border-radius: 4px;
-            font-size: 0.9rem;
-        }
+        /* デバイス切り替えボタン */
+        .device-switcher { margin-bottom: 20px; background: #222; padding: 5px; border-radius: 8px; border: 1px solid var(--gold); }
+        .device-btn { background: none; border: none; color: #888; padding: 8px 15px; cursor: pointer; font-size: 0.8rem; }
+        .device-btn.active { color: var(--gold); font-weight: bold; }
 
-        input[type="file"] {
-            font-size: 0.7rem;
-            color: #ccc;
-            background: #222;
-            padding: 5px;
-            width: 100%;
-            border-radius: 4px;
-        }
+        #preview-container { transition: all 0.3s ease; box-shadow: 0 20px 50px rgba(0,0,0,0.5); border: 8px solid #222; border-radius: 20px; overflow: hidden; background: #fff; }
+        .view-pc { width: 100%; height: 90%; }
+        .view-tablet { width: 768px; height: 90%; }
+        .view-mobile { width: 375px; height: 667px; }
 
-        .btn-download {
-            width: 100%;
-            background: linear-gradient(45deg, #B8860B, #D4AF37);
-            color: black;
-            border: none;
-            padding: 15px;
-            font-weight: bold;
-            cursor: pointer;
-            margin: 30px 0;
-            border-radius: 4px;
-            font-size: 1rem;
-        }
+        iframe { width: 100%; height: 100%; border: none; }
 
-        /* 右側：プレビュー */
-        .preview-side {
-            flex-grow: 1;
-            background: #333;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-        }
-
-        #preview-frame {
-            width: 375px; 
-            height: 80vh;
-            background: white;
-            border: 12px solid #222;
-            border-radius: 30px;
-            overflow: hidden;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-        }
-
-        iframe { width: 100%; height: 100%; border: none; background: #000; }
-        .preview-label { margin-bottom: 10px; color: var(--gold); font-size: 0.8rem; letter-spacing: 2px; }
+        /* モーダル */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 100; justify-content: center; align-items: center; }
+        .modal-content { background: #222; padding: 30px; border: 1px solid var(--gold); border-radius: 8px; max-width: 500px; text-align: center; }
+        .share-url { background: #111; border: 1px dashed var(--gold); padding: 10px; color: var(--gold); margin: 20px 0; word-break: break-all; }
+        .btn-action { background: var(--gold); color: #000; border: none; padding: 12px 25px; font-weight: bold; cursor: pointer; border-radius: 4px; margin: 5px; }
     </style>
 </head>
 <body>
@@ -101,191 +46,125 @@
 <div class="editor-side">
     <h1>施工事例作成ビルダー</h1>
     
+    <h2><span class="step-num">1</span>必要情報の入力</h2>
     <div class="form-group">
         <label>施工タイトル</label>
-        <input type="text" id="title" value="M様邸 擁壁リノベーション" oninput="updatePreview()">
+        <input type="text" id="title" value="M様邸 擁壁リノベーション">
     </div>
-
     <div class="form-group">
         <label>キャッチコピー</label>
-        <input type="text" id="catch" value="ブロック塀が、重厚な石積みへ。" oninput="updatePreview()">
+        <select id="catch-preset" onchange="document.getElementById('catch').value = this.value">
+            <option value="ブロック塀が、重厚な石積みへ。">1. 変化を強調</option>
+            <option value="既存を活かし、価値を再定義する。">2. 洗練・知性</option>
+            <option value="塗り替えたのは、住まいの品格。">3. 高級感・品質</option>
+        </select>
+        <input type="text" id="catch" value="ブロック塀が、重厚な石積みへ。" style="margin-top:5px;">
     </div>
 
-    <h2>メイン設定</h2>
-    <div class="form-group">
-        <label>メイン画像 (hero.jpg)</label>
-        <input type="file" id="img-hero" accept="image/*" onchange="previewImage(this, 'hero')">
-    </div>
+    <h2><span class="step-num">2</span>画像のアップロード</h2>
+    <div class="form-group"><label>メイン画像</label><input type="file" onchange="previewImg(this, 'hero')"></div>
+    <div class="form-group"><label>B/A 1 (Before/After)</label><input type="file" onchange="previewImg(this, 'b1')"><input type="file" onchange="previewImg(this, 'a1')" style="margin-top:5px;"></div>
+    <div class="form-group"><label>B/A 2 (Before/After)</label><input type="file" onchange="previewImg(this, 'b2')"><input type="file" onchange="previewImg(this, 'a2')" style="margin-top:5px;"></div>
+    <div class="form-group"><label>アトモスフィア</label><input type="file" onchange="previewImg(this, 'atmo')"></div>
+    <div class="form-group"><label>施工コメント</label><textarea id="comment" rows="3">ここに詳細を入力...</textarea></div>
 
-    <h2>比較セット 1</h2>
-    <div class="form-group">
-        <label>Before (before1.jpg)</label>
-        <input type="file" id="img-b1" accept="image/*" onchange="previewImage(this, 'b1')">
-    </div>
-    <div class="form-group">
-        <label>After (after1.jpg)</label>
-        <input type="file" id="img-a1" accept="image/*" onchange="previewImage(this, 'a1')">
-    </div>
-
-    <h2>比較セット 2</h2>
-    <div class="form-group">
-        <label>Before (before2.jpg)</label>
-        <input type="file" id="img-b2" accept="image/*" onchange="previewImage(this, 'b2')">
-    </div>
-    <div class="form-group">
-        <label>After (after2.jpg)</label>
-        <input type="file" id="img-a2" accept="image/*" onchange="previewImage(this, 'a2')">
-    </div>
-
-    <h2>仕上げ</h2>
-    <div class="form-group">
-        <label>アトモスフィア (atmosphere.jpg)</label>
-        <input type="file" id="img-atmo" accept="image/*" onchange="previewImage(this, 'atmo')">
-    </div>
-
-    <div class="form-group">
-        <label>施工コメント</label>
-        <textarea id="comment" rows="4" oninput="updatePreview()">ここに施工のこだわりや背景を入力してください。</textarea>
-    </div>
-
-    <button class="btn-download" onclick="downloadHTML()">ポートフォリオを保存</button>
+    <button class="btn-action" style="width:100%; margin-top:20px;" onclick="updatePreview()">プレビューを更新</button>
+    <button class="btn-action" style="width:100%; background:none; border:1px solid var(--gold); color:var(--gold);" onclick="showExport()">出力・共有URL発行</button>
 </div>
 
 <div class="preview-side">
-    <div class="preview-label">PREVIEW</div>
-    <div id="preview-frame">
+    <div class="device-switcher">
+        <button class="device-btn" onclick="changeView('mobile', this)">MOBILE</button>
+        <button class="device-btn" onclick="changeView('tablet', this)">TABLET</button>
+        <button class="device-btn active" onclick="changeView('pc', this)">PC</button>
+    </div>
+    <div id="preview-container" class="view-pc">
         <iframe id="output-iframe"></iframe>
     </div>
 </div>
 
-<script>
-    const images = { hero: '', b1: '', a1: '', b2: '', a2: '', atmo: '' };
+<div id="shareModal" class="modal">
+    <div class="modal-content">
+        <h2 style="margin-top:0;">公開準備が整いました</h2>
+        <p style="font-size:0.8rem; color:#ccc;">HTMLを保存してGitHub等にアップすると、以下のURLで共有可能になります。</p>
+        <div class="share-url" id="simulated-url">https://your-name.github.io/portfolio/index.html</div>
+        <button class="btn-action" onclick="downloadHTML()">HTMLをダウンロード</button>
+        <button class="btn-action" style="background:#444; color:#fff;" onclick="copyURL()">URLをコピー</button>
+        <button class="btn-action" style="background:#075e54; color:#fff;" onclick="shareLine()">LINEで送る</button>
+        <p style="font-size:0.7rem; color:#888; margin-top:15px;" onclick="this.parentElement.parentElement.style.display='none'">[ 閉じる ]</p>
+    </div>
+</div>
 
-    function previewImage(input, key) {
-        if (input.files && input.files[0]) {
-            images[key] = URL.createObjectURL(input.files[0]);
-            updatePreview();
-        }
+<script>
+    const images = { hero:'', b1:'', a1:'', b2:'', a2:'', atmo:'' };
+    function previewImg(input, key) { if(input.files[0]) images[key] = URL.createObjectURL(input.files[0]); }
+
+    function changeView(type, btn) {
+        const container = document.getElementById('preview-container');
+        container.className = 'view-' + type;
+        document.querySelectorAll('.device-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
     }
 
-    function generateHTML(isDownload = false) {
+    function generateHTML(isDownload) {
         const title = document.getElementById('title').value;
         const catchphrase = document.getElementById('catch').value;
         const comment = document.getElementById('comment').value;
+        const getImg = (k, f) => isDownload ? `img/${f}` : (images[k] || 'https://via.placeholder.com/800');
 
-        const getImg = (key, fileName) => {
-            if (isDownload) return `img/${fileName}`;
-            return images[key] || 'https://via.placeholder.com/800x800/222/D4AF37?text=NO+IMAGE';
-        };
-
-        return `
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        body { margin: 0; background: #000; color: #fff; font-family: "Helvetica Neue", Arial, sans-serif; -webkit-font-smoothing: antialiased; }
-        /* スマホで見やすく調整したヒーローエリア */
-        .hero { position: relative; min-height: 100vh; width: 100%; display: flex; flex-direction: column; justify-content: flex-end; overflow: hidden; }
-        .hero-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: -1; }
-        .hero::after { content:''; position:absolute; top:0; left:0; width:100%; height:100%; background:linear-gradient(to bottom, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.8) 100%); }
-        .hero-content { position: relative; z-index: 1; padding: 40px 20px; }
-        .gold { color: #D4AF37; }
-        h1 { font-size: 1.6rem; margin: 0; letter-spacing: 1px; line-height: 1.3; }
-        .catch { font-size: 0.95rem; margin-top: 10px; opacity: 0.9; }
-        
-        .content { padding: 40px 0; text-align: center; }
-        h2.sec-title { font-size: 0.8rem; letter-spacing: 3px; color: #D4AF37; margin: 40px 0 20px; text-transform: uppercase; }
-
-        /* Before After Slider CSS */
-        .ba-wrapper { position: relative; width: 90%; max-width: 500px; margin: 0 auto 30px; aspect-ratio: 1/1; overflow: hidden; border: 1px solid #D4AF37; touch-action: pan-y; }
-        .ba-img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
-        .after-layer { clip-path: inset(0 0 0 50%); }
-        .handle { position: absolute; top: 0; bottom: 0; left: 50%; width: 2px; background: #D4AF37; z-index: 5; pointer-events: none; }
-        .handle::after { content: '◀▶'; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #D4AF37; color: #000; padding: 6px; font-size: 12px; border-radius: 4px; font-weight: bold; }
-
-        .desc-box { width: 85%; margin: 20px auto; font-size: 0.9rem; line-height: 1.8; color: #ccc; text-align: left; }
-        .atmo-img { width: 100%; height: auto; margin-top: 40px; border-top: 1px solid #D4AF37; }
-        footer { padding: 60px 0; text-align: center; font-size: 0.7rem; color: #666; letter-spacing: 2px; }
-    </style>
-</head>
-<body>
-    <div class="hero">
-        <img src="${getImg('hero', 'hero.jpg')}" class="hero-bg">
-        <div class="hero-content">
-            <h1 class="gold">${title}</h1>
-            <p class="catch">${catchphrase}</p>
-        </div>
-    </div>
-
-    <div class="content">
-        <h2 class="sec-title">Case Study 01</h2>
-        <div class="ba-wrapper slider-node">
-            <img src="${getImg('b1', 'before1.jpg')}" class="ba-img">
-            <img src="${getImg('a1', 'after1.jpg')}" class="ba-img after-layer">
-            <div class="handle"></div>
-        </div>
-
-        <h2 class="sec-title">Case Study 02</h2>
-        <div class="ba-wrapper slider-node">
-            <img src="${getImg('b2', 'before2.jpg')}" class="ba-img">
-            <img src="${getImg('a2', 'after2.jpg')}" class="ba-img after-layer">
-            <div class="handle"></div>
-        </div>
-
-        <div class="desc-box">
-            <p class="gold" style="margin-bottom: 5px;">[ 施工詳細 ]</p>
-            ${comment.replace(/\n/g, '<br>')}
-        </div>
-        
-        <img src="${getImg('atmo', 'atmosphere.jpg')}" class="atmo-img">
-    </div>
-
-    <footer>&copy; ROLLER STONE PORTFOLIO</footer>
-
-    <script>
-        document.querySelectorAll('.slider-node').forEach(slider => {
-            const after = slider.querySelector('.after-layer');
-            const handle = slider.querySelector('.handle');
-
-            const moveSlider = (e) => {
-                const rect = slider.getBoundingClientRect();
-                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-                const x = clientX - rect.left;
-                let percent = (x / rect.width) * 100;
-                if (percent < 0) percent = 0;
-                if (percent > 100) percent = 100;
-                after.style.clipPath = "inset(0 0 0 " + percent + "%)";
-                handle.style.left = percent + "%";
-            };
-
-            slider.addEventListener('mousemove', moveSlider);
-            slider.addEventListener('touchmove', moveSlider, { passive: true });
-        });
-    <\/script>
-</body>
-</html>`;
+        return `<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><style>
+            body { margin: 0; background: #000; color: #fff; font-family: sans-serif; }
+            .hero { position: relative; height: 100vh; display: flex; align-items: flex-end; background: url('${getImg('hero','hero.jpg')}') center/cover; }
+            .hero::after { content:''; position:absolute; top:0; left:0; width:100%; height:100%; background:linear-gradient(transparent, #000); }
+            .hero-content { position: relative; z-index: 1; padding: 40px; }
+            .gold { color: #D4AF37; }
+            .ba-wrapper { position: relative; width: 90%; max-width: 600px; margin: 40px auto; aspect-ratio: 1/1; overflow: hidden; border: 1px solid #D4AF37; }
+            .ba-img { position: absolute; width: 100%; height: 100%; object-fit: cover; }
+            .after { clip-path: inset(0 0 0 50%); }
+            .handle { position: absolute; top:0; bottom:0; left:50%; width:2px; background:#D4AF37; z-index:5; }
+            .handle::after { content:'◀▶'; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); background:#D4AF37; color:#000; padding:5px; border-radius:4px; font-size:12px; }
+            .desc { width: 80%; margin: 40px auto; line-height: 1.8; border-left: 2px solid #D4AF37; padding-left: 20px; }
+        </style></head><body>
+            <div class="hero"><div class="hero-content"><h1 class="gold">${title}</h1><p>${catchphrase}</p></div></div>
+            <div class="ba-wrapper" id="s1"><img src="${getImg('b1','before1.jpg')}" class="ba-img"><img src="${getImg('a1','after1.jpg')}" class="ba-img after"><div class="handle"></div></div>
+            <div class="ba-wrapper" id="s2"><img src="${getImg('b2','before2.jpg')}" class="ba-img"><img src="${getImg('a2','after2.jpg')}" class="ba-img after"><div class="handle"></div></div>
+            <div class="desc">${comment.replace(/\n/g,'<br>')}</div>
+            <img src="${getImg('atmo','atmosphere.jpg')}" style="width:100%;">
+            <script>
+                document.querySelectorAll('.ba-wrapper').forEach(s => {
+                    const move = (e) => {
+                        const r = s.getBoundingClientRect();
+                        const x = (e.touches ? e.touches[0].clientX : e.clientX) - r.left;
+                        let p = (x / r.width) * 100;
+                        p = Math.max(0, Math.min(100, p));
+                        s.querySelector('.after').style.clipPath = "inset(0 0 0 "+p+"%)";
+                        s.querySelector('.handle').style.left = p + "%";
+                    };
+                    s.addEventListener('mousemove', move);
+                    s.addEventListener('touchmove', move);
+                });
+            <\/script></body></html>`;
     }
 
     function updatePreview() {
-        const iframe = document.getElementById('output-iframe');
-        const html = generateHTML(false);
-        const blob = new Blob([html], { type: 'text/html' });
-        iframe.src = URL.createObjectURL(blob);
+        const doc = document.getElementById('output-iframe').contentWindow.document;
+        doc.open(); doc.write(generateHTML(false)); doc.close();
     }
 
-    window.onload = updatePreview;
-
+    function showExport() { document.getElementById('shareModal').style.display = 'flex'; }
     function downloadHTML() {
-        const htmlContent = generateHTML(true);
-        const blob = new Blob([htmlContent], { type: 'text/html' });
+        const blob = new Blob([generateHTML(true)], { type: 'text/html' });
         const a = document.createElement('a');
         a.href = URL.createObjectURL(blob);
         a.download = 'index.html';
         a.click();
     }
+    function copyURL() { navigator.clipboard.writeText(document.getElementById('simulated-url').innerText); alert('URLをコピーしました'); }
+    function shareLine() {
+        const url = document.getElementById('simulated-url').innerText;
+        window.open(`https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(url)}`);
+    }
+    window.onload = updatePreview;
 </script>
-
 </body>
 </html>
