@@ -11,8 +11,8 @@
     </script>
 
     <meta charset="UTF-8">
-    <!-- スマホ表示の最適化 -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- ビューポート設定（スマホ対応） -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>工事請負契約書 作成システム</title>
     <script src="https://yubinbango.github.io/yubinbango/yubinbango.js" charset="UTF-8"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
@@ -55,9 +55,13 @@
         .preview-controls { position: sticky; top: 0; background: rgba(0,0,0,0.9); padding: 12px; display: flex; justify-content: center; gap: 15px; z-index: 1000; }
 
         /* --- PDF出力用コンテナ --- */
-        #content-to-export { width: 210mm; margin: 0 auto; background: #555; }
+        #content-to-export {
+            width: 210mm;
+            margin: 0 auto;
+            background: #555;
+        }
 
-        /* --- A4ページ定義（12pt / 3ページ完全固定） --- */
+        /* --- A4ページ定義 --- */
         .a4-page {
             width: 210mm;
             height: 296mm;
@@ -74,6 +78,34 @@
         }
         
         .page-break { page-break-after: always; }
+
+        /* ▼▼▼ 【重要】スマホ縦画面でのズレ防止CSS ▼▼▼ */
+        /* PDF生成中のみ、強制的にPC幅(800px以上)として振る舞わせる */
+        body.generating-pdf {
+            width: 1200px !important; /* 仮想的な横幅 */
+            overflow: hidden !important;
+        }
+        
+        body.generating-pdf #preview-screen,
+        body.generating-pdf #content-to-export,
+        body.generating-pdf .a4-page {
+            margin: 0 !important;
+            padding: 0 !important;
+            width: 210mm !important;
+            min-width: 800px !important; /* ここが重要 */
+            box-shadow: none !important;
+            
+            /* 画面左上に固定してズレを防ぐ */
+            position: absolute !important;
+            top: 0 !important;
+            left: 0 !important;
+        }
+        
+        body.generating-pdf .a4-page {
+            padding: 12mm 18mm !important; /* 内部の余白は維持 */
+            position: relative !important; /* ページごとの相対位置は維持 */
+        }
+        /* ▲▲▲ ここまで ▲▲▲ */
 
         .stamp-box { position: absolute; top: 12mm; right: 18mm; border: 0.5px solid #000; width: 22mm; height: 28mm; font-size: 8pt; display: flex; align-items: center; justify-content: center; text-align: center; }
         
@@ -101,9 +133,10 @@
 <!-- ブラウザ起動警告 -->
 <div id="browser-warning">
     <div class="warning-box">
-        <div style="color:var(--rs-gold); font-size:1.2rem; font-weight:bold; margin-bottom:10px;">⚠️ PDF保存の注意</div>
+        <div style="color:var(--rs-gold); font-size:1.2rem; font-weight:bold; margin-bottom:10px;">⚠️ 必ずブラウザで開いてください</div>
         <div style="font-size:0.95rem; text-align:left; line-height:1.6;">
-            LINEやFacebook等のアプリ内ブラウザでは、PDFが正常に保存できない場合があります。<br><br>
+            LINEやFacebook等のアプリ内ブラウザでは、<br>
+            <span style="color:var(--rs-gold); font-weight:bold;">PDFのレイアウトが崩れる</span>場合があります。<br><br>
             必ず右下のメニュー等から<br>
             <strong>「ブラウザで開く（Safari / Chrome）」</strong><br>
             を選択して操作してください。
@@ -330,7 +363,8 @@
     }
 
     async function generatePDF() {
-        // PDF生成中は一時的にクラスを付与してレイアウトを強制
+        // ▼▼▼ ここが魔法のコードです ▼▼▼
+        // スマホだろうが何だろうが、「私は今、幅1200pxのPCです」と強制的に振る舞わせる
         document.body.classList.add('generating-pdf');
         
         const element = document.getElementById('content-to-export');
@@ -341,10 +375,9 @@
             html2canvas: { 
                 scale: 3, 
                 useCORS: true, 
-                scrollY: 0, 
-                // 【重要】スマホでもPC幅（1200px）として描画させる
-                windowWidth: 1200, 
-                width: 800 // A4幅相当を指定
+                scrollY: 0,
+                windowWidth: 1200, // ★ここがミソ！仮想的にPCの幅でレンダリング
+                width: 800         // コンテンツ幅も明示
             }, 
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
