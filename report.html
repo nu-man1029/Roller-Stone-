@@ -11,6 +11,7 @@
         .container { max-width: 500px; margin: 0 auto; padding: 20px; }
         .card { background: var(--card); border-radius: 15px; padding: 20px; border: 1px solid var(--border); margin-bottom: 15px; }
         label { display: block; color: var(--gold); font-size: 0.8rem; margin-bottom: 10px; font-weight: bold; }
+        .ai-note { font-size: 0.75rem; color: #aaa; margin-bottom: 10px; background: #222; padding: 8px; border-left: 3px solid var(--gold); }
         input, select, textarea { width: 100%; padding: 12px; background: #000; border: 1px solid #444; color: #fff; border-radius: 8px; box-sizing: border-box; margin-bottom: 15px; }
         .upload-box { border: 2px dashed var(--gold); height: 140px; display: flex; align-items: center; justify-content: center; border-radius: 10px; margin-bottom: 15px; cursor: pointer; overflow: hidden; position: relative; }
         .upload-box img { width: 100%; height: 100%; object-fit: cover; }
@@ -42,7 +43,9 @@
 
     <div class="card">
         <label>こだわりポイント</label>
-        <textarea id="kodawari" rows="2" placeholder="こだわりを入力"></textarea>
+        <div class="ai-note">💡 単語だけの入力でもOK！AIがお客様に刺さる魅力的な文章へ最適化します。<br>例：丁寧な下地、明るい石色、高級感ある仕上げ、など</div>
+        <textarea id="kodawari" rows="3" placeholder="こだわりを入力（AIが調整します）"></textarea>
+        
         <label>石の色 / 目地の色</label>
         <div style="display: flex; gap: 10px;"><input type="text" id="stoneColor" placeholder="石色"><input type="text" id="jointColor" placeholder="目地色"></div>
         <label>現場備考</label>
@@ -61,7 +64,8 @@
 
     <div class="card">
         <label>お客様の声</label>
-        <textarea id="voice" rows="2" placeholder="お客様の感想を入力"></textarea>
+        <div class="ai-note">💡 お客様の感想を短く入力してください。AIが心に響くコメントとして整えます。<br>例：明るくなって嬉しい、掃除が楽になった、など</div>
+        <textarea id="voice" rows="3" placeholder="お客様の感想を入力（AIが調整します）"></textarea>
     </div>
 
     <label>📸 3. フッター写真</label>
@@ -74,20 +78,19 @@
     let setCount = 1;
     function trigger(id) { document.getElementById(id).click(); }
 
-    // 画像圧縮プレビュー機能
     function preview(input) {
         const reader = new FileReader();
         reader.onload = (e) => {
             const img = new Image();
             img.onload = () => {
                 const canvas = document.createElement('canvas');
-                const max = 400; // 長辺400pxにリサイズ
+                const max = 400; 
                 let w = img.width, h = img.height;
                 if(w > h) { if(w > max){ h *= max/w; w = max; } } else { if(h > max){ w *= max/h; h = max; } }
                 canvas.width = w; canvas.height = h;
                 canvas.getContext('2d').drawImage(img, 0, 0, w, h);
                 const pImg = document.getElementById('p-' + input.id);
-                pImg.src = canvas.toDataURL('image/jpeg', 0.6); // 圧縮してセット
+                pImg.src = canvas.toDataURL('image/jpeg', 0.6);
                 pImg.style.display = 'block';
                 if(document.getElementById('t-'+input.id)) document.getElementById('t-'+input.id).style.display='none';
             };
@@ -104,7 +107,7 @@
 
     async function finalSubmit() {
         const store = document.getElementById('storeName').value;
-        const gasUrl = "https://script.google.com/macros/s/AKfycbyDPJN8acuWfUoP6XgnaXjNJU_fZLRQV2SmnLLB8FZmeWullFps2q7likTiYvfyGQQ4Lg/exec"; 
+        const gasUrl = "https://script.google.com/macros/s/AKfycbx73lSOVknF8pgjnA_zqeEL4RTZu50ZfI-8eS-qzV7hyceo5h3AV1sQkZC-kiC8eMpBZQ/exec"; 
         
         const payload = {
             pref: document.getElementById('pref').value, storeName: store,
@@ -115,19 +118,15 @@
         };
 
         try {
-            // スプレッドシート保存
             await fetch(gasUrl, { method: "POST", mode: "no-cors", body: JSON.stringify(payload) });
-            
-            // URL組み立て
             let lpUrl = `${gasUrl}?p=${encodeURIComponent(payload.pref)}&s=${encodeURIComponent(store)}&sc=${encodeURIComponent(payload.stoneColor)}&jc=${encodeURIComponent(payload.jointColor)}&m=${encodeURIComponent(payload.memo)}&k=${encodeURIComponent(payload.kodawari)}&v=${encodeURIComponent(payload.voice)}&cu=${encodeURIComponent(payload.contactUrl)}&tel=${encodeURIComponent(payload.phone)}`;
             
-            // 画像データ（im=Main, ib1=Before, ia1=After, iff=Footer）
             const im = document.getElementById('p-mainImg').src; if(im.startsWith('data:')) lpUrl += `&im=${encodeURIComponent(im)}`;
             const ib = document.getElementById('p-b1').src; if(ib.startsWith('data:')) lpUrl += `&ib1=${encodeURIComponent(ib)}`;
             const ia = document.getElementById('p-a1').src; if(ia.startsWith('data:')) lpUrl += `&ia1=${encodeURIComponent(ia)}`;
             const iff = document.getElementById('p-footImg').src; if(iff.startsWith('data:')) lpUrl += `&iff=${encodeURIComponent(iff)}`;
 
-            const msg = `お世話になっております。\n【施工報告】${store}\n集客LP 兼 報告ページ完成です。\nご確認、宜しくお願いします\n${lpUrl}\n\n※このリンクをSNSのプロフィールや、グループLINEに共有してください。`;
+            const msg = `お世話になっております。\n【施工報告】${store}\n集客LP 兼 報告ページ完成です。\nご確認、宜しくお願いします\n${lpUrl}`;
             
             if (navigator.share) { await navigator.share({ text: msg }); } 
             else { navigator.clipboard.writeText(msg); alert("LINE用メッセージをコピーしました！"); }
