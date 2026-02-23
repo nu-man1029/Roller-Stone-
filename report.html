@@ -1,153 +1,275 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RS施工報告フォーム</title>
-    <style>
-        :root { --gold: #c5a059; --bg: #0a0a0a; --card: #1a1a1a; --border: #333; }
-        body { background: var(--bg); color: #fff; font-family: sans-serif; margin: 0; padding-bottom: 120px; }
-        .header { background: #000; padding: 20px; text-align: center; border-bottom: 2px solid var(--gold); }
-        .container { max-width: 500px; margin: 0 auto; padding: 20px; }
-        .card { background: var(--card); border-radius: 15px; padding: 20px; border: 1px solid var(--border); margin-bottom: 15px; }
-        label { display: block; color: var(--gold); font-size: 0.8rem; margin-bottom: 10px; font-weight: bold; }
-        .ai-note { font-size: 0.75rem; color: #aaa; margin-bottom: 10px; background: #222; padding: 8px; border-left: 3px solid var(--gold); }
-        input, select, textarea { width: 100%; padding: 12px; background: #000; border: 1px solid #444; color: #fff; border-radius: 8px; box-sizing: border-box; margin-bottom: 15px; }
-        .upload-box { border: 2px dashed var(--gold); height: 140px; display: flex; align-items: center; justify-content: center; border-radius: 10px; margin-bottom: 15px; cursor: pointer; overflow: hidden; position: relative; }
-        .upload-box img { width: 100%; height: 100%; object-fit: cover; }
-        .ba-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .btn-add { width: 100%; background: none; border: 1px solid var(--gold); color: var(--gold); padding: 15px; border-radius: 10px; cursor: pointer; font-weight: bold; margin-bottom: 20px; }
-        .btn-submit { width: 100%; background: linear-gradient(135deg, var(--gold), #eed08c); color: #000; border: none; padding: 18px; border-radius: 40px; font-weight: bold; font-size: 1.1rem; cursor: pointer; }
-        #loadingOverlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center; flex-direction: column; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RS施工報告LPジェネレーター</title>
+<!-- 住所自動入力ライブラリ -->
+<script src="https://yubinbango.github.io/yubinbango/yubinbango.js" charset="UTF-8"></script>
+<style>
+    :root { --gold: #c5a059; --bg: #0a0a0a; --card-bg: #1a1a1a; }
+    body { background: var(--bg); color: #fff; font-family: sans-serif; margin: 0; padding: 20px; box-sizing: border-box; }
+    h1, h2, h3 { color: var(--gold); text-align: center; }
+    
+    /* 入力フォームのスタイル */
+    .input-section { max-width: 600px; margin: 0 auto 40px; background: #222; padding: 20px; border-radius: 15px; border: 1px solid #444; }
+    label { display: block; margin-top: 15px; color: var(--gold); font-weight: bold; font-size: 0.9rem; }
+    input[type="text"], input[type="number"], textarea, select {
+        width: 100%; padding: 12px; margin-top: 5px; background: #000; border: 1px solid #555; color: #fff; border-radius: 5px; box-sizing: border-box; font-size: 16px;
+    }
+    textarea { height: 100px; resize: vertical; }
+    .file-input-wrapper { margin-top: 5px; border: 1px dashed #555; padding: 20px; text-align: center; border-radius: 5px; cursor: pointer; }
+    .file-input-wrapper:hover { border-color: var(--gold); background: #111; }
+    
+    button#generateBtn {
+        display: block; width: 100%; padding: 18px; background: linear-gradient(135deg, #c5a059, #e6c88b); 
+        color: #000; font-weight: bold; border: none; border-radius: 30px; font-size: 1.1rem; margin-top: 30px; cursor: pointer;
+        box-shadow: 0 4px 15px rgba(197, 160, 89, 0.4); transition: transform 0.2s;
+    }
+    button#generateBtn:active { transform: scale(0.98); }
+
+    /* プレビューエリア（生成されるHTMLの見た目） */
+    #previewArea { display: none; margin-top: 40px; border-top: 2px solid var(--gold); padding-top: 20px; }
+    
+    /* 生成後のHTML用スタイル（埋め込み用） */
+    .generated-body { background: #0a0a0a; color: #fff; font-family: sans-serif; margin: 0; text-align: center; }
+    .main-img { width: 100%; max-height: 400px; object-fit: contain; border-bottom: 2px solid #c5a059; background: #000; }
+    .container { padding: 20px; max-width: 600px; margin: auto; }
+    .card { background: #1a1a1a; padding: 20px; border-radius: 15px; border: 1px solid #333; margin-bottom: 20px; text-align: left; }
+    .label { color: #c5a059; font-size: 0.8rem; font-weight: bold; display: block; margin-bottom: 5px; }
+    .ba-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
+    .ba-box { text-align: center; }
+    .ba-box span { display: block; font-size: 0.8rem; color: #888; margin-bottom: 5px; }
+    .ba-box img { width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 8px; border: 1px solid #444; background: #000; display: block; }
+    .btn-contact { display: block; width: 100%; padding: 15px; background: #06c755; color: white; text-decoration: none; border-radius: 30px; font-weight: bold; margin-top: 10px; box-sizing: border-box; text-align: center; }
+    .footer { font-size: 0.7rem; color: #666; margin-top: 40px; }
+</style>
 </head>
 <body>
 
-<div id="loadingOverlay"><p>📸 画像を保存中...</p></div>
+    <h1 style="margin-bottom: 5px;">RSW DX PORTAL</h1>
+    <h2 style="font-size: 1rem; color: #888; margin-top: 0;">施工報告LPジェネレーター</h2>
 
-<div class="header"><h1>施工報告 & LP生成</h1></div>
-<div class="container">
-    
-    <label>📸 1. メイン写真</label>
-    <div class="upload-box" onclick="trigger('mainImg')"><span id="t-mainImg">📸 選択</span><img id="p-mainImg" style="display:none"><input type="file" id="mainImg" hidden onchange="preview(this)"></div>
+    <!-- 入力フォーム -->
+    <div class="input-section h-adr">
+        <span class="p-country-name" style="display:none;">Japan</span>
+        
+        <label>施工完了日</label>
+        <input type="date" id="date" value="<?php echo date('Y-m-d'); ?>">
 
-    <div class="card">
-        <label>認定施工店エリア</label>
-        <select id="pref">
-            <script>
-                const prefs = ["北海道","青森県","岩手県","宮城県","秋田県","山形県","福島県","茨城県","栃木県","群馬県","埼玉県","千葉県","東京都","神奈川県","新潟県","富山県","石川県","福井県","山梨県","長野県","岐阜県","静岡県","愛知県","三重県","滋賀県","京都府","大阪府","兵庫県","奈良県","和歌山県","鳥取県","島根県","岡山県","広島県","山口県","徳島県","香川県","愛媛県","高知県","福岡県","佐賀県","長崎県","熊本県","大分県","宮崎県","鹿児島県","沖縄県"];
-                prefs.forEach(p => document.write(`<option value="${p}">${p}認定施工店</option>`));
-            </script>
-        </select>
-        <label>屋号</label><input type="text" id="storeName" placeholder="屋号を入力">
-        <label>お問い合わせURL</label><input type="url" id="contactUrl" placeholder="https://line.me/...">
-        <label>電話番号</label><input type="tel" id="phone" placeholder="090-0000-0000">
-    </div>
+        <label>顧客名 (様)</label>
+        <input type="text" id="customerName" placeholder="例：山田 太郎">
 
-    <div class="card">
-        <label>こだわりポイント</label>
-        <div class="ai-note">💡 単語入力OK！AIが魅力的な文章へ最適化します。</div>
-        <textarea id="kodawari" rows="3" placeholder="こだわりを入力"></textarea>
-        <label>石の色 / 目地の色</label>
-        <div style="display: flex; gap: 10px;"><input type="text" id="stoneColor" placeholder="石色"><input type="text" id="jointColor" placeholder="目地色"></div>
-        <label>現場備考</label>
-        <textarea id="memo" rows="2" placeholder="備考を入力"></textarea>
-    </div>
+        <label>郵便番号 (ハイフンなし)</label>
+        <input type="text" class="p-postal-code" size="8" maxlength="8" placeholder="1234567">
+        
+        <label>住所 (自動入力)</label>
+        <input type="text" class="p-region p-locality p-street-address p-extended-address" id="address">
 
-    <label>📸 2. Before / After</label>
-    <div id="ba-list">
-        <div class="card ba-grid">
-            <div class="upload-box" style="height:100px; margin-bottom:0;" onclick="trigger('b1')"><span>BEFORE</span><img id="p-b1" style="display:none"></div>
-            <div class="upload-box" style="height:100px; margin-bottom:0;" onclick="trigger('a1')"><span>AFTER</span><img id="p-a1" style="display:none"></div>
+        <label>認定施工店名</label>
+        <input type="text" id="shopName" value="認定施工店">
+
+        <hr style="border-color: #333; margin: 20px 0;">
+
+        <label>メイン画像 (完了写真)</label>
+        <div class="file-input-wrapper">
+            <input type="file" id="imgMain" accept="image/*">
         </div>
-        <input type="file" id="b1" hidden onchange="preview(this)"><input type="file" id="a1" hidden onchange="preview(this)">
-    </div>
-    <button class="btn-add" onclick="addNewSet()">＋ 比較セットを追加</button>
 
-    <div class="card">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <div>
+                <label>Before画像</label>
+                <div class="file-input-wrapper">
+                    <input type="file" id="imgBefore" accept="image/*">
+                </div>
+            </div>
+            <div>
+                <label>After画像</label>
+                <div class="file-input-wrapper">
+                    <input type="file" id="imgAfter" accept="image/*">
+                </div>
+            </div>
+        </div>
+
+        <label>施工風景 / 集合写真 (任意)</label>
+        <div class="file-input-wrapper">
+            <input type="file" id="imgSub" accept="image/*">
+        </div>
+
+        <hr style="border-color: #333; margin: 20px 0;">
+
+        <label>こだわりポイント</label>
+        <textarea id="kodawari" placeholder="例：既存のひび割れを活かしたデザインにしました..."></textarea>
+
+        <div style="display: flex; gap: 10px;">
+            <div style="flex:1;">
+                <label>施工面積 (㎡)</label>
+                <input type="text" id="area" placeholder="30">
+            </div>
+            <div style="flex:1;">
+                <label>施工日数 (日)</label>
+                <input type="text" id="days" placeholder="3">
+            </div>
+        </div>
+        <label>使用カラー</label>
+        <input type="text" id="color" placeholder="ミルクティー, ブラック">
+
         <label>お客様の声</label>
-        <div class="ai-note">💡 短く入力してください。AIが心に響く表現に整えます。</div>
-        <textarea id="voice" rows="3" placeholder="感想を入力"></textarea>
+        <textarea id="voice" placeholder="例：想像以上の仕上がりで感動しました！"></textarea>
+
+        <label>公式LINE URL (問い合わせボタン用)</label>
+        <input type="text" id="lineUrl" placeholder="https://line.me/...">
+
+        <button id="generateBtn" onclick="generateAndDownload()">報告書LPを作成＆ダウンロード</button>
     </div>
-
-    <label>📸 3. フッター写真</label>
-    <div class="upload-box" style="height:120px;" onclick="trigger('footImg')"><span id="t-footImg">📸 選択</span><img id="p-footImg" style="display:none"><input type="file" id="footImg" hidden onchange="preview(this)"></div>
-
-    <button class="btn-submit" id="submitBtn" onclick="finalSubmit()">内容を確認して送信</button>
-</div>
 
 <script>
-    let setCount = 1;
-    function trigger(id) { document.getElementById(id).click(); }
+    // 今日の日付をセット
+    document.getElementById('date').valueAsDate = new Date();
 
-    function preview(input) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            const img = new Image();
-            img.onload = () => {
-                const canvas = document.createElement('canvas');
-                const max = 500; 
-                let w = img.width, h = img.height;
-                if(w > h) { if(w > max){ h *= max/w; w = max; } } else { if(h > max){ w *= max/h; h = max; } }
-                canvas.width = w; canvas.height = h;
-                canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-                const pImg = document.getElementById('p-' + input.id);
-                pImg.src = canvas.toDataURL('image/jpeg', 0.6);
-                pImg.style.display = 'block';
-                if(document.getElementById('t-'+input.id)) document.getElementById('t-'+input.id).style.display='none';
-            };
-            img.src = e.target.result;
-        };
-        reader.readAsDataURL(input.files[0]);
-    }
+    // 画像をBase64に変換する関数
+    const fileToBase64 = (file) => {
+        return new Promise((resolve, reject) => {
+            if (!file) { resolve(null); return; }
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = error => reject(error);
+        });
+    };
 
-    function addNewSet() {
-        setCount++;
-        const html = `<div class="card ba-grid"><div class="upload-box" style="height:100px; margin-bottom:0;" onclick="trigger('b${setCount}')"><span>BEFORE</span><img id="p-b${setCount}" style="display:none"></div><div class="upload-box" style="height:100px; margin-bottom:0;" onclick="trigger('a${setCount}')"><span>AFTER</span><img id="p-a${setCount}" style="display:none"></div></div><input type="file" id="b${setCount}" hidden onchange="preview(this)"><input type="file" id="a${setCount}" hidden onchange="preview(this)">`;
-        document.getElementById('ba-list').insertAdjacentHTML('beforeend', html);
-    }
-
-    async function finalSubmit() {
-        const overlay = document.getElementById('loadingOverlay');
-        overlay.style.display = 'flex';
-
-        const store = document.getElementById('storeName').value;
-        const gasUrl = "https://script.google.com/macros/s/AKfycbwl9mXhUlgroAI0m5lHNuOIrggxJem0dqNSYT-uSE5sPXrdq_GphnEOUN-IADmWTe0PCg/exec"; 
-        
-        const payload = {
-            pref: document.getElementById('pref').value, storeName: store,
-            stoneColor: document.getElementById('stoneColor').value, jointColor: document.getElementById('jointColor').value,
-            memo: document.getElementById('memo').value, kodawari: document.getElementById('kodawari').value,
-            voice: document.getElementById('voice').value, contactUrl: document.getElementById('contactUrl').value,
-            phone: document.getElementById('phone').value,
-            imgM: document.getElementById('p-mainImg').src || "",
-            imgB1: document.getElementById('p-b1').src || "",
-            imgA1: document.getElementById('p-a1').src || "",
-            imgF: document.getElementById('p-footImg').src || ""
-        };
+    async function generateAndDownload() {
+        const btn = document.getElementById('generateBtn');
+        btn.innerText = "生成中...";
+        btn.disabled = true;
 
         try {
-            // mode: 'no-cors' を指定してブラウザのブロックを回避
-            await fetch(gasUrl, { method: "POST", mode: "no-cors", body: JSON.stringify(payload) });
+            // 入力値の取得
+            const d = {
+                date: document.getElementById('date').value,
+                s: document.getElementById('customerName').value || "お客様",
+                addr: document.getElementById('address').value,
+                p: document.getElementById('shopName').value,
+                k: document.getElementById('kodawari').value,
+                sc: document.getElementById('area').value,
+                jc: document.getElementById('days').value,
+                m: document.getElementById('color').value,
+                v: document.getElementById('voice').value,
+                cu: document.getElementById('lineUrl').value
+            };
+
+            // 画像の読み込み
+            const im = await fileToBase64(document.getElementById('imgMain').files[0]);
+            const ib1 = await fileToBase64(document.getElementById('imgBefore').files[0]);
+            const ia1 = await fileToBase64(document.getElementById('imgAfter').files[0]);
+            const iff = await fileToBase64(document.getElementById('imgSub').files[0]);
+
+            // HTMLテンプレートの構築
+            const htmlContent = `
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>施工完了報告 | ${d.s}様邸</title>
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-9KY5C7XC36"><\/script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-9KY5C7XC36');
+<\/script>
+<style>
+    body { background: #0a0a0a; color: #fff; font-family: "Helvetica Neue", Arial, sans-serif; margin: 0; text-align: center; }
+    .main-img { width: 100%; max-height: 450px; object-fit: contain; border-bottom: 2px solid #c5a059; background: #000; }
+    .container { padding: 20px; max-width: 600px; margin: auto; }
+    .card { background: #1a1a1a; padding: 20px; border-radius: 15px; border: 1px solid #333; margin-bottom: 20px; text-align: left; box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
+    .label { color: #c5a059; font-size: 0.8rem; font-weight: bold; display: block; margin-bottom: 8px; letter-spacing: 0.05em; }
+    h1 { margin: 10px 0 20px; font-size: 1.8rem; text-align: center; color: #fff; }
+    p { line-height: 1.6; color: #ddd; }
+    .ba-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
+    .ba-box { text-align: center; }
+    .ba-box span { display: block; font-size: 0.8rem; color: #c5a059; margin-bottom: 5px; font-weight: bold; }
+    .ba-box img { width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 8px; border: 1px solid #555; background: #000; }
+    .btn-contact { display: block; width: 100%; padding: 18px; background: #06c755; color: white; text-decoration: none; border-radius: 50px; font-weight: bold; margin-top: 10px; box-sizing: border-box; text-align: center; font-size: 1.1rem; box-shadow: 0 4px 10px rgba(6, 199, 85, 0.4); }
+    .footer { margin-top: 40px; padding-bottom: 20px; color: #555; font-size: 0.7rem; }
+</style>
+</head>
+<body>
+    ${im ? `<img src="${im}" class="main-img">` : ''}
+    
+    <div class="container">
+        <p class="label" style="text-align:center;">${d.p} 施工報告</p>
+        <h1>${d.s} 様</h1>
+        <p style="text-align:center; color:#888; font-size:0.9rem; margin-top:-10px; margin-bottom:30px;">
+            ${d.addr ? d.addr : ''}
+        </p>
+
+        <div class="card">
+            <span class="label">こだわりポイント</span>
+            <p style="margin-top:0; white-space: pre-wrap;">${d.k || '素晴らしい仕上がりになりました。'}</p>
             
-            // 保存完了を待たずに（no-corsでは結果が取れないため）、LINE用リンクを生成
-            // 画像は数秒後に反映される前提で進める
-            const lpUrl = `${gasUrl}?p=${encodeURIComponent(payload.pref)}&s=${encodeURIComponent(store)}&sc=${encodeURIComponent(payload.stoneColor)}&jc=${encodeURIComponent(payload.jointColor)}&m=${encodeURIComponent(payload.memo)}&k=${encodeURIComponent(payload.kodawari)}&v=${encodeURIComponent(payload.voice)}&cu=${encodeURIComponent(payload.contactUrl)}&tel=${encodeURIComponent(payload.phone)}`;
+            <div style="border-top: 1px solid #333; margin-top:15px; padding-top:15px; font-size: 0.9rem; color:#aaa;">
+                <span style="margin-right:10px;">📐 面積: ${d.sc}㎡</span>
+                <span style="margin-right:10px;">📅 工期: ${d.jc}日</span>
+                <span>🎨 色: ${d.m}</span>
+            </div>
+        </div>
+
+        <h2 style="color:#c5a059; font-size: 1.2rem; margin: 30px 0 15px;">Before / After</h2>
+        <div class="ba-grid">
+            <div class="ba-box">
+                <span>BEFORE</span>
+                ${ib1 ? `<img src="${ib1}">` : '<div style="background:#222; height:100%; border-radius:8px;"></div>'}
+            </div>
+            <div class="ba-box">
+                <span>AFTER</span>
+                ${ia1 ? `<img src="${ia1}">` : '<div style="background:#222; height:100%; border-radius:8px;"></div>'}
+            </div>
+        </div>
+
+        ${d.v ? `
+        <div class="card">
+            <span class="label">お客様の声</span>
+            <p style="margin-top:0; font-style: italic; white-space: pre-wrap;">「${d.v}」</p>
+        </div>` : ''}
+
+        ${iff ? `<img src="${iff}" style="width:100%; border-radius:15px; margin-top:20px; border:1px solid #444;">` : ''}
+
+        <div style="margin-top:40px;">
+            ${d.cu ? `<a href="${d.cu}" class="btn-contact">公式LINEでお問い合わせ</a>` : ''}
+        </div>
+
+        <div class="footer">
+            Generated by RSW DX PORTAL<br>
+            Date: ${d.date}
+        </div>
+    </div>
+</body>
+</html>`;
+
+            // ダウンロード処理
+            const blob = new Blob([htmlContent], { type: 'text/html' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `report_${d.date}_${d.s}様.html`;
+            link.click();
+
+            // ボタンの状態を戻す
+            btn.innerText = "作成完了！もう一度作成する";
+            btn.disabled = false;
             
-            const msg = `お世話になっております。\n【施工報告】${store}\n報告ページ完成しました。\n${lpUrl}`;
-            
-            if (navigator.share) { 
-                await navigator.share({ text: msg }); 
-            } else { 
-                navigator.clipboard.writeText(msg); 
-                alert("LINE用メッセージをコピーしました！"); 
-            }
-        } catch (e) {
-            alert("通信環境により保存に失敗した可能性がありますが、メッセージを作成します。");
-        } finally {
-            overlay.style.display = 'none';
+            alert("報告書LPの作成が完了しました！\nダウンロードされたファイルを開いて確認してください。");
+
+        } catch (error) {
+            console.error(error);
+            alert("エラーが発生しました。画像のサイズが大きすぎる可能性があります。");
+            btn.innerText = "報告書LPを作成＆ダウンロード";
+            btn.disabled = false;
         }
     }
 </script>
+
 </body>
 </html>
