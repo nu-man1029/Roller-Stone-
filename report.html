@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RS施工報告 & LP生成</title>
+    <title>RS施工報告フォーム</title>
     <style>
         :root { --gold: #c5a059; --bg: #0a0a0a; --card: #1a1a1a; --border: #333; }
         body { background: var(--bg); color: #fff; font-family: sans-serif; margin: 0; padding-bottom: 120px; }
@@ -12,45 +12,44 @@
         .card { background: var(--card); border-radius: 15px; padding: 20px; border: 1px solid var(--border); margin-bottom: 15px; }
         label { display: block; color: var(--gold); font-size: 0.8rem; margin-bottom: 10px; font-weight: bold; }
         input, select, textarea { width: 100%; padding: 12px; background: #000; border: 1px solid #444; color: #fff; border-radius: 8px; box-sizing: border-box; margin-bottom: 15px; }
-        .upload-box { border: 2px dashed var(--gold); height: 150px; display: flex; align-items: center; justify-content: center; border-radius: 10px; margin-bottom: 20px; cursor: pointer; overflow: hidden; position: relative; background: #111; }
+        .upload-box { border: 2px dashed var(--gold); height: 140px; display: flex; align-items: center; justify-content: center; border-radius: 10px; margin-bottom: 15px; cursor: pointer; overflow: hidden; position: relative; }
         .upload-box img { width: 100%; height: 100%; object-fit: cover; }
         .ba-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .btn-add { width: 100%; background: none; border: 1px solid var(--gold); color: var(--gold); padding: 15px; border-radius: 10px; cursor: pointer; font-weight: bold; margin-bottom: 30px; }
+        .btn-add { width: 100%; background: none; border: 1px solid var(--gold); color: var(--gold); padding: 15px; border-radius: 10px; cursor: pointer; font-weight: bold; margin-bottom: 20px; }
         .btn-submit { width: 100%; background: linear-gradient(135deg, var(--gold), #eed08c); color: #000; border: none; padding: 18px; border-radius: 40px; font-weight: bold; font-size: 1.1rem; cursor: pointer; }
     </style>
 </head>
 <body>
 
-<div class="header"><h1>施工報告システム</h1></div>
-
+<div class="header"><h1>施工報告 & LP生成</h1></div>
 <div class="container">
     
-    <label>📸 1. メイン写真（一番上）</label>
-    <div class="upload-box" onclick="trigger('mainImg')">
-        <span id="t-mainImg">📸 タップして選択</span><img id="p-mainImg" style="display:none">
-        <input type="file" id="mainImg" hidden onchange="preview(this)">
+    <label>📸 1. メイン写真</label>
+    <div class="upload-box" onclick="trigger('mainImg')"><span id="t-mainImg">📸 選択</span><img id="p-mainImg" style="display:none"><input type="file" id="mainImg" hidden onchange="preview(this)"></div>
+
+    <div class="card">
+        <label>認定施工店エリア（都道府県）</label>
+        <select id="pref">
+            <script>
+                const prefs = ["北海道","青森県","岩手県","宮城県","秋田県","山形県","福島県","茨城県","栃木県","群馬県","埼玉県","千葉県","東京都","神奈川県","新潟県","富山県","石川県","福井県","山梨県","長野県","岐阜県","静岡県","愛知県","三重県","滋賀県","京都府","大阪府","兵庫県","奈良県","和歌山県","鳥取県","島根県","岡山県","広島県","山口県","徳島県","香川県","愛媛県","高知県","福岡県","佐賀県","長崎県","熊本県","大分県","宮崎県","鹿児島県","沖縄県"];
+                prefs.forEach(p => document.write(`<option value="${p}">${p}認定施工店</option>`));
+            </script>
+        </select>
+        <label>屋号</label><input type="text" id="storeName" placeholder="屋号を入力">
+        <label>お問い合わせURL (LINEなど)</label><input type="url" id="contactUrl" placeholder="https://line.me/...">
+        <label>電話番号</label><input type="tel" id="phone" placeholder="090-0000-0000">
     </div>
 
     <div class="card">
-        <label>認定施工店エリア</label>
-        <select id="pref">
-            <option value="三重県">三重県認定施工店</option>
-            <option value="愛知県">愛知県認定施工店</option>
-            <option value="岐阜県">岐阜県認定施工店</option>
-        </select>
-        <label>屋号</label><input type="text" id="storeName" placeholder="例：株式会社KENSIN">
-        
+        <label>こだわりポイント</label>
+        <textarea id="kodawari" rows="2" placeholder="こだわりを入力"></textarea>
         <label>石の色 / 目地の色</label>
-        <div style="display: flex; gap: 10px;">
-            <input type="text" id="stoneColor" placeholder="石色">
-            <input type="text" id="jointColor" placeholder="目地色">
-        </div>
-        
+        <div style="display: flex; gap: 10px;"><input type="text" id="stoneColor" placeholder="石色"><input type="text" id="jointColor" placeholder="目地色"></div>
         <label>現場備考</label>
-        <textarea id="memo" rows="2" placeholder="例：表札はぼかしを入れてください"></textarea>
+        <textarea id="memo" rows="2" placeholder="備考を入力"></textarea>
     </div>
 
-    <label>📸 2. Before / After (セット追加可能)</label>
+    <label>📸 2. Before / After</label>
     <div id="ba-list">
         <div class="card ba-grid">
             <div class="upload-box" style="height:100px; margin-bottom:0;" onclick="trigger('b1')"><span>BEFORE</span><img id="p-b1" style="display:none"></div>
@@ -60,72 +59,79 @@
     </div>
     <button class="btn-add" onclick="addNewSet()">＋ 比較セットを追加</button>
 
-    <label>📸 3. フッター写真（一番下）</label>
-    <div class="upload-box" style="height:120px;" onclick="trigger('footImg')">
-        <span id="t-footImg">📸 タップして選択</span><img id="p-footImg" style="display:none">
-        <input type="file" id="footImg" hidden onchange="preview(this)">
+    <div class="card">
+        <label>お客様の声</label>
+        <textarea id="voice" rows="2" placeholder="お客様の感想を入力"></textarea>
     </div>
 
-    <button class="btn-submit" onclick="finalSubmit()">報告を送信してLINEを作成</button>
+    <label>📸 3. フッター写真</label>
+    <div class="upload-box" style="height:120px;" onclick="trigger('footImg')"><span id="t-footImg">📸 選択</span><img id="p-footImg" style="display:none"><input type="file" id="footImg" hidden onchange="preview(this)"></div>
+
+    <button class="btn-submit" onclick="finalSubmit()">内容を確認して送信</button>
 </div>
 
 <script>
     let setCount = 1;
     function trigger(id) { document.getElementById(id).click(); }
-    
+
+    // 画像圧縮プレビュー機能
     function preview(input) {
         const reader = new FileReader();
         reader.onload = (e) => {
-            const img = document.getElementById('p-' + input.id);
-            img.src = e.target.result; img.style.display = 'block';
-            if(document.getElementById('t-'+input.id)) document.getElementById('t-'+input.id).style.display='none';
+            const img = new Image();
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                const max = 400; // 長辺400pxにリサイズ
+                let w = img.width, h = img.height;
+                if(w > h) { if(w > max){ h *= max/w; w = max; } } else { if(h > max){ w *= max/h; h = max; } }
+                canvas.width = w; canvas.height = h;
+                canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+                const pImg = document.getElementById('p-' + input.id);
+                pImg.src = canvas.toDataURL('image/jpeg', 0.6); // 圧縮してセット
+                pImg.style.display = 'block';
+                if(document.getElementById('t-'+input.id)) document.getElementById('t-'+input.id).style.display='none';
+            };
+            img.src = e.target.result;
         };
         reader.readAsDataURL(input.files[0]);
     }
 
     function addNewSet() {
         setCount++;
-        const html = `
-            <div class="card ba-grid">
-                <div class="upload-box" style="height:100px; margin-bottom:0;" onclick="trigger('b${setCount}')"><span>BEFORE</span><img id="p-b${setCount}" style="display:none"></div>
-                <div class="upload-box" style="height:100px; margin-bottom:0;" onclick="trigger('a${setCount}')"><span>AFTER</span><img id="p-a${setCount}" style="display:none"></div>
-            </div>
-            <input type="file" id="b${setCount}" hidden onchange="preview(this)"><input type="file" id="a${setCount}" hidden onchange="preview(this)">`;
+        const html = `<div class="card ba-grid"><div class="upload-box" style="height:100px; margin-bottom:0;" onclick="trigger('b${setCount}')"><span>BEFORE</span><img id="p-b${setCount}" style="display:none"></div><div class="upload-box" style="height:100px; margin-bottom:0;" onclick="trigger('a${setCount}')"><span>AFTER</span><img id="p-a${setCount}" style="display:none"></div></div><input type="file" id="b${setCount}" hidden onchange="preview(this)"><input type="file" id="a${setCount}" hidden onchange="preview(this)">`;
         document.getElementById('ba-list').insertAdjacentHTML('beforeend', html);
     }
 
     async function finalSubmit() {
         const store = document.getElementById('storeName').value;
-        const pref = document.getElementById('pref').value;
-        const sc = document.getElementById('stoneColor').value;
-        const jc = document.getElementById('jointColor').value;
-        const m = document.getElementById('memo').value;
-
-        // ★教えていただいた最新のIDを反映済み
-        const gasUrl = "https://script.google.com/macros/s/AKfycbwnpn1bmNRP18TrjRg58-471_sy2GI62Q5nWph-quTJRQ4rLsfg38G4GHYiJTeq0FEpIQ/exec"; 
-
+        const gasUrl = "https://script.google.com/macros/s/AKfycbyDPJN8acuWfUoP6XgnaXjNJU_fZLRQV2SmnLLB8FZmeWullFps2q7likTiYvfyGQQ4Lg/exec"; 
+        
         const payload = {
-            pref: pref, storeName: store, stoneColor: sc, jointColor: jc, memo: m
+            pref: document.getElementById('pref').value, storeName: store,
+            stoneColor: document.getElementById('stoneColor').value, jointColor: document.getElementById('jointColor').value,
+            memo: document.getElementById('memo').value, kodawari: document.getElementById('kodawari').value,
+            voice: document.getElementById('voice').value, contactUrl: document.getElementById('contactUrl').value,
+            phone: document.getElementById('phone').value
         };
 
         try {
-            // スプレッドシート保存用
+            // スプレッドシート保存
             await fetch(gasUrl, { method: "POST", mode: "no-cors", body: JSON.stringify(payload) });
-
-            // LINE共有用URLの組み立て
-            const lpUrl = `${gasUrl}?p=${encodeURIComponent(pref)}&s=${encodeURIComponent(store)}&sc=${encodeURIComponent(sc)}&jc=${encodeURIComponent(jc)}&m=${encodeURIComponent(m)}`;
             
+            // URL組み立て
+            let lpUrl = `${gasUrl}?p=${encodeURIComponent(payload.pref)}&s=${encodeURIComponent(store)}&sc=${encodeURIComponent(payload.stoneColor)}&jc=${encodeURIComponent(payload.jointColor)}&m=${encodeURIComponent(payload.memo)}&k=${encodeURIComponent(payload.kodawari)}&v=${encodeURIComponent(payload.voice)}&cu=${encodeURIComponent(payload.contactUrl)}&tel=${encodeURIComponent(payload.phone)}`;
+            
+            // 画像データ（im=Main, ib1=Before, ia1=After, iff=Footer）
+            const im = document.getElementById('p-mainImg').src; if(im.startsWith('data:')) lpUrl += `&im=${encodeURIComponent(im)}`;
+            const ib = document.getElementById('p-b1').src; if(ib.startsWith('data:')) lpUrl += `&ib1=${encodeURIComponent(ib)}`;
+            const ia = document.getElementById('p-a1').src; if(ia.startsWith('data:')) lpUrl += `&ia1=${encodeURIComponent(ia)}`;
+            const iff = document.getElementById('p-footImg').src; if(iff.startsWith('data:')) lpUrl += `&iff=${encodeURIComponent(iff)}`;
+
             const msg = `お世話になっております。\n【施工報告】${store}\n集客LP 兼 報告ページ完成です。\nご確認、宜しくお願いします\n${lpUrl}\n\n※このリンクをSNSのプロフィールや、グループLINEに共有してください。`;
             
-            if (navigator.share) { 
-                await navigator.share({ text: msg }); 
-            } else { 
-                navigator.clipboard.writeText(msg); 
-                alert("LINE用メッセージをコピーしました！"); 
-            }
-        } catch (e) { 
-            alert("送信エラーが発生しました。"); 
-        }
+            if (navigator.share) { await navigator.share({ text: msg }); } 
+            else { navigator.clipboard.writeText(msg); alert("LINE用メッセージをコピーしました！"); }
+        } catch (e) { alert("送信エラーが発生しました。"); }
     }
 </script>
 </body>
