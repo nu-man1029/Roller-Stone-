@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>施工報告 & LP生成</title>
+    <title>RS施工報告 & LP生成</title>
     <style>
         :root { --gold: #c5a059; --bg: #0a0a0a; --card: #1a1a1a; --border: #333; }
         body { background: var(--bg); color: #fff; font-family: sans-serif; margin: 0; padding-bottom: 120px; }
@@ -14,64 +14,85 @@
         input, select, textarea { width: 100%; padding: 12px; background: #000; border: 1px solid #444; color: #fff; border-radius: 8px; box-sizing: border-box; margin-bottom: 15px; }
         .upload-box { border: 2px dashed var(--gold); height: 150px; display: flex; align-items: center; justify-content: center; border-radius: 10px; margin-bottom: 20px; cursor: pointer; overflow: hidden; position: relative; background: #111; }
         .upload-box img { width: 100%; height: 100%; object-fit: cover; }
+        .ba-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .btn-add { width: 100%; background: none; border: 1px solid var(--gold); color: var(--gold); padding: 15px; border-radius: 10px; cursor: pointer; font-weight: bold; margin-bottom: 30px; }
         .btn-submit { width: 100%; background: linear-gradient(135deg, var(--gold), #eed08c); color: #000; border: none; padding: 18px; border-radius: 40px; font-weight: bold; font-size: 1.1rem; cursor: pointer; }
-        #preview-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 2000; overflow-y: auto; padding-bottom: 100px; }
     </style>
 </head>
 <body>
 
 <div class="header"><h1>施工報告システム</h1></div>
+
 <div class="container">
+    
     <label>📸 1. メイン写真（一番上）</label>
-    <div class="upload-box" onclick="trigger('mainImg')"><span id="t-mainImg">📸 選択</span><img id="p-mainImg" style="display:none"><input type="file" id="mainImg" hidden onchange="preview(this)"></div>
+    <div class="upload-box" onclick="trigger('mainImg')">
+        <span id="t-mainImg">📸 タップして選択</span><img id="p-mainImg" style="display:none">
+        <input type="file" id="mainImg" hidden onchange="preview(this)">
+    </div>
 
     <div class="card">
         <label>認定施工店エリア</label>
-        <select id="pref"><option value="">選択</option><option value="三重県">三重県認定施工店</option><option value="愛知県">愛知県認定施工店</option></select>
-        <label>屋号</label><input type="text" id="storeName" placeholder="屋号を入力">
-        <label>お問合せ先</label><input type="url" id="contactUrl" placeholder="LINE URL"><input type="tel" id="phone" placeholder="電話番号">
+        <select id="pref">
+            <option value="三重県">三重県認定施工店</option>
+            <option value="愛知県">愛知県認定施工店</option>
+            <option value="岐阜県">岐阜県認定施工店</option>
+        </select>
+        <label>屋号</label><input type="text" id="storeName" placeholder="例：株式会社KENSIN">
+        
+        <label>石の色 / 目地の色</label>
+        <div style="display: flex; gap: 10px;">
+            <input type="text" id="stoneColor" placeholder="石色">
+            <input type="text" id="jointColor" placeholder="目地色">
+        </div>
+        
+        <label>現場備考</label>
+        <textarea id="memo" rows="2" placeholder="例：表札はぼかしを入れてください"></textarea>
     </div>
 
-    <label>📸 2. Before / After</label>
-    <div class="card" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-        <div class="upload-box" style="height:100px;" onclick="trigger('b1')"><span>BEFORE</span><img id="p-b1" style="display:none"></div>
-        <div class="upload-box" style="height:100px;" onclick="trigger('a1')"><span>AFTER</span><img id="p-a1" style="display:none"></div>
+    <label>📸 2. Before / After (セット追加可能)</label>
+    <div id="ba-list">
+        <div class="card ba-grid">
+            <div class="upload-box" style="height:100px; margin-bottom:0;" onclick="trigger('b1')"><span>BEFORE</span><img id="p-b1" style="display:none"></div>
+            <div class="upload-box" style="height:100px; margin-bottom:0;" onclick="trigger('a1')"><span>AFTER</span><img id="p-a1" style="display:none"></div>
+        </div>
         <input type="file" id="b1" hidden onchange="preview(this)"><input type="file" id="a1" hidden onchange="preview(this)">
     </div>
-
-    <div class="card">
-        <label>石色 / 目地色</label>
-        <input type="text" id="stoneColor" placeholder="石色"><input type="text" id="jointColor" placeholder="目地色">
-        <label>備考（現場指示など）</label>
-        <textarea id="memo" rows="2" placeholder="入力例：表札はぼかしを入れてください"></textarea>
-    </div>
+    <button class="btn-add" onclick="addNewSet()">＋ 比較セットを追加</button>
 
     <label>📸 3. フッター写真（一番下）</label>
-    <div class="upload-box" onclick="trigger('footImg')"><span id="t-footImg">📸 選択</span><img id="p-footImg" style="display:none"><input type="file" id="footImg" hidden onchange="preview(this)"></div>
+    <div class="upload-box" style="height:120px;" onclick="trigger('footImg')">
+        <span id="t-footImg">📸 タップして選択</span><img id="p-footImg" style="display:none">
+        <input type="file" id="footImg" hidden onchange="preview(this)">
+    </div>
 
-    <button class="btn-submit" onclick="showPreview()">プレビューを確認</button>
-</div>
-
-<div id="preview-modal">
-    <div style="padding: 20px; text-align: center;"><h2 style="color:var(--gold);">送信内容の確認</h2><div id="preview-content"></div>
-    <button class="btn-submit" onclick="finalSubmit()">この内容で送信・LINE作成</button>
-    <button onclick="closePreview()" style="color:#888; background:none; border:none; margin-top:20px;">修正する</button></div>
+    <button class="btn-submit" onclick="finalSubmit()">報告を送信してLINEを作成</button>
 </div>
 
 <script>
+    let setCount = 1;
     function trigger(id) { document.getElementById(id).click(); }
+    
     function preview(input) {
         const reader = new FileReader();
-        reader.onload = (e) => { document.getElementById('p-' + input.id).src = e.target.result; document.getElementById('p-' + input.id).style.display = 'block'; };
+        reader.onload = (e) => {
+            const img = document.getElementById('p-' + input.id);
+            img.src = e.target.result; img.style.display = 'block';
+            if(document.getElementById('t-'+input.id)) document.getElementById('t-'+input.id).style.display='none';
+        };
         reader.readAsDataURL(input.files[0]);
     }
-    function showPreview() {
-        const store = document.getElementById('storeName').value;
-        if(!store) return alert("屋号を入れてください");
-        document.getElementById('preview-content').innerHTML = `<div class="card"><h3>${store}</h3><p>石色:${document.getElementById('stoneColor').value}</p><p>備考:${document.getElementById('memo').value}</p></div>`;
-        document.getElementById('preview-modal').style.display = 'block';
+
+    function addNewSet() {
+        setCount++;
+        const html = `
+            <div class="card ba-grid">
+                <div class="upload-box" style="height:100px; margin-bottom:0;" onclick="trigger('b${setCount}')"><span>BEFORE</span><img id="p-b${setCount}" style="display:none"></div>
+                <div class="upload-box" style="height:100px; margin-bottom:0;" onclick="trigger('a${setCount}')"><span>AFTER</span><img id="p-a${setCount}" style="display:none"></div>
+            </div>
+            <input type="file" id="b${setCount}" hidden onchange="preview(this)"><input type="file" id="a${setCount}" hidden onchange="preview(this)">`;
+        document.getElementById('ba-list').insertAdjacentHTML('beforeend', html);
     }
-    function closePreview() { document.getElementById('preview-modal').style.display = 'none'; }
 
     async function finalSubmit() {
         const store = document.getElementById('storeName').value;
@@ -79,19 +100,32 @@
         const sc = document.getElementById('stoneColor').value;
         const jc = document.getElementById('jointColor').value;
         const m = document.getElementById('memo').value;
-        
-        // ★ image_9b0962.png の最新URL
-        const gasUrl = "https://script.google.com/macros/s/AKfycbwye2V3Ks750mJWmxxoZzG_OljiZ1qfGCQRU_pWAnHJs49V7YndLBDSZFK355znQ/exec"; 
+
+        // ★教えていただいた最新のIDを反映済み
+        const gasUrl = "https://script.google.com/macros/s/AKfycbwnpn1bmNRP18TrjRg58-471_sy2GI62Q5nWph-quTJRQ4rLsfg38G4GHYiJTeq0FEpIQ/exec"; 
+
+        const payload = {
+            pref: pref, storeName: store, stoneColor: sc, jointColor: jc, memo: m
+        };
 
         try {
-            await fetch(gasUrl, { method: "POST", mode: "no-cors", body: JSON.stringify({pref: pref, storeName: store, stoneColor: sc, jointColor: jc, memo: m}) });
+            // スプレッドシート保存用
+            await fetch(gasUrl, { method: "POST", mode: "no-cors", body: JSON.stringify(payload) });
+
+            // LINE共有用URLの組み立て
             const lpUrl = `${gasUrl}?p=${encodeURIComponent(pref)}&s=${encodeURIComponent(store)}&sc=${encodeURIComponent(sc)}&jc=${encodeURIComponent(jc)}&m=${encodeURIComponent(m)}`;
+            
             const msg = `お世話になっております。\n【施工報告】${store}\n集客LP 兼 報告ページ完成です。\nご確認、宜しくお願いします\n${lpUrl}\n\n※このリンクをSNSのプロフィールや、グループLINEに共有してください。`;
             
-            if (navigator.share) { await navigator.share({ text: msg }); } 
-            else { navigator.clipboard.writeText(msg); alert("LINE用メッセージをコピーしました！"); }
-        } catch (e) { alert("送信エラー"); }
-        closePreview();
+            if (navigator.share) { 
+                await navigator.share({ text: msg }); 
+            } else { 
+                navigator.clipboard.writeText(msg); 
+                alert("LINE用メッセージをコピーしました！"); 
+            }
+        } catch (e) { 
+            alert("送信エラーが発生しました。"); 
+        }
     }
 </script>
 </body>
