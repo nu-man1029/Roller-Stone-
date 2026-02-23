@@ -148,11 +148,29 @@
 
     function closePreview() { document.getElementById('preview-modal').style.display = 'none'; }
 
-    async function finalSubmit() {
-        const store = document.getElementById('storeName').value;
-        const gasUrl = "https://script.google.com/macros/s/AKfycbym8JRPn7lfk_wbsOBu7YJZ16FmAW4QEMUCugfuYVyJxN_nZZDLaKZD6o5b_q3P9ZbWig/exec"; 
+  async function finalSubmit() {
+    const store = document.getElementById('storeName').value;
+    const pref = document.getElementById('pref').value;
+    const gasUrl = "https://script.google.com/macros/s/AKfycbym8JRPn7lfk_wbsOBu7YJZ16FmAW4QEMUCugfuYVyJxN_nZZDLaKZD6o5b_q3P9ZbWig/exec"; 
 
-        const msg = `お世話になっております。\n【施工報告】${store}\n集客LP 兼 報告ページ完成です。\nご確認、宜しくお願いします\n${gasUrl}?s=${encodeURIComponent(store)}\n\n※このリンクをSNSのプロフィールや、グループLINEに共有してください。`;
+    // スプレッドシートへ送信するデータ
+    const payload = {
+        pref: pref,
+        storeName: store,
+        area: document.getElementById('area').value,
+        days: document.getElementById('days').value,
+        stoneColor: document.getElementById('stoneColor').value,
+        jointColor: document.getElementById('jointColor').value,
+        points: document.getElementById('points').value,
+        voice: document.getElementById('voice').value,
+        memo: document.getElementById('memo').value
+    };
+
+    try {
+        await fetch(gasUrl, { method: "POST", mode: "no-cors", body: JSON.stringify(payload) });
+
+        // ★ご指定の挨拶文メッセージ
+        const msg = `お世話になっております。\n【施工報告】${store}\n集客LP 兼 報告ページ完成です。\nご確認、宜しくお願いします\n${gasUrl}?p=${encodeURIComponent(pref)}&s=${encodeURIComponent(store)}\n\n※このリンクをSNSのプロフィールや、グループLINEに共有してください。`;
 
         if (navigator.share) {
             await navigator.share({ text: msg });
@@ -160,8 +178,8 @@
             navigator.clipboard.writeText(msg);
             alert("報告メッセージをコピーしました！LINEに貼り付けてください。");
         }
-        closePreview();
+    } catch (e) {
+        alert("送信エラーが発生しました。");
     }
-</script>
-</body>
-</html>
+    closePreview();
+}
