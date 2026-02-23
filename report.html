@@ -91,32 +91,81 @@
 
 <script>
     let setCount = 1;
+
+    // セットを追加する関数
     function addNewSet() {
         setCount++;
-        const html = `<div class="ba-set" id="set-${setCount}"><div class="ba-grid"><div class="upload-box" onclick="trigger('b${setCount}')"><span class="ba-badge">BEFORE</span><span id="t-b${setCount}">📸 写真を選択</span><img id="p-b${setCount}" style="display:none"><input type="file" id="b${setCount}" hidden onchange="preview(this)"></div><div class="upload-box" onclick="trigger('a${setCount}')"><span class="ba-badge">AFTER</span><span id="t-a${setCount}">📸 写真を選択</span><img id="p-a${setCount}" style="display:none"><input type="file" id="a${setCount}" hidden onchange="preview(this)"></div></div></div>`;
+        const html = `
+            <div class="ba-set" id="set-${setCount}">
+                <div class="ba-grid">
+                    <div class="upload-box" onclick="trigger('b${setCount}')">
+                        <span class="ba-badge">BEFORE</span>
+                        <span id="t-b${setCount}">📸 写真を選択</span><img id="p-b${setCount}" style="display:none">
+                        <input type="file" id="b${setCount}" hidden onchange="preview(this)">
+                    </div>
+                    <div class="upload-box" onclick="trigger('a${setCount}')">
+                        <span class="ba-badge">AFTER</span>
+                        <span id="t-a${setCount}">📸 写真を選択</span><img id="p-a${setCount}" style="display:none">
+                        <input type="file" id="a${setCount}" hidden onchange="preview(this)">
+                    </div>
+                </div>
+            </div>`;
         document.getElementById('ba-list').insertAdjacentHTML('beforeend', html);
     }
+
     function trigger(id) { document.getElementById(id).click(); }
+
     function preview(input) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            const img = document.getElementById('p-' + input.id);
-            img.src = e.target.result; img.style.display = 'block';
-            document.getElementById('t-' + input.id).style.display = 'none';
-        };
-        reader.readAsDataURL(input.files[0]);
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = document.getElementById('p-' + input.id);
+                const txt = document.getElementById('t-' + input.id);
+                img.src = e.target.result;
+                img.style.display = 'block';
+                txt.style.display = 'none';
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
     }
 
-    function submitToGas() {
-        // ここで生成されるURLが「最強のデモ」になります
-        const url = "https://script.google.com/macros/s/XXXX/exec"; 
-        const msg = `【施工報告】${document.getElementById('storeName').value}\n\n集客LP 兼 報告ページが完成しました。\n${url}\n\n※このリンクをSNSのプロフィールや、グループLINEに共有してください。`;
-        
-        if (navigator.share) {
-            navigator.share({ text: msg });
-        } else {
-            alert("URLを生成し、コピーしました。");
-            navigator.clipboard.writeText(msg);
+    // ★★★ ここが一番重要！送信ボタンを押した時の動きです ★★★
+    async function submitToGas() {
+        const store = document.getElementById('storeName').value;
+        if(!store) return alert("屋号を入力してください");
+
+        // 【画像 image_908dcf.png で発行された最新のURLです】
+        const gasUrl = "https://script.google.com/macros/s/AKfycbym8JRPn7lfk_wbsOBu7YJZ16FmAW4QEMUCugfuYVyJxN_nZZDLaKZD6o5b_q3P9ZbWig/exec"; 
+
+        const payload = {
+            storeName: store,
+            area: document.getElementById('area').value,
+            days: document.getElementById('days').value,
+            colors: document.getElementById('colors').value,
+            points: document.getElementById('points').value,
+            voice: document.getElementById('voice').value
+        };
+
+        try {
+            // Googleスプレッドシートへデータを飛ばす
+            await fetch(gasUrl, {
+                method: "POST",
+                mode: "no-cors", 
+                body: JSON.stringify(payload)
+            });
+
+            // LINE送信用の文章を作る
+            const lpUrl = gasUrl + "?s=" + encodeURIComponent(store);
+            const msg = `【施工報告：${store}】\nAIリライト済みの報告ページを生成しました。\n\n▼確認・素材DLページ\n${lpUrl}\n\n（このURLをグループLINEに共有してください）`;
+
+            if (navigator.share) {
+                await navigator.share({ text: msg });
+            } else {
+                navigator.clipboard.writeText(msg);
+                alert("報告ページURLを作成し、コピーしました！LINEに貼り付けてください。");
+            }
+        } catch (e) {
+            alert("送信に失敗しました。ネット接続を確認してください。");
         }
     }
 </script>
