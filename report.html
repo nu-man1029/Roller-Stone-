@@ -10,33 +10,23 @@
         .header { background: #000; padding: 20px; text-align: center; border-bottom: 2px solid var(--gold); position: sticky; top: 0; z-index: 100; }
         .header h1 { color: var(--gold); margin: 0; font-size: 1rem; letter-spacing: 2px; }
         .container { max-width: 500px; margin: 0 auto; padding: 20px; }
-        
         .section-title { color: var(--gold); font-size: 0.8rem; font-weight: bold; margin: 25px 0 10px; display: flex; align-items: center; }
         .section-title::after { content: ""; flex: 1; height: 1px; background: var(--border); margin-left: 10px; }
-        
         .card { background: var(--card); border-radius: 15px; padding: 20px; border: 1px solid var(--border); margin-bottom: 15px; }
         label { display: block; color: #888; font-size: 0.7rem; margin-bottom: 5px; }
-        
         input, select, textarea { width: 100%; padding: 12px; background: #000; border: 1px solid #444; color: #fff; border-radius: 8px; box-sizing: border-box; font-size: 0.95rem; margin-bottom: 15px; }
         input:focus, select:focus, textarea:focus { border-color: var(--gold); outline: none; }
-        ::placeholder { color: #555; }
-
-        /* 画像セット */
         .ba-set { background: #111; padding: 15px; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 15px; }
         .ba-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .upload-box { background: #222; border: 1px dashed var(--gold); height: 110px; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 10px; cursor: pointer; overflow: hidden; position: relative; }
         .upload-box img { width: 100%; height: 100%; object-fit: cover; }
         .ba-badge { position: absolute; top: 5px; left: 5px; background: rgba(0,0,0,0.7); color: var(--gold); font-size: 0.6rem; padding: 2px 6px; border-radius: 4px; font-weight: bold; }
-
         .btn-add { width: 100%; background: none; border: 1px solid var(--gold); color: var(--gold); padding: 15px; border-radius: 10px; cursor: pointer; font-weight: bold; margin-bottom: 30px; }
-        
-        /* プレビュー画面（オーバーレイ） */
         #preview-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 2000; overflow-y: auto; padding-bottom: 100px; }
         .preview-header { background: #000; padding: 15px; color: var(--gold); text-align: center; border-bottom: 1px solid var(--gold); position: sticky; top: 0; }
-        
         .footer { position: fixed; bottom: 0; width: 100%; background: rgba(0,0,0,0.9); padding: 20px; box-sizing: border-box; border-top: 1px solid #333; backdrop-filter: blur(10px); z-index: 1000; }
-        .btn-submit { width: 100%; max-width: 460px; display: block; margin: 0 auto; background: linear-gradient(135deg, var(--gold), #eed08c); color: #000; border: none; padding: 18px; border-radius: 40px; font-weight: bold; font-size: 1.1rem; cursor: pointer; }
-        .btn-close { background: #333; color: #fff; margin-top: 10px; border-radius: 40px; padding: 10px; border: none; width: 100%; }
+        .btn-submit { width: 100%; max-width: 460px; display: block; margin: 0 auto; background: linear-gradient(135deg, var(--gold), #eed08c); color: #000; border: none; padding: 18px; border-radius: 40px; font-weight: bold; font-size: 1.1rem; cursor: pointer; text-align: center; }
+        .btn-close { background: #333; color: #fff; margin-top: 10px; border-radius: 40px; padding: 10px; border: none; width: 100%; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -52,7 +42,7 @@
                 <option value="三重県">三重県認定施工店</option>
                 <option value="愛知県">愛知県認定施工店</option>
                 <option value="岐阜県">岐阜県認定施工店</option>
-                </select>
+            </select>
             <label>屋号</label>
             <input type="text" id="storeName" placeholder="例：株式会社KENSIN">
         </div>
@@ -84,7 +74,7 @@
             <label>お客様の声</label>
             <textarea id="voice" rows="2" placeholder="お客様の声：明るくなったと喜ばれました"></textarea>
             <label>自由記述備考欄</label>
-            <textarea id="memo" rows="2" placeholder="入力例：表札はぼかしを入れてください、など"></textarea>
+            <textarea id="memo" rows="2" placeholder="例：表札はぼかしを入れてください"></textarea>
         </div>
 
         <div class="section-title">5. 写真 (Before/After)</div>
@@ -103,8 +93,7 @@
 
 <div id="preview-modal">
     <div class="preview-header">プレビュー確認</div>
-    <div class="container" id="preview-content">
-        </div>
+    <div class="container" id="preview-content"></div>
     <div class="footer">
         <button class="btn-submit" onclick="finalSubmit()">これで送信・URL生成</button>
         <button class="btn-close" onclick="closePreview()">修正する</button>
@@ -129,57 +118,33 @@
         const store = document.getElementById('storeName').value;
         const pref = document.getElementById('pref').value;
         if(!store || !pref) return alert("屋号と都道府県を選択してください");
-
-        const content = `
-            <div class="card">
-                <h2 style="color:var(--gold); margin:0;">${pref}認定施工店</h2>
-                <h3 style="margin:5px 0;">${store}</h3>
-                <hr style="border:0; border-top:1px solid #333; margin:15px 0;">
-                <p><b>面積:</b> ${document.getElementById('area').value} / <b>日数:</b> ${document.getElementById('days').value}</p>
-                <p><b>石色:</b> ${document.getElementById('stoneColor').value} / <b>目地:</b> ${document.getElementById('jointColor').value}</p>
-                <p style="font-size:0.9rem; color:#ccc;"><b>こだわり:</b><br>${document.getElementById('points').value}</p>
-                <p style="font-size:0.9rem; color:#ccc;"><b>備考:</b><br>${document.getElementById('memo').value}</p>
-            </div>
-            <p style="text-align:center; font-size:0.8rem; color:#888;">※写真は本番URLでスライド形式になります</p>
-        `;
-        document.getElementById('preview-content').innerHTML = content;
+        document.getElementById('preview-content').innerHTML = `<div class="card"><h2 style="color:var(--gold); margin:0;">${pref}認定施工店</h2><h3 style="margin:5px 0;">${store}</h3><hr style="border:0; border-top:1px solid #333; margin:15px 0;"><p><b>面積:</b> ${document.getElementById('area').value} / <b>日数:</b> ${document.getElementById('days').value}</p><p><b>石色:</b> ${document.getElementById('stoneColor').value} / <b>目地:</b> ${document.getElementById('jointColor').value}</p><p><b>備考:</b> ${document.getElementById('memo').value}</p></div>`;
         document.getElementById('preview-modal').style.display = 'block';
     }
 
     function closePreview() { document.getElementById('preview-modal').style.display = 'none'; }
 
-  async function finalSubmit() {
-    const store = document.getElementById('storeName').value;
-    const pref = document.getElementById('pref').value;
-    const gasUrl = "https://script.google.com/macros/s/AKfycbym8JRPn7lfk_wbsOBu7YJZ16FmAW4QEMUCugfuYVyJxN_nZZDLaKZD6o5b_q3P9ZbWig/exec"; 
+    async function finalSubmit() {
+        const store = document.getElementById('storeName').value;
+        const pref = document.getElementById('pref').value;
+        // ★新しいURLをここに適用済み
+        const gasUrl = "https://script.google.com/macros/s/AKfycby6OlI_OXhTXsHf8HZwtmok_EH2G7G3PeIBiJzU18288HEVoICNXyI3YViVGdSUVMp3Ow/exec"; 
 
-    // スプレッドシートへ送信するデータ
-    const payload = {
-        pref: pref,
-        storeName: store,
-        area: document.getElementById('area').value,
-        days: document.getElementById('days').value,
-        stoneColor: document.getElementById('stoneColor').value,
-        jointColor: document.getElementById('jointColor').value,
-        points: document.getElementById('points').value,
-        voice: document.getElementById('voice').value,
-        memo: document.getElementById('memo').value
-    };
+        const payload = {
+            pref: pref, storeName: store, area: document.getElementById('area').value,
+            days: document.getElementById('days').value, stoneColor: document.getElementById('stoneColor').value,
+            jointColor: document.getElementById('jointColor').value, points: document.getElementById('points').value,
+            voice: document.getElementById('voice').value, memo: document.getElementById('memo').value
+        };
 
-    try {
-        await fetch(gasUrl, { method: "POST", mode: "no-cors", body: JSON.stringify(payload) });
-
-        // ★ご指定の挨拶文メッセージ
-        const msg = `お世話になっております。\n【施工報告】${store}\n集客LP 兼 報告ページ完成です。\nご確認、宜しくお願いします\n${gasUrl}?p=${encodeURIComponent(pref)}&s=${encodeURIComponent(store)}\n\n※このリンクをSNSのプロフィールや、グループLINEに共有してください。`;
-
-        if (navigator.share) {
-            await navigator.share({ text: msg });
-        } else {
-            navigator.clipboard.writeText(msg);
-            alert("報告メッセージをコピーしました！LINEに貼り付けてください。");
-        }
-    } catch (e) {
-        alert("送信エラーが発生しました。");
+        try {
+            await fetch(gasUrl, { method: "POST", mode: "no-cors", body: JSON.stringify(payload) });
+            const msg = `お世話になっております。\n【施工報告】${store}\n集客LP 兼 報告ページ完成です。\nご確認、宜しくお願いします\n${gasUrl}?p=${encodeURIComponent(pref)}&s=${encodeURIComponent(store)}\n\n※このリンクをSNSのプロフィールや、グループLINEに共有してください。`;
+            if (navigator.share) { await navigator.share({ text: msg }); } 
+            else { navigator.clipboard.writeText(msg); alert("報告メッセージをコピーしました！"); }
+        } catch (e) { alert("送信エラーが発生しました。"); }
+        closePreview();
     }
-    closePreview();
-}
+</script>
+</body>
+</html>
