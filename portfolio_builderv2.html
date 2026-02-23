@@ -3,188 +3,953 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>提案パース・ビルダー | Analytics Integrated</title>
+    <title>提案パース・ビルダー | ROLLER STONE PREMIUM</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=Noto+Serif+JP:wght@200;300;400&display=swap" rel="stylesheet">
     <style>
-        :root { --gold: #D4AF37; --dark-bg: #1a1a1a; --input-bg: #2a2a2a; --text-color: #ffffff; }
-        body { font-family: 'Helvetica Neue', Arial, 'Hiragino Mincho ProN', serif; background-color: #000; color: var(--text-color); margin: 0; padding-bottom: 50px; }
+        :root {
+            --gold: #C9A84C;
+            --gold-light: #E8D5A3;
+            --gold-dim: rgba(201,168,76,0.3);
+            --dark: #0e0e0e;
+            --panel: #141414;
+            --card: #1a1a1a;
+            --input-bg: #111;
+            --border: #2a2a2a;
+            --text: #e8e8e8;
+            --muted: #777;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Noto Serif JP', 'Cormorant Garamond', serif;
+            background: var(--dark);
+            color: var(--text);
+            min-height: 100vh;
+        }
 
-        /* 編集パネル */
-        .editor-container { max-width: 900px; margin: 0 auto; padding: 20px; background: var(--dark-bg); border-bottom: 2px solid var(--gold); position: sticky; top: 0; z-index: 100; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
-        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        @media (max-width: 600px) { .form-grid { grid-template-columns: 1fr; } }
+        /* ━━━ HEADER ━━━ */
+        .app-header {
+            background: var(--panel);
+            border-bottom: 1px solid var(--border);
+            padding: 14px 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 200;
+        }
+        .app-logo {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.1rem;
+            font-weight: 300;
+            letter-spacing: 4px;
+            color: var(--gold);
+            text-transform: uppercase;
+        }
+        .app-logo span { color: var(--muted); font-size: 0.65rem; letter-spacing: 6px; display: block; margin-top: 2px; }
 
-        .form-group { margin-bottom: 12px; }
-        label { display: block; font-size: 0.7rem; color: var(--gold); margin-bottom: 5px; font-weight: bold; letter-spacing: 1px; }
-        input[type="text"], textarea, select { width: 100%; background: var(--input-bg); border: 1px solid #444; color: white; padding: 10px; box-sizing: border-box; border-radius: 4px; font-size: 0.85rem; }
-        input[type="file"] { font-size: 0.7rem; color: #ccc; width: 100%; border: 1px dashed #555; padding: 5px; background: #111; }
-        
-        .style-selector { display: flex; gap: 5px; margin-bottom: 8px; }
-        .style-btn { flex: 1; background: #333; border: 1px solid #555; color: #888; padding: 6px; font-size: 0.65rem; cursor: pointer; border-radius: 4px; }
-        .style-btn.active { border-color: var(--gold); color: var(--gold); background: #2a2515; }
+        /* ━━━ LAYOUT ━━━ */
+        .workspace {
+            display: grid;
+            grid-template-columns: 380px 1fr;
+            height: calc(100vh - 57px);
+        }
+        @media (max-width: 900px) {
+            .workspace { grid-template-columns: 1fr; height: auto; }
+            .preview-panel { height: 70vh; }
+        }
 
-        .ai-suggestion-box { grid-column: 1 / -1; background: #0a0a0a; border: 1px solid #D4AF37; padding: 12px; border-radius: 4px; margin-top: 5px; display: none; }
-        .copy-chip { display: inline-block; background: #222; color: #ddd; padding: 6px 12px; border-radius: 4px; font-size: 0.8rem; margin: 0 5px 5px 0; cursor: pointer; border: 1px solid #444; }
+        /* ━━━ EDITOR PANEL ━━━ */
+        .editor-panel {
+            background: var(--panel);
+            border-right: 1px solid var(--border);
+            overflow-y: auto;
+            padding: 28px 24px;
+        }
+        .editor-panel::-webkit-scrollbar { width: 4px; }
+        .editor-panel::-webkit-scrollbar-track { background: transparent; }
+        .editor-panel::-webkit-scrollbar-thumb { background: #333; border-radius: 2px; }
 
-        .btn-publish { background: linear-gradient(45deg, #B8860B, #D4AF37); color: #000; border: none; padding: 16px; font-weight: bold; cursor: pointer; border-radius: 4px; width: 100%; font-size: 1rem; margin-top: 15px; letter-spacing: 2px; }
-        
-        #preview-frame-container { width: 100%; max-width: 1000px; height: 800px; margin: 20px auto; background: #000; overflow: hidden; border: 1px solid #333; }
-        iframe { width: 100%; height: 100%; border: none; }
+        .section-title {
+            font-size: 0.6rem;
+            letter-spacing: 5px;
+            color: var(--gold);
+            text-transform: uppercase;
+            margin: 28px 0 14px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--gold-dim);
+            font-family: 'Cormorant Garamond', serif;
+        }
+        .section-title:first-child { margin-top: 0; }
+
+        /* API KEY */
+        .api-key-row {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            background: #0a0a0a;
+            border: 1px solid #2a2a2a;
+            border-radius: 6px;
+            padding: 10px 12px;
+            margin-bottom: 6px;
+        }
+        .api-key-row input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: var(--text);
+            font-size: 0.78rem;
+            outline: none;
+            font-family: 'Courier New', monospace;
+        }
+        .api-key-row input::placeholder { color: #444; }
+        .api-key-hint { font-size: 0.62rem; color: #555; margin-bottom: 20px; line-height: 1.6; }
+        .api-key-hint a { color: var(--gold); text-decoration: none; }
+
+        /* FORM ELEMENTS */
+        .form-group { margin-bottom: 16px; }
+        label {
+            display: block;
+            font-size: 0.62rem;
+            color: var(--muted);
+            margin-bottom: 6px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+        input[type="text"], textarea {
+            width: 100%;
+            background: var(--input-bg);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 10px 13px;
+            border-radius: 5px;
+            font-size: 0.82rem;
+            font-family: 'Noto Serif JP', serif;
+            transition: border-color 0.2s;
+            outline: none;
+        }
+        input[type="text"]:focus, textarea:focus { border-color: var(--gold-dim); }
+        textarea { resize: vertical; line-height: 1.7; }
+
+        .file-upload-area {
+            border: 1px dashed #333;
+            border-radius: 5px;
+            padding: 14px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: var(--input-bg);
+            position: relative;
+        }
+        .file-upload-area:hover { border-color: var(--gold-dim); background: #151515; }
+        .file-upload-area input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; }
+        .file-upload-area .upload-label { font-size: 0.7rem; color: #555; letter-spacing: 1px; pointer-events: none; }
+        .file-upload-area .upload-label.has-file { color: var(--gold); }
+        .file-upload-area .upload-icon { font-size: 1.4rem; display: block; margin-bottom: 6px; opacity: 0.4; }
+
+        .ba-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+        /* BA SET */
+        .ba-set {
+            background: #0d0d0d;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 10px;
+            position: relative;
+            animation: fadeIn 0.25s ease;
+        }
+        .ba-set-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        .ba-set-label {
+            font-size: 0.6rem;
+            color: var(--muted);
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+        .ba-delete-btn {
+            background: none;
+            border: 1px solid #333;
+            color: #555;
+            width: 24px;
+            height: 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s;
+            flex-shrink: 0;
+        }
+        .ba-delete-btn:hover { border-color: #c0392b; color: #c0392b; background: rgba(192,57,43,0.08); }
+
+        .btn-add-ba {
+            width: 100%;
+            padding: 11px;
+            background: transparent;
+            border: 1px dashed #333;
+            color: #555;
+            font-size: 0.68rem;
+            letter-spacing: 3px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-family: 'Cormorant Garamond', serif;
+            transition: all 0.2s;
+            margin-top: 4px;
+            text-transform: uppercase;
+        }
+        .btn-add-ba:hover { border-color: var(--gold-dim); color: var(--gold); background: rgba(201,168,76,0.03); }
+
+        /* STYLE SELECTOR */
+        .style-selector { display: flex; gap: 6px; margin-bottom: 0; }
+        .style-btn {
+            flex: 1;
+            background: var(--input-bg);
+            border: 1px solid var(--border);
+            color: #666;
+            padding: 9px 6px;
+            font-size: 0.65rem;
+            cursor: pointer;
+            border-radius: 5px;
+            letter-spacing: 1px;
+            transition: all 0.2s;
+            font-family: 'Noto Serif JP', serif;
+        }
+        .style-btn:hover { border-color: var(--gold-dim); color: #999; }
+        .style-btn.active { border-color: var(--gold); color: var(--gold); background: rgba(201,168,76,0.06); }
+
+        /* AI COPY BOX */
+        .ai-copy-box {
+            margin-top: 12px;
+            background: #0a0a0a;
+            border: 1px solid var(--gold-dim);
+            border-radius: 6px;
+            padding: 14px;
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+        .ai-copy-header { font-size: 0.58rem; color: var(--gold); letter-spacing: 4px; margin-bottom: 10px; text-transform: uppercase; }
+        .ai-loading { display: flex; align-items: center; gap: 8px; color: #555; font-size: 0.75rem; }
+        .ai-loading::before {
+            content: '';
+            width: 12px; height: 12px;
+            border: 1px solid var(--gold-dim);
+            border-top-color: var(--gold);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            flex-shrink: 0;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .copy-chip {
+            display: block;
+            background: #111;
+            color: #ccc;
+            padding: 9px 12px;
+            border-radius: 4px;
+            font-size: 0.78rem;
+            margin-bottom: 6px;
+            cursor: pointer;
+            border: 1px solid #2a2a2a;
+            transition: all 0.15s;
+            line-height: 1.5;
+            font-family: 'Noto Serif JP', serif;
+        }
+        .copy-chip:last-child { margin-bottom: 0; }
+        .copy-chip:hover { border-color: var(--gold-dim); color: var(--gold-light); background: #0f0f0f; }
+        .copy-chip.selected { border-color: var(--gold); color: var(--gold); }
+
+        /* SHARE AREA */
+        .share-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
+        .share-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 11px;
+            border-radius: 5px;
+            font-size: 0.72rem;
+            cursor: pointer;
+            border: 1px solid;
+            font-family: 'Noto Serif JP', serif;
+            letter-spacing: 1px;
+            transition: all 0.2s;
+            text-decoration: none;
+            color: inherit;
+            background: var(--input-bg);
+        }
+        .share-btn-x { border-color: #333; color: #aaa; }
+        .share-btn-x:hover { border-color: #888; color: #fff; background: #151515; }
+        .share-btn-ig { border-color: rgba(192,80,220,0.3); color: #c878e8; }
+        .share-btn-ig:hover { border-color: #c878e8; background: #120818; }
+        .share-btn svg { width: 15px; height: 15px; fill: currentColor; flex-shrink: 0; }
+
+        .ig-guide {
+            background: #0a0510;
+            border: 1px solid rgba(192,80,220,0.2);
+            border-radius: 5px;
+            padding: 14px;
+            margin-top: 10px;
+            display: none;
+        }
+        .ig-guide-title { font-size: 0.62rem; color: #c878e8; letter-spacing: 3px; margin-bottom: 8px; text-transform: uppercase; }
+        .ig-guide p { font-size: 0.72rem; color: #888; line-height: 1.8; }
+        .ig-guide strong { color: #c878e8; }
+
+        /* CONTRAST COPY BOX */
+        .contrast-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
+        .contrast-input-wrap { position: relative; }
+        .contrast-tag {
+            position: absolute;
+            top: 8px; left: 10px;
+            font-size: 0.52rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            pointer-events: none;
+            z-index: 1;
+        }
+        .contrast-tag.before { color: #666; }
+        .contrast-tag.after  { color: var(--gold); }
+        .contrast-input-wrap textarea {
+            padding-top: 26px;
+            font-size: 0.75rem;
+            line-height: 1.6;
+            min-height: 70px;
+        }
+        .btn-gen-contrast {
+            width: 100%;
+            padding: 10px;
+            background: rgba(201,168,76,0.07);
+            border: 1px solid var(--gold-dim);
+            color: var(--gold);
+            font-size: 0.68rem;
+            letter-spacing: 3px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-family: 'Cormorant Garamond', serif;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+        .btn-gen-contrast:hover { background: rgba(201,168,76,0.14); }
+        .btn-gen-contrast:disabled { opacity: 0.4; cursor: not-allowed; }
+
+        .contrast-result {
+            background: #0a0a0a;
+            border: 1px solid var(--gold-dim);
+            border-radius: 6px;
+            padding: 14px;
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+        .contrast-result-header { font-size: 0.58rem; color: var(--gold); letter-spacing: 4px; margin-bottom: 10px; text-transform: uppercase; }
+        .contrast-chip {
+            display: block;
+            background: #0f0f0f;
+            border: 1px solid #242424;
+            border-radius: 5px;
+            padding: 10px 12px;
+            margin-bottom: 7px;
+            cursor: pointer;
+            transition: all 0.15s;
+            font-family: 'Noto Serif JP', serif;
+        }
+        .contrast-chip:last-child { margin-bottom: 0; }
+        .contrast-chip:hover { border-color: var(--gold-dim); }
+        .contrast-chip.selected { border-color: var(--gold); }
+        .contrast-chip .chip-before { font-size: 0.68rem; color: #666; margin-bottom: 5px; letter-spacing: 1px; }
+        .contrast-chip .chip-arrow { color: var(--gold); font-size: 0.7rem; margin: 3px 0; }
+        .contrast-chip .chip-after  { font-size: 0.82rem; color: #ddd; line-height: 1.5; }
+        .contrast-chip.selected .chip-after { color: var(--gold-light); }
+
+        /* PUBLISH BTN */
+        .btn-publish {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #9a6c18, #C9A84C, #9a6c18);
+            background-size: 200% 100%;
+            color: #000;
+            border: none;
+            font-size: 0.78rem;
+            font-weight: 600;
+            letter-spacing: 4px;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-top: 24px;
+            text-transform: uppercase;
+            font-family: 'Cormorant Garamond', serif;
+            transition: background-position 0.4s;
+        }
+        .btn-publish:hover { background-position: 100% 0; }
+
+        /* ━━━ PREVIEW PANEL ━━━ */
+        .preview-panel {
+            background: #050505;
+            overflow: hidden;
+            position: relative;
+        }
+        .preview-label {
+            position: absolute;
+            top: 14px;
+            right: 16px;
+            font-size: 0.55rem;
+            letter-spacing: 4px;
+            color: #2a2a2a;
+            z-index: 10;
+            text-transform: uppercase;
+            pointer-events: none;
+        }
+        #output-iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
     </style>
 </head>
 <body>
 
-<div class="editor-container">
-    <div class="form-grid">
-        <div class="form-group">
-            <label>PROJECT TITLE</label>
-            <input type="text" id="title" value="M-RESIDENCE EXTERIOR PLAN" oninput="updatePreview()">
+<header class="app-header">
+    <div class="app-logo">
+        Roller Stone
+        <span>Premium Proposal Builder</span>
+    </div>
+    <div style="font-size:0.6rem; color:#333; letter-spacing:3px; font-family:'Cormorant Garamond',serif;">PRESENTATION SYSTEM</div>
+</header>
+
+<div class="workspace">
+    <!-- ━━━ EDITOR ━━━ -->
+    <div class="editor-panel">
+
+        <div class="section-title">OpenAI API 設定</div>
+        <div class="api-key-row">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            <input type="password" id="api-key" placeholder="sk-... （任意）" autocomplete="off">
         </div>
+        <p class="api-key-hint">
+            未入力でも内蔵コピーを使用します。キーは端末内のみで使用されます。<br>
+            <a href="https://platform.openai.com/api-keys" target="_blank">→ OpenAI APIキーを取得する</a>
+        </p>
+
+        <div class="section-title">01 ｜ 物件・提案情報</div>
         <div class="form-group">
-            <label>1. STYLE（AIコピー連動）</label>
-            <div class="style-selector">
-                <button class="style-btn active" onclick="setStyle('luxury', this)">重厚・高級</button>
-                <button class="style-btn" onclick="setStyle('modern', this)">洗練・モダン</button>
-                <button class="style-btn" onclick="setStyle('nature', this)">自然・情緒</button>
+            <label>物件名 / お客様邸名</label>
+            <input type="text" id="title" value="M邸 外構リノベーション" placeholder="例：田中様邸　外構計画" oninput="updatePreview()">
+        </div>
+
+        <div class="form-group">
+            <label>現状の課題 → 提案のポイント <span style="color:#444;font-size:0.6rem;">— AIが対比コピーを生成</span></label>
+            <div class="contrast-inputs">
+                <div class="contrast-input-wrap">
+                    <span class="contrast-tag before">現状の課題</span>
+                    <textarea id="issue" rows="3" placeholder="例：駐車場が老朽化&#10;雑草が目立つ&#10;塀が古く暗い印象" oninput="updatePreview()"></textarea>
+                </div>
+                <div class="contrast-input-wrap">
+                    <span class="contrast-tag after">提案のポイント</span>
+                    <textarea id="proposal-point" rows="3" placeholder="例：石畳×緑化で&#10;重厚感と上品さを&#10;両立させた空間へ" oninput="updatePreview()"></textarea>
+                </div>
+            </div>
+            <button class="btn-gen-contrast" id="btn-gen-contrast" onclick="generateContrastCopy()">
+                ✦ &nbsp; AIで対比コピーを生成
+            </button>
+            <div id="contrast-result" class="contrast-result">
+                <div class="contrast-result-header">✦ AI Generated Contrast Copy</div>
+                <div id="contrast-chips"></div>
+            </div>
+        </div>
+
+        <div class="form-group" style="display:none;">
+            <input type="text" id="issue-copy" value="">
+            <input type="text" id="proposal-copy" value="">
+        </div>
+
+        <div class="section-title">02 ｜ スタイル選択</div>
+        <div class="style-selector">
+            <button class="style-btn active" onclick="setStyle('luxury', this)">重厚・高級</button>
+            <button class="style-btn" onclick="setStyle('modern', this)">洗練・モダン</button>
+            <button class="style-btn" onclick="setStyle('nature', this)">自然・情緒</button>
+        </div>
+
+        <div class="section-title">03 ｜ メインビジュアル</div>
+        <div class="form-group">
+            <div class="file-upload-area">
+                <span class="upload-icon">🖼</span>
+                <div class="upload-label" id="hero-label">HERO IMAGE をアップロード</div>
+                <input type="file" accept="image/*" onchange="processImg(this,'hero','hero-label',true)">
             </div>
         </div>
         <div class="form-group">
-            <label>2. MAIN VISUAL</label>
-            <input type="file" accept="image/*" onchange="processImg(this, 'hero', true)">
+            <label>キャッチコピー <span style="color:#444;font-size:0.6rem;">— 画像＋スタイルで自動生成</span></label>
+            <input type="text" id="catch" value="" placeholder="画像とスタイルを選ぶと自動生成されます" oninput="updatePreview()">
         </div>
-        <div class="form-group">
-            <label>CATCH COPY（自動生成）</label>
-            <input type="text" id="catch" value="画像をアップすると候補が出ます" oninput="updatePreview()">
+        <div id="ai-box" class="ai-copy-box">
+            <div class="ai-copy-header">✦ AI Suggested Copy</div>
+            <div id="ai-chips"><div class="ai-loading">AIがコピーを考えています...</div></div>
         </div>
-        <div id="ai-box" class="ai-suggestion-box"><div id="ai-chips"></div></div>
 
-        <div class="form-group"><label>3. BEFORE / AFTER セット 01</label>
-            <input type="file" accept="image/*" onchange="processImg(this, 'b1')">
-            <input type="file" accept="image/*" onchange="processImg(this, 'a1')" style="margin-top:5px;">
-        </div>
-        <div class="form-group"><label>4. BEFORE / AFTER セット 02</label>
-            <input type="file" accept="image/*" onchange="processImg(this, 'b2')">
-            <input type="file" accept="image/*" onchange="processImg(this, 'a2')" style="margin-top:5px;">
-        </div>
+        <div class="section-title">04 ｜ Before / After</div>
+        <div id="ba-sets-container"></div>
+        <button class="btn-add-ba" onclick="addBaSet()">＋ &nbsp; セットを追加</button>
+
+        <div class="section-title">05 ｜ ラストビジュアル</div>
         <div class="form-group">
-            <label>5. LAST VISUAL（俯瞰 または 夜景）</label>
-            <input type="file" accept="image/*" onchange="processImg(this, 'footer_img')">
+            <div class="file-upload-area">
+                <span class="upload-icon">🌙</span>
+                <div class="upload-label" id="footer-label">俯瞰・夜景イメージをアップロード</div>
+                <input type="file" accept="image/*" onchange="processImg(this,'footer_img','footer-label')">
+            </div>
         </div>
-        <div class="form-group" style="grid-column: 1 / -1;">
-            <label>DESIGN CONCEPT</label>
-            <textarea id="comment" rows="2" oninput="updatePreview()">邸宅の価値を再定義する、特別な提案です。</textarea>
+
+        <div class="section-title">06 ｜ SNSシェア</div>
+        <div class="form-group">
+            <label>公開URL（シェアに使用）</label>
+            <input type="text" id="lp-url" placeholder="https://yoursite.github.io/...">
         </div>
+        <div class="share-buttons">
+            <button class="share-btn share-btn-x" onclick="doXShare()">
+                <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.747l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                X でシェア
+            </button>
+            <button class="share-btn share-btn-ig" onclick="doIgShare()">
+                <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>
+                Instagram へ
+            </button>
+        </div>
+        <div id="ig-guide" class="ig-guide">
+            <div class="ig-guide-title">✦ Instagram 投稿手順</div>
+            <p>
+                <strong>① 画像が保存されました</strong><br>
+                Instagramアプリを開いて <strong>新規投稿 → カメラロール</strong> から保存した画像を選択してください。<br><br>
+                <strong>② キャプションをクリップボードにコピー済み</strong><br>
+                <span id="ig-caption-preview" style="color:#666; font-size:0.68rem;"></span>
+            </p>
+        </div>
+
+        <button class="btn-publish" onclick="preparePublish()">▲ &nbsp; 公開用 index.html を生成</button>
+
     </div>
-    <button class="btn-publish" onclick="preparePublish()">公開用ファイルを生成してLINE共有の準備をする</button>
+
+    <!-- ━━━ PREVIEW ━━━ -->
+    <div class="preview-panel">
+        <div class="preview-label">LIVE PREVIEW</div>
+        <iframe id="output-iframe"></iframe>
+    </div>
 </div>
 
-<div id="preview-frame-container"><iframe id="output-iframe"></iframe></div>
-
 <script>
-    const images = { hero:'', b1:'', a1:'', b2:'', a2:'', footer_img:'' };
+    const images = { hero:'', footer_img:'' };
+    // BA sets: [{id, before:'', after:''}]
+    let baSets = [];
+    let baIdCounter = 0;
     let currentStyle = 'luxury';
-    const ANALYTICS_ID = "G-9KY5C7XC36"; // ご指定の測定ID
+    let heroUploaded = false;
+    const ANALYTICS_ID = "G-9KY5C7XC36";
 
+    // ─── BA Set Management ───
+    function addBaSet() {
+        const id = ++baIdCounter;
+        baSets.push({ id, before: '', after: '' });
+        renderBaSets();
+        updatePreview();
+    }
+
+    function removeBaSet(id) {
+        if (baSets.length <= 1) return; // 最低1セットは残す
+        baSets = baSets.filter(s => s.id !== id);
+        renderBaSets();
+        updatePreview();
+    }
+
+    function renderBaSets() {
+        const container = document.getElementById('ba-sets-container');
+        container.innerHTML = '';
+        baSets.forEach((set, idx) => {
+            const div = document.createElement('div');
+            div.className = 'ba-set';
+            div.innerHTML = `
+                <div class="ba-set-header">
+                    <span class="ba-set-label">セット ${String(idx + 1).padStart(2,'0')}</span>
+                    <button class="ba-delete-btn" onclick="removeBaSet(${set.id})" title="削除">✕</button>
+                </div>
+                <div class="ba-pair">
+                    <div class="file-upload-area">
+                        <div class="upload-label ${set.before ? 'has-file' : ''}" id="b-label-${set.id}">
+                            ${set.before ? '✓ BEFORE' : '← BEFORE'}
+                        </div>
+                        <input type="file" accept="image/*" onchange="processBaImg(this, ${set.id}, 'before')">
+                    </div>
+                    <div class="file-upload-area">
+                        <div class="upload-label ${set.after ? 'has-file' : ''}" id="a-label-${set.id}">
+                            ${set.after ? '✓ AFTER' : 'AFTER →'}
+                        </div>
+                        <input type="file" accept="image/*" onchange="processBaImg(this, ${set.id}, 'after')">
+                    </div>
+                </div>`;
+            container.appendChild(div);
+        });
+    }
+
+    function processBaImg(input, setId, side) {
+        if (!input.files[0]) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const img = new Image();
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                let w = img.width, h = img.height;
+                if (w > 1920) { h = h * 1920 / w; w = 1920; }
+                canvas.width = w; canvas.height = h;
+                canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+                const dataUrl = canvas.toDataURL('image/jpeg', 0.72);
+                const set = baSets.find(s => s.id === setId);
+                if (set) {
+                    set[side] = dataUrl;
+                    const labelEl = document.getElementById(`${side === 'before' ? 'b' : 'a'}-label-${setId}`);
+                    if (labelEl) {
+                        labelEl.textContent = side === 'before' ? '✓ BEFORE' : '✓ AFTER';
+                        labelEl.classList.add('has-file');
+                    }
+                    updatePreview();
+                }
+            };
+            img.src = e.target.result;
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+
+    // ─── Style ───
     function setStyle(style, btn) {
         currentStyle = style;
         document.querySelectorAll('.style-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
-        if(images.hero) generateAICopy();
+        if (heroUploaded) generateAICopy();
     }
 
-    function generateAICopy() {
+    // ─── Hero / Footer Image ───
+    function processImg(input, key, labelId, isHero = false) {
+        if (!input.files[0]) return;
+        const label = document.getElementById(labelId);
+        const name = input.files[0].name;
+        label.textContent = name.length > 22 ? name.substring(0, 20) + '...' : name;
+        label.classList.add('has-file');
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const img = new Image();
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                let w = img.width, h = img.height;
+                if (w > 1920) { h = h * 1920 / w; w = 1920; }
+                canvas.width = w; canvas.height = h;
+                canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+                images[key] = canvas.toDataURL('image/jpeg', 0.72);
+                if (isHero) { heroUploaded = true; generateAICopy(); }
+                updatePreview();
+            };
+            img.src = e.target.result;
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+
+    // ─── Contrast Copy Generation ───
+    async function generateContrastCopy() {
+        const issue   = document.getElementById('issue').value.trim();
+        const point   = document.getElementById('proposal-point').value.trim();
+        if (!issue && !point) {
+            alert('「現状の課題」と「提案のポイント」を入力してください。');
+            return;
+        }
+        const btn = document.getElementById('btn-gen-contrast');
+        const box = document.getElementById('contrast-result');
+        const chips = document.getElementById('contrast-chips');
+        btn.disabled = true;
+        box.style.display = 'block';
+        chips.innerHTML = '<div class="ai-loading">AIが対比コピーを考えています...</div>';
+
+        const apiKey = document.getElementById('api-key').value.trim();
+        if (!apiKey || !apiKey.startsWith('sk-')) {
+            await new Promise(r => setTimeout(r, 800));
+            useLocalContrastCopy(issue, point);
+            btn.disabled = false;
+            return;
+        }
+        try {
+            const res = await fetch('https://api.openai.com/v1/chat/completions', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
+                body: JSON.stringify({
+                    model: 'gpt-4o-mini',
+                    messages: [
+                        { role: 'system', content: 'あなたは高級住宅外構工事の提案書専門コピーライターです。「現状の課題」と「提案のポイント」をもとに、施主への対比型コピーを3案生成してください。各案は以下のJSON配列形式のみで出力（説明・番号不要）:\n[{"before":"課題を短く15字以内","after":"提案の魅力を格調高く20〜35字"},...]' },
+                        { role: 'user', content: `現状の課題：${issue}\n提案のポイント：${point}\nスタイル：${currentStyle}` }
+                    ],
+                    max_tokens: 400, temperature: 0.85
+                })
+            });
+            if (!res.ok) throw new Error('API error');
+            const data = await res.json();
+            const raw = data.choices[0].message.content.replace(/```json|```/g,'').trim();
+            renderContrastChips(JSON.parse(raw).slice(0, 3));
+        } catch (err) {
+            console.warn('Contrast copy error:', err.message);
+            useLocalContrastCopy(issue, point);
+        }
+        btn.disabled = false;
+    }
+
+    function useLocalContrastCopy(issue, point) {
+        const fallbacks = {
+            luxury: [
+                { before: '老朽化した外構', after: '石積みの風格が、邸宅の価値を静かに語る。' },
+                { before: '暗く重い印象の門構え', after: '歳月が証明する、本物の風格をここに。' },
+                { before: '時代遅れの外観', after: '威風堂々。住まいの矜持を再定義する。' }
+            ],
+            modern: [
+                { before: '雑然として散漫な印象', after: '余白に宿る品格。本質的な美を描く。' },
+                { before: '古さが目立つ外構', after: '日常をアートに変える、洗練のライン。' },
+                { before: '暗く閉じた雰囲気', after: '都市の風景に、静かな存在感を刻む。' }
+            ],
+            nature: [
+                { before: '殺風景で殺伐とした外観', after: '光と影が織りなす、この場所だけの季節。' },
+                { before: '緑のない冷たい印象', after: '自然と共鳴する、上質な暮らしの入口。' },
+                { before: '無機質な外構', after: '優しく迎え入れる、緑と石の詩情。' }
+            ]
+        };
+        const items = fallbacks[currentStyle].map((f, i) => ({
+            before: i === 0 && issue ? issue.split('\n')[0] : f.before,
+            after:  i === 0 && point ? point.replace(/\n/g,'　') : f.after
+        }));
+        renderContrastChips(items);
+    }
+
+    function renderContrastChips(items) {
+        const chips = document.getElementById('contrast-chips');
+        chips.innerHTML = '';
+        items.forEach((item, i) => {
+            const chip = document.createElement('div');
+            chip.className = 'contrast-chip';
+            chip.innerHTML = `
+                <div class="chip-before">${item.before}</div>
+                <div class="chip-arrow">▼</div>
+                <div class="chip-after">${item.after}</div>`;
+            chip.onclick = () => {
+                document.querySelectorAll('.contrast-chip').forEach(c => c.classList.remove('selected'));
+                chip.classList.add('selected');
+                document.getElementById('issue-copy').value    = item.before;
+                document.getElementById('proposal-copy').value = item.after;
+                updatePreview();
+            };
+            chips.appendChild(chip);
+            if (i === 0) chip.click();
+        });
+    }
+
+    // ─── AI Copy ───
+    async function generateAICopy() {
+        const apiKey = document.getElementById('api-key').value.trim();
         const box = document.getElementById('ai-box');
         const chips = document.getElementById('ai-chips');
-        box.style.display = 'block'; chips.innerHTML = '';
-        const lib = {
-            luxury: ["既存を凌駕する、邸宅の風格を再現する。", "歳月を重ねるほどに深まる、石積みの品格。", "威風堂々。住まいの価値を再定義する。"],
-            modern: ["日常をアートに変える、洗練のテクスチャ。", "無駄を削ぎ落とし、本質的な美しさを描く。", "都市の風景に、新たなリズムを刻むデザイン。"],
-            nature: ["光と影が織りなす、自然の移ろいを感じる場所。", "優しく迎え入れ、心地よい安らぎを醸成する。", "この場所でしか味わえない、上質な日常。"]
-        };
-        lib[currentStyle].forEach(text => {
-            const chip = document.createElement('span'); chip.className = 'copy-chip'; chip.innerText = text;
-            chip.onclick = () => { document.getElementById('catch').value = text; updatePreview(); };
-            chips.appendChild(chip);
-        });
-        document.getElementById('catch').value = lib[currentStyle][0];
-        updatePreview();
-    }
 
-    // --- ここに軽量化処理を統合しました ---
-    function processImg(input, key, isHero = false) {
-        if (input.files[0]) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                const img = new Image();
-                img.onload = () => {
-                    const canvas = document.createElement('canvas');
-                    let width = img.width;
-                    let height = img.height;
-                    const max_size = 1920; // 4Kなどは不要なため最大幅を制限
-                    if (width > max_size) { height *= max_size / width; width = max_size; }
-                    canvas.width = width; canvas.height = height;
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(img, 0, 0, width, height);
-                    // 品質0.7のJPEGに変換することで劇的に軽量化
-                    images[key] = canvas.toDataURL('image/jpeg', 0.7);
-                    updatePreview();
-                    if(isHero) generateAICopy(); 
-                };
-                img.src = e.target.result;
-            };
-            reader.readAsDataURL(input.files[0]);
+        box.style.display = 'block';
+        chips.innerHTML = '<div class="ai-loading">AIがコピーを考えています...</div>';
+
+        const styleMap = { luxury: '重厚で威厳ある高級邸宅', modern: '洗練されたモダンでスタイリッシュな住宅', nature: '自然と調和した情緒ある和の住宅' };
+
+        if (!apiKey || !apiKey.startsWith('sk-')) {
+            await new Promise(r => setTimeout(r, 700));
+            useLocalCopy();
+            return;
+        }
+
+        try {
+            const res = await fetch('https://api.openai.com/v1/chat/completions', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${apiKey}`
+                },
+                body: JSON.stringify({
+                    model: 'gpt-4o-mini',
+                    messages: [
+                        {
+                            role: 'system',
+                            content: 'あなたは高級住宅の外構・エクステリア工事専門の広告コピーライターです。提案書のキャッチコピーとして使う、格調高く簡潔な日本語コピーを3案生成してください。各案は15〜35文字程度。番号・記号・説明文は不要で、コピー本文のみを1行ずつ出力してください。'
+                        },
+                        {
+                            role: 'user',
+                            content: `「${styleMap[currentStyle]}」向けの外構提案書用キャッチコピーを3案お願いします。`
+                        }
+                    ],
+                    max_tokens: 220,
+                    temperature: 0.9
+                })
+            });
+
+            if (!res.ok) throw new Error('API error ' + res.status);
+            const data = await res.json();
+            const lines = data.choices[0].message.content
+                .split('\n')
+                .map(l => l.replace(/^[\d\.\-\s・]+/, '').trim())
+                .filter(l => l.length > 5)
+                .slice(0, 3);
+
+            renderChips(lines);
+        } catch (err) {
+            console.warn('OpenAI API error:', err.message);
+            useLocalCopy();
         }
     }
 
-    function generateHTML() {
-        const title = document.getElementById('title').value;
-        const catchphrase = document.getElementById('catch').value;
-        const comment = document.getElementById('comment').value;
-        const img = (k) => images[k] || 'https://via.placeholder.com/1200x800/111/222?text=NO+IMAGE';
+    function useLocalCopy() {
+        const lib = {
+            luxury: ["歳月が証明する、本物の風格をここに。", "威風堂々。住まいの価値を次世代へ継ぐ。", "石積みが語る、邸宅の矜持と美学。"],
+            modern: ["余白に宿る品格。本質的な美を描く。", "日常をアートに変える、洗練のライン。", "都市の風景に、静かな存在感を刻む。"],
+            nature: ["光と影が織りなす、この場所だけの季節。", "自然と共鳴する、上質な暮らしの入口。", "優しく迎え入れる、緑と石の詩情。"]
+        };
+        renderChips(lib[currentStyle]);
+    }
 
-        return `<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <script async src="https://www.googletagmanager.com/gtag/js?id=${ANALYTICS_ID}"><\/script>
-            <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${ANALYTICS_ID}');<\/script>
-            <style>
-                body { margin: 0; background: #000; color: #fff; font-family: "serif"; overflow-x: hidden; }
-                .hero { height: 95vh; display: flex; align-items: center; justify-content: center; text-align: center; background: url('${img('hero')}') center/cover no-repeat; position: relative; }
-                .hero::after { content:''; position:absolute; inset:0; background: linear-gradient(to bottom, transparent 50%, #000); }
-                .hero-content { position: relative; z-index: 10; padding: 50px; border: 1px solid rgba(212,175,55,0.4); background: rgba(0,0,0,0.4); backdrop-filter: blur(10px); width: 80%; max-width: 600px; }
-                .gold { color: #D4AF37; }
-                h1 { font-size: 2.2rem; margin: 0; letter-spacing: 12px; font-weight: 200; text-transform: uppercase; border-top: 1px solid rgba(212,175,55,0.2); padding-top: 20px; }
-                .section-label { color: #D4AF37; text-align: center; font-size: 0.7rem; letter-spacing: 6px; margin: 100px 0 40px; text-transform: uppercase; }
-                .ba-container { position: relative; width: 92%; max-width: 900px; margin: 0 auto 80px; aspect-ratio: 16/9; overflow: hidden; border: 1px solid #333; }
-                .ba-img { position: absolute; top:0; left:0; width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
-                .after-img { clip-path: inset(0 0 0 50%); z-index: 2; }
-                .handle { position: absolute; top:0; bottom:0; left:50%; width:2px; background:#D4AF37; z-index:10; cursor: ew-resize; }
-                .handle::after { content:'SLIDE'; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); background:#000; color:#D4AF37; padding:8px 15px; border:1px solid #D4AF37; font-size:10px; letter-spacing:3px; white-space:nowrap; }
-                .desc { width: 85%; max-width: 800px; margin: 100px auto; line-height: 2.4; color: #bbb; border-left: 2px solid #D4AF37; padding-left: 30px; font-size: 1.1rem; }
-                .last-visual { width: 100%; display: block; filter: contrast(1.1); margin-top:40px; }
-                footer { padding: 120px 0; text-align: center; background: #050505; color: #333; letter-spacing: 5px; font-size: 0.7rem; border-top: 1px solid #111; }
-            </style></head><body>
-                <div class="hero"><div class="hero-content"><div class="gold" style="letter-spacing:5px; margin-bottom:25px; font-size:0.9rem;">${catchphrase}</div><h1>${title}</h1></div></div>
-                <div class="section-label">Perspective Comparison 01</div>
-                <div class="ba-container"><img src="${img('b1')}" class="ba-img"><img src="${img('a1')}" class="ba-img after-img"><div class="handle"></div></div>
-                <div class="section-label">Perspective Comparison 02</div>
-                <div class="ba-container"><img src="${img('b2')}" class="ba-img"><img src="${img('a2')}" class="ba-img after-img"><div class="handle"></div></div>
-                <div class="desc"><p class="gold" style="font-size:0.75rem; letter-spacing:3px; margin-bottom:15px;">PROPOSAL CONCEPT</p>${comment.replace(/\n/g,'<br>')}</div>
-                <div class="section-label">Detail Atmosphere</div>
-                <img src="${img('footer_img')}" class="last-visual">
-                <footer>ROLLER STONE PREMIUM PRESENTATION</footer>
-                <script>
-                    document.querySelectorAll('.ba-container').forEach(container => {
-                        const handle = container.querySelector('.handle');
-                        const afterImg = container.querySelector('.after-img');
-                        const update = (e) => {
-                            const rect = container.getBoundingClientRect();
-                            const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
-                            let pos = Math.max(0, Math.min(100, (x / rect.width) * 100));
-                            afterImg.style.clipPath = "inset(0 0 0 " + pos + "%)";
-                            handle.style.left = pos + "%";
-                        };
-                        container.addEventListener('mousemove', update);
-                        container.addEventListener('touchmove', update, {passive: true});
-                    });
-                <\/script></body></html>`;
+    function renderChips(lines) {
+        const chips = document.getElementById('ai-chips');
+        chips.innerHTML = '';
+        lines.forEach((text, i) => {
+            const chip = document.createElement('div');
+            chip.className = 'copy-chip';
+            chip.textContent = text;
+            chip.onclick = () => {
+                document.querySelectorAll('.copy-chip').forEach(c => c.classList.remove('selected'));
+                chip.classList.add('selected');
+                document.getElementById('catch').value = text;
+                updatePreview();
+            };
+            chips.appendChild(chip);
+            if (i === 0) chip.click();
+        });
+    }
+
+    // ─── Share ───
+    function doXShare() {
+        const url = document.getElementById('lp-url').value.trim();
+        const copy = document.getElementById('catch').value;
+        const title = document.getElementById('title').value;
+        const text = [copy, title, url, '#外構工事 #エクステリア #住宅デザイン'].filter(Boolean).join('\n\n');
+        window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent(text), '_blank');
+    }
+
+    function doIgShare() {
+        if (!images.hero) {
+            alert('メインビジュアルをアップロードしてから実行してください。');
+            return;
+        }
+
+        // ヒーロー画像をダウンロード
+        const a = document.createElement('a');
+        a.href = images.hero;
+        a.download = 'proposal-hero.jpg';
+        a.click();
+
+        // キャプションをクリップボードへ
+        const copy = document.getElementById('catch').value;
+        const title = document.getElementById('title').value;
+        const url = document.getElementById('lp-url').value.trim();
+        const caption = [copy, title, url, '#外構工事 #エクステリア #住宅デザイン #ローラーストーン'].filter(Boolean).join('\n\n');
+        navigator.clipboard.writeText(caption).catch(() => {});
+
+        document.getElementById('ig-guide').style.display = 'block';
+        document.getElementById('ig-caption-preview').textContent = caption.substring(0, 60) + '...(クリップボードにコピーしました)';
+
+        // モバイルでInstagramアプリ起動を試みる
+        setTimeout(() => { window.location.href = 'instagram://app'; }, 600);
+    }
+
+    // ─── Generate Output HTML ───
+    function generateHTML() {
+        const title      = document.getElementById('title').value || '外構リノベーション提案';
+        const catchphrase= document.getElementById('catch').value || '';
+        const issueCopy  = document.getElementById('issue-copy').value || '';
+        const propCopy   = document.getElementById('proposal-copy').value || '';
+        const noImg = 'https://via.placeholder.com/1200x800/111/1a1a1a?text=NO+IMAGE';
+
+        // ヒーローオーバーレイコンテンツ
+        const heroContent = (issueCopy || propCopy) ? `
+            <div class="hero-contrast">
+                ${issueCopy ? `<div class="hero-issue"><span class="issue-label">現状</span>${issueCopy}</div>` : ''}
+                ${(issueCopy && propCopy) ? `<div class="hero-arrow">▼</div>` : ''}
+                ${propCopy  ? `<div class="hero-proposal">${propCopy}</div>` : ''}
+            </div>` : '';
+
+        const catchLine = catchphrase ? `<div class="catch">${catchphrase}</div>` : '';
+
+        // BA sections
+        const baSections = baSets.map((set, idx) => {
+            const beforeSrc = set.before || noImg;
+            const afterSrc  = set.after  || noImg;
+            const num = String(idx + 1).padStart(2, '0');
+            return `<div class="label">Perspective Comparison &nbsp;&nbsp; ${num}</div>
+<div class="ba-wrap"><img src="${beforeSrc}" class="ba-img"><img src="${afterSrc}" class="ba-img after-img"><div class="handle"></div></div>`;
+        }).join('\n');
+
+        return `<!DOCTYPE html><html lang="ja"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>${title}</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@200;300;400&family=Noto+Serif+JP:wght@200;300&display=swap" rel="stylesheet">
+<script async src="https://www.googletagmanager.com/gtag/js?id=${ANALYTICS_ID}"><\/script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${ANALYTICS_ID}');<\/script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#000;color:#fff;font-family:'Noto Serif JP','Cormorant Garamond',serif;overflow-x:hidden}
+.hero{height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;text-align:center;background:url('${images.hero || noImg}') center/cover no-repeat;position:relative;padding-bottom:0}
+.hero::after{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,.1) 0%,rgba(0,0,0,.55) 50%,rgba(0,0,0,.92) 100%)}
+/* ── タイトルブロック ── */
+.hero-title-block{position:relative;z-index:10;padding:36px 50px 40px;width:100%;max-width:900px;animation:fadeUp 1s ease both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+.catch{color:#C9A84C;font-size:.78rem;letter-spacing:5px;margin-bottom:16px;font-weight:300}
+.hero-title{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:200;letter-spacing:8px;text-transform:uppercase;line-height:1.6;border-top:1px solid rgba(201,168,76,.2);padding-top:18px}
+/* ── 対比コピー ── */
+.hero-contrast{position:relative;z-index:10;width:100%;background:rgba(0,0,0,.72);backdrop-filter:blur(20px);border-top:1px solid rgba(201,168,76,.2);padding:28px 0 32px;animation:fadeUp 1.2s .2s ease both}
+.hero-issue{font-size:.75rem;color:#888;letter-spacing:3px;margin-bottom:6px;font-family:'Noto Serif JP',serif}
+.issue-label{display:inline-block;background:rgba(255,255,255,.06);border:1px solid #333;color:#666;font-size:.55rem;letter-spacing:3px;padding:3px 8px;margin-right:10px;border-radius:2px;vertical-align:middle;text-transform:uppercase}
+.hero-arrow{font-size:.65rem;color:rgba(201,168,76,.5);margin:10px 0;letter-spacing:2px}
+.hero-proposal{font-size:1.15rem;color:#E8D5A3;font-weight:300;letter-spacing:4px;font-family:'Noto Serif JP',serif;line-height:1.8;padding:0 40px}
+/* ── ラベル・BA・共通 ── */
+.label{color:#C9A84C;text-align:center;font-size:.58rem;letter-spacing:7px;margin:100px 0 40px;text-transform:uppercase;opacity:.75;font-family:'Cormorant Garamond',serif}
+.ba-wrap{width:90%;max-width:880px;margin:0 auto 90px;aspect-ratio:16/9;overflow:hidden;border:1px solid #1e1e1e;position:relative;cursor:ew-resize}
+.ba-img{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;pointer-events:none;display:block}
+.after-img{clip-path:inset(0 0 0 50%);z-index:2}
+.handle{position:absolute;top:0;bottom:0;left:50%;width:2px;background:#C9A84C;z-index:10;pointer-events:none}
+.handle::after{content:'◀  SLIDE  ▶';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,.9);color:#C9A84C;padding:9px 16px;border:1px solid rgba(201,168,76,.6);font-size:9px;letter-spacing:3px;white-space:nowrap;font-family:'Cormorant Garamond',serif}
+.last-img{width:100%;display:block;filter:contrast(1.05) brightness(.96);margin-top:60px}
+footer{padding:100px 0;text-align:center;background:#030303;color:#252525;letter-spacing:6px;font-size:.6rem;border-top:1px solid #111;font-family:'Cormorant Garamond',serif}
+</style></head><body>
+<div class="hero">
+  <div class="hero-title-block">
+    ${catchLine}
+    <div class="hero-title">${title}</div>
+  </div>
+  ${heroContent}
+</div>
+${baSections}
+<div class="label">Detail &nbsp;&nbsp; Atmosphere</div>
+<img src="${images.footer_img || noImg}" class="last-img">
+<footer>ROLLER STONE &nbsp;·&nbsp; PREMIUM EXTERIOR PROPOSAL</footer>
+<script>
+document.querySelectorAll('.ba-wrap').forEach(wrap=>{
+  const handle=wrap.querySelector('.handle'),after=wrap.querySelector('.after-img');
+  const move=e=>{
+    const r=wrap.getBoundingClientRect();
+    const cx=e.touches?e.touches[0].clientX:e.clientX;
+    const p=Math.max(0,Math.min(100,(cx-r.left)/r.width*100));
+    after.style.clipPath='inset(0 0 0 '+p+'%)';
+    handle.style.left=p+'%';
+  };
+  wrap.addEventListener('mousemove',move);
+  wrap.addEventListener('touchmove',move,{passive:true});
+});
+<\/script></body></html>`;
     }
 
     function updatePreview() {
@@ -194,10 +959,19 @@
 
     function preparePublish() {
         const blob = new Blob([generateHTML()], { type: 'text/html' });
-        const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'index.html'; a.click();
-        alert("軽量化された index.html が保存されました。このファイルをGitHubにアップロードしてください。");
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'index.html';
+        a.click();
+        setTimeout(() => alert('index.html を保存しました。\nGitHub Pages 等にアップロードして公開URLをSNSシェア欄に入力してください。'), 300);
     }
-    window.onload = updatePreview;
+
+    window.onload = () => {
+        // デフォルト2セット
+        addBaSet();
+        addBaSet();
+        updatePreview();
+    };
 </script>
 </body>
 </html>
