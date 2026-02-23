@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RSLINE 施工報告ジェネレーター</title>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-9KY5C7XC36"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-9KY5C7XC36');
+    </script>
+    <style>
+        :root {
+            --bg-color: #0a0a0a;
+            --accent-gold: #c5a059;
+            --text-white: #ffffff;
+            --card-bg: #1a1a1a;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-white);
+            font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 500px;
+        }
+
+        h1 {
+            color: var(--accent-gold);
+            text-align: center;
+            font-size: 1.5rem;
+            margin-bottom: 25px;
+            letter-spacing: 1px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            color: var(--accent-gold);
+        }
+
+        input[type="text"],
+        input[type="number"],
+        textarea {
+            width: 100%;
+            padding: 12px;
+            background: #222;
+            border: 1px solid #444;
+            color: white;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 1rem;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--accent-gold);
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .radio-group label {
+            flex: 1;
+            background: #222;
+            border: 1px solid #444;
+            padding: 10px;
+            text-align: center;
+            border-radius: 8px;
+            cursor: pointer;
+            color: var(--text-white);
+        }
+
+        input[type="radio"] {
+            display: none;
+        }
+
+        input[type="radio"]:checked + label {
+            background: var(--accent-gold);
+            color: black;
+            border-color: var(--accent-gold);
+        }
+
+        /* 写真選択エリア */
+        .drop-zone {
+            border: 2px dashed var(--accent-gold);
+            border-radius: 12px;
+            padding: 30px 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.3s;
+            background: rgba(197, 160, 89, 0.05);
+        }
+
+        .drop-zone:hover {
+            background: rgba(197, 160, 89, 0.1);
+        }
+
+        .drop-zone p {
+            margin: 0;
+            color: var(--accent-gold);
+            font-size: 0.9rem;
+        }
+
+        /* サムネイル表示 */
+        #preview-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .thumb-wrapper {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 1;
+        }
+
+        .thumb-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 4px;
+            border: 1px solid #444;
+        }
+
+        .remove-btn {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #ff4444;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* ボタン */
+        .submit-btn {
+            width: 100%;
+            background: linear-gradient(45deg, #c5a059, #eed08c);
+            color: #000;
+            border: none;
+            padding: 16px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 30px;
+            margin-top: 30px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(197, 160, 89, 0.3);
+        }
+
+        .submit-btn:active {
+            transform: scale(0.98);
+        }
+
+        .hint {
+            font-size: 0.8rem;
+            color: #888;
+            margin-top: 10px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>RS施工報告ツール</h1>
+
+    <div class="form-group">
+        <label>屋号</label>
+        <input type="text" id="storeName" placeholder="施工店名を入力">
+    </div>
+
+    <div class="form-group">
+        <label>施工タイプ</label>
+        <div class="radio-group">
+            <input type="radio" name="type" id="typeStone" value="ローラーストーン" checked>
+            <label for="typeStone">石風</label>
+            <input type="radio" name="type" id="typeWall" value="ローラーウォール">
+            <label for="typeWall">壁風</label>
+        </div>
+    </div>
+
+    <div style="display: flex; gap: 15px;">
+        <div class="form-group" style="flex: 1;">
+            <label>施工面積 (㎡)</label>
+            <input type="number" id="area" placeholder="例: 30">
+        </div>
+        <div class="form-group" style="flex: 1;">
+            <label>施工日数 (日)</label>
+            <input type="number" id="days" placeholder="例: 3">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label>下地処理</label>
+        <div class="radio-group">
+            <input type="radio" name="base" id="baseYes" value="あり">
+            <label for="baseYes">あり</label>
+            <input type="radio" name="base" id="baseNo" value="なし" checked>
+            <label for="baseNo">なし</label>
+        </div>
+    </div>
+
+    <div style="display: flex; gap: 15px;">
+        <div class="form-group" style="flex: 1;">
+            <label>石色</label>
+            <input type="text" id="stoneColor" placeholder="ミルクティー">
+        </div>
+        <div class="form-group" style="flex: 1;">
+            <label>目地色</label>
+            <input type="text" id="jointColor" placeholder="グレー">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label>お客様の声</label>
+        <textarea id="feedback" rows="2" placeholder="理想通りになりました！等"></textarea>
+    </div>
+
+    <div class="drop-zone" onclick="document.getElementById('fileInput').click()">
+        <p>📷 施工写真をタップして選択</p>
+        <input type="file" id="fileInput" multiple accept="image/*" style="display:none">
+    </div>
+
+    <div id="preview-container"></div>
+
+    <button class="submit-btn" onclick="generateAndShare()">報告データを作成</button>
+    <p class="hint">※LINEが開いたら、投稿先のコメント欄に貼り付けてください。</p>
+</div>
+
+<script>
+    const fileInput = document.getElementById('fileInput');
+    const previewContainer = document.getElementById('preview-container');
+    let selectedFiles = [];
+
+    // localStorage から屋号を復元
+    window.onload = () => {
+        const savedName = localStorage.getItem('rs_store_name');
+        if (savedName) document.getElementById('storeName').value = savedName;
+    };
+
+    // 写真選択時の処理
+    fileInput.addEventListener('change', (e) => {
+        const files = Array.from(e.target.files);
+        files.forEach(file => {
+            selectedFiles.push(file);
+            renderPreview(file);
+        });
+        fileInput.value = ""; // 同じファイルの再選択を可能にする
+    });
+
+    function renderPreview(file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const div = document.createElement('div');
+            div.className = 'thumb-wrapper';
+            div.innerHTML = `
+                <img src="${e.target.result}">
+                <button class="remove-btn" onclick="removeFile(this, '${file.name}')">×</button>
+            `;
+            previewContainer.appendChild(div);
+        };
+        reader.readAsDataURL(file);
+    }
+
+    function removeFile(btn, fileName) {
+        const wrapper = btn.parentElement;
+        const index = Array.from(previewContainer.children).indexOf(wrapper);
+        selectedFiles.splice(index, 1);
+        wrapper.remove();
+    }
+
+    async function generateAndShare() {
+        const storeName = document.getElementById('storeName').value;
+        const type = document.querySelector('input[name="type"]:checked').value;
+        const area = document.getElementById('area').value;
+        const days = document.getElementById('days').value;
+        const base = document.querySelector('input[name="base"]:checked').value;
+        const stoneColor = document.getElementById('stoneColor').value;
+        const jointColor = document.getElementById('jointColor').value;
+        const feedback = document.getElementById('feedback').value;
+
+        if(!storeName) { alert("屋号を入力してください"); return; }
+
+        // 屋号を保存
+        localStorage.setItem('rs_store_name', storeName);
+
+        // テキスト生成
+        const reportText = `[${storeName}]\n${type} ${area}㎡\n日数 ${days}日\n下地処理 ${base}\n石 ${stoneColor} / 目地 ${jointColor}\n\n声 → ${feedback}`;
+
+        // クリップボードにコピー
+        try {
+            await navigator.clipboard.writeText(reportText);
+        } catch (err) {
+            console.error('コピー失敗', err);
+        }
+
+        // 共有
+        if (navigator.share) {
+            const shareData = {
+                title: '施工報告',
+                text: reportText // テキストも一応含める
+            };
+
+            // 画像がある場合は追加
+            if (selectedFiles.length > 0) {
+                shareData.files = selectedFiles;
+            }
+
+            try {
+                await navigator.share(shareData);
+            } catch (err) {
+                console.log('シェアキャンセルまたは失敗', err);
+            }
+        } else {
+            alert("お使いのブラウザは共有機能に対応していません。テキストはコピーされました。");
+        }
+    }
+</script>
+
+</body>
+</html>
