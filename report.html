@@ -3,128 +3,88 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RSLINE 施工報告システム</title>
+    <title>RS施工報告 PRO - 加盟店版</title>
     <style>
-        :root { --bg: #0a0a0a; --gold: #c5a059; --white: #fff; --gray: #222; }
-        body { background: var(--bg); color: var(--white); font-family: sans-serif; padding: 20px; line-height: 1.6; }
-        .container { max-width: 500px; margin: 0 auto; }
-        h1 { color: var(--gold); text-align: center; border-bottom: 1px solid var(--gold); padding-bottom: 10px; }
+        :root { --gold: #c5a059; --bg: #0a0a0a; --card: #1a1a1a; }
+        body { background: var(--bg); color: #fff; font-family: 'Helvetica Neue', Arial, sans-serif; margin: 0; padding-bottom: 100px; }
+        .header { background: #000; padding: 20px; text-align: center; border-bottom: 2px solid var(--gold); }
+        .header h1 { color: var(--gold); margin: 0; font-size: 1.1rem; letter-spacing: 2px; }
+        .container { max-width: 500px; margin: 0 auto; padding: 20px; }
         
-        /* フォーム共通 */
-        .card { background: var(--gray); padding: 15px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #333; }
-        label { display: block; color: var(--gold); font-size: 0.8rem; font-weight: bold; margin-bottom: 5px; }
-        input, textarea { width: 100%; padding: 10px; background: #000; border: 1px solid #444; color: #fff; border-radius: 6px; box-sizing: border-box; margin-bottom: 10px; }
-
-        /* 画像選択エリア */
-        .ba-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
-        .photo-box { background: #111; border: 1px dashed var(--gold); border-radius: 8px; height: 120px; display: flex; align-items: center; justify-content: center; position: relative; cursor: pointer; overflow: hidden; }
-        .photo-box img { width: 100%; height: 100%; object-fit: cover; }
-        .photo-box span { font-size: 0.7rem; color: var(--gold); }
-        .remove-btn { position: absolute; top: 2px; right: 2px; background: rgba(255,0,0,0.8); color: #fff; border: none; border-radius: 50%; width: 20px; height: 20px; cursor: pointer; z-index: 10; }
-
-        /* ボタン */
-        .btn-main { width: 100%; background: linear-gradient(45deg, #c5a059, #eed08c); color: #000; border: none; padding: 18px; font-weight: bold; border-radius: 35px; cursor: pointer; font-size: 1.1rem; }
-        .btn-add { background: none; border: 1px solid var(--gold); color: var(--gold); padding: 5px 15px; border-radius: 15px; font-size: 0.8rem; margin-bottom: 20px; cursor: pointer; }
-
-        /* AIリライトプレビュー表示 */
-        #ai-preview { background: #1a1a1a; border-left: 4px solid var(--gold); padding: 10px; font-size: 0.9rem; margin-top: 10px; display: none; }
+        /* カードデザイン */
+        .card { background: var(--card); border-radius: 15px; padding: 20px; border: 1px solid #333; margin-bottom: 20px; }
+        label { display: block; color: var(--gold); font-size: 0.75rem; font-weight: bold; margin-bottom: 10px; }
+        input, textarea { width: 100%; padding: 12px; background: #000; border: 1px solid #444; color: #fff; border-radius: 8px; box-sizing: border-box; margin-bottom: 12px; font-size: 1rem; }
+        
+        /* 無限追加Before/After */
+        .ba-set { background: #111; padding: 15px; border-radius: 12px; border: 1px solid #333; margin-bottom: 15px; position: relative; }
+        .ba-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .upload-box { background: #222; border: 1px dashed var(--gold); height: 120px; display: flex; align-items: center; justify-content: center; border-radius: 10px; cursor: pointer; overflow: hidden; position: relative; }
+        .upload-box img { width: 100%; height: 100%; object-fit: cover; }
+        .ba-badge { position: absolute; top: 5px; left: 5px; background: rgba(0,0,0,0.7); color: var(--gold); font-size: 0.6rem; padding: 2px 6px; border-radius: 4px; }
+        
+        .btn-add { width: 100%; background: none; border: 1px solid var(--gold); color: var(--gold); padding: 15px; border-radius: 10px; cursor: pointer; font-weight: bold; margin-bottom: 30px; }
+        .footer { position: fixed; bottom: 0; width: 100%; background: rgba(0,0,0,0.9); padding: 20px; box-sizing: border-box; }
+        .btn-submit { width: 100%; max-width: 460px; display: block; margin: 0 auto; background: linear-gradient(135deg, var(--gold), #eed08c); color: #000; border: none; padding: 18px; border-radius: 40px; font-weight: bold; font-size: 1.1rem; cursor: pointer; }
     </style>
 </head>
 <body>
 
+<div class="header"><h1>RS 施工報告システム</h1></div>
+
 <div class="container">
-    <h1>RS施工報告ジェネレーター</h1>
-
     <div class="card">
-        <label>施工店情報</label>
-        <input type="text" id="storeName" placeholder="屋号を入力（保存されます）">
-        
-        <label>基本データ</label>
-        <div style="display:flex; gap:10px;">
-            <input type="text" id="type" placeholder="石風/壁風">
-            <input type="text" id="area" placeholder="面積(㎡)">
-        </div>
-        <input type="text" id="colors" placeholder="石色 / 目地色">
+        <label>基本情報</label>
+        <input type="text" id="storeName" placeholder="屋号（例：株式会社KENSIN）">
+        <input type="text" id="info" placeholder="面積・日数（例：50㎡ / 4日間）">
+        <textarea id="comment" rows="4" placeholder="こだわり・お客様の声（箇条書きでOK）"></textarea>
     </div>
 
-    <div class="card">
-        <label>施工写真 (Before / After)</label>
-        <div id="photo-sets">
-            <div class="ba-grid" id="set-1">
-                <div class="photo-box" onclick="triggerFile('b1')"><span id="txt-b1">Before 1</span><img id="img-b1"><input type="file" id="b1" hidden onchange="preview(this)"></div>
-                <div class="photo-box" onclick="triggerFile('a1')"><span id="txt-a1">After 1</span><img id="img-a1"><input type="file" id="a1" hidden onchange="preview(this)"></div>
-            </div>
-            <div class="ba-grid" id="set-2">
-                <div class="photo-box" onclick="triggerFile('b2')"><span id="txt-b2">Before 2</span><img id="img-b2"><input type="file" id="b2" hidden onchange="preview(this)"></div>
-                <div class="photo-box" onclick="triggerFile('a2')"><span id="txt-a2">After 2</span><img id="img-a2"><input type="file" id="a2" hidden onchange="preview(this)"></div>
+    <div id="ba-list">
+        <div class="ba-set" id="set-1">
+            <label>セット 1</label>
+            <div class="ba-grid">
+                <div class="upload-box" onclick="trigger('b1')"><span class="ba-badge">BEFORE</span><span id="t-b1">📸選択</span><img id="p-b1" style="display:none"><input type="file" id="b1" hidden onchange="preview(this)"></div>
+                <div class="upload-box" onclick="trigger('a1')"><span class="ba-badge">AFTER</span><span id="t-a1">📸選択</span><img id="p-a1" style="display:none"><input type="file" id="a1" hidden onchange="preview(this)"></div>
             </div>
         </div>
-        <button class="btn-add" onclick="alert('プロトタイプ版は現在2セットまでです')">＋セットを追加</button>
     </div>
 
-    <div class="card">
-        <label>現場のこだわり / お客様の声</label>
-        <textarea id="rawComment" rows="3" placeholder="簡易入力でOK！AIがリライトします" oninput="showAiRewrite()"></textarea>
-        <div id="ai-preview">
-            <label>✨ AIリライト案 (本部コピー用)</label>
-            <div id="ai-text" style="color:#ccc; font-style: italic;"></div>
-        </div>
-    </div>
+    <button class="btn-add" onclick="addNewSet()">＋ 比較セットを追加</button>
+</div>
 
-    <button class="btn-main" onclick="generateReport()">報告データを作成 & LINE送信</button>
-    
-    <canvas id="exportCanvas" style="display:none;"></canvas>
+<div class="footer">
+    <button class="btn-submit" onclick="sendToHonbu()">報告ページを生成 & LINE送信</button>
 </div>
 
 <script>
-    // 屋号の保存
-    window.onload = () => {
-        document.getElementById('storeName').value = localStorage.getItem('rs_name') || '';
+    let setCount = 1;
+    function addNewSet() {
+        setCount++;
+        const html = `<div class="ba-set" id="set-${setCount}"><label>セット ${setCount}</label><div class="ba-grid"><div class="upload-box" onclick="trigger('b${setCount}')"><span class="ba-badge">BEFORE</span><span id="t-b${setCount}">📸選択</span><img id="p-b${setCount}" style="display:none"><input type="file" id="b${setCount}" hidden onchange="preview(this)"></div><div class="upload-box" onclick="trigger('a${setCount}')"><span class="ba-badge">AFTER</span><span id="t-a${setCount}">📸選択</span><img id="p-a${setCount}" style="display:none"><input type="file" id="a${setCount}" hidden onchange="preview(this)"></div></div></div>`;
+        document.getElementById('ba-list').insertAdjacentHTML('beforeend', html);
     }
-
-    function triggerFile(id) { document.getElementById(id).click(); }
-
+    function trigger(id) { document.getElementById(id).click(); }
     function preview(input) {
-        if (input.files && input.files[0]) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                const img = document.getElementById('img-' + input.id);
-                const txt = document.getElementById('txt-' + input.id);
-                img.src = e.target.result;
-                img.style.display = 'block';
-                txt.style.display = 'none';
-            };
-            reader.readAsDataURL(input.files[0]);
-        }
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            document.getElementById('p-' + input.id).src = e.target.result;
+            document.getElementById('p-' + input.id).style.display = 'block';
+            document.getElementById('t-' + input.id).style.display = 'none';
+        };
+        reader.readAsDataURL(input.files[0]);
     }
 
-    // AIリライトのシミュレーション
-    function showAiRewrite() {
-        const raw = document.getElementById('rawComment').value;
-        const aiPreview = document.getElementById('ai-preview');
-        const aiText = document.getElementById('ai-text');
+    async function sendToHonbu() {
+        // ※ 本来はここにGASのURLを指定してfetchで送信
+        const store = document.getElementById('storeName').value;
+        const msg = `【施工報告：${store}】\nAIリライト済みの報告ページを生成しました。\n\n▼確認・保存URL\nhttps://script.google.com/macros/s/XXXX/exec?id=RE001\n\n（このURLをグループLINEに共有してください）`;
         
-        if(raw.length > 5) {
-            aiPreview.style.display = 'block';
-            aiText.innerText = `【施工事例】\n${raw}を軸に、細部までこだわり抜いたローラーストーン施工。施主様からも「想像以上の高級感！」と感動の声をいただきました✨ #ローラーストーン #外構リフォーム`;
-        }
-    }
-
-    async function generateReport() {
-        const name = document.getElementById('storeName').value;
-        const aiText = document.getElementById('ai-text').innerText || document.getElementById('rawComment').value;
-        localStorage.setItem('rs_name', name);
-
-        // クリップボードにリライト済みの文章をコピー
-        const copyText = `[${name} 施工報告]\n${document.getElementById('type').value} ${document.getElementById('area').value}㎡\n${document.getElementById('colors').value}\n\n${aiText}`;
-        await navigator.clipboard.writeText(copyText);
-
-        // 本来はここでCanvasを使って画像を1枚に結合し、Share APIで飛ばす
-        alert("文章をコピーしました！LINEが開いたら、本部へのメッセージ欄にペーストしてください。写真はアルバムとして送信されます。");
-        
-        // LINE共有（仮）
         if (navigator.share) {
-            navigator.share({ title: '施工報告', text: copyText });
+            await navigator.share({ text: msg });
+        } else {
+            alert("URLをコピーしました！");
+            navigator.clipboard.writeText(msg);
         }
     }
 </script>
