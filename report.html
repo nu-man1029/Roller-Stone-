@@ -3,87 +3,119 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RS施工報告 PRO - 加盟店版</title>
+    <title>RS施工報告システム PRO</title>
     <style>
-        :root { --gold: #c5a059; --bg: #0a0a0a; --card: #1a1a1a; }
-        body { background: var(--bg); color: #fff; font-family: 'Helvetica Neue', Arial, sans-serif; margin: 0; padding-bottom: 100px; }
-        .header { background: #000; padding: 20px; text-align: center; border-bottom: 2px solid var(--gold); }
+        :root { --gold: #c5a059; --bg: #0a0a0a; --card: #1a1a1a; --border: #333; }
+        body { background: var(--bg); color: #fff; font-family: 'Helvetica Neue', Arial, sans-serif; margin: 0; padding-bottom: 120px; }
+        .header { background: #000; padding: 20px; text-align: center; border-bottom: 2px solid var(--gold); position: sticky; top: 0; z-index: 100; }
         .header h1 { color: var(--gold); margin: 0; font-size: 1.1rem; letter-spacing: 2px; }
         .container { max-width: 500px; margin: 0 auto; padding: 20px; }
         
-        /* カードデザイン */
-        .card { background: var(--card); border-radius: 15px; padding: 20px; border: 1px solid #333; margin-bottom: 20px; }
-        label { display: block; color: var(--gold); font-size: 0.75rem; font-weight: bold; margin-bottom: 10px; }
-        input, textarea { width: 100%; padding: 12px; background: #000; border: 1px solid #444; color: #fff; border-radius: 8px; box-sizing: border-box; margin-bottom: 12px; font-size: 1rem; }
+        .section-title { color: var(--gold); font-size: 0.8rem; font-weight: bold; margin: 25px 0 10px; display: flex; align-items: center; }
+        .section-title::after { content: ""; flex: 1; height: 1px; background: var(--border); margin-left: 10px; }
         
-        /* 無限追加Before/After */
-        .ba-set { background: #111; padding: 15px; border-radius: 12px; border: 1px solid #333; margin-bottom: 15px; position: relative; }
+        .card { background: var(--card); border-radius: 15px; padding: 20px; border: 1px solid var(--border); margin-bottom: 15px; }
+        label { display: block; color: #888; font-size: 0.7rem; margin-bottom: 5px; }
+        
+        input, textarea { width: 100%; padding: 12px; background: #000; border: 1px solid #444; color: #fff; border-radius: 8px; box-sizing: border-box; font-size: 0.95rem; margin-bottom: 15px; }
+        input:focus, textarea:focus { border-color: var(--gold); outline: none; }
+        ::placeholder { color: #555; font-size: 0.85rem; }
+
+        /* 画像セット */
+        .ba-set { background: #111; padding: 15px; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 15px; }
         .ba-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .upload-box { background: #222; border: 1px dashed var(--gold); height: 120px; display: flex; align-items: center; justify-content: center; border-radius: 10px; cursor: pointer; overflow: hidden; position: relative; }
+        .upload-box { background: #222; border: 1px dashed var(--gold); height: 120px; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 10px; cursor: pointer; overflow: hidden; position: relative; }
         .upload-box img { width: 100%; height: 100%; object-fit: cover; }
-        .ba-badge { position: absolute; top: 5px; left: 5px; background: rgba(0,0,0,0.7); color: var(--gold); font-size: 0.6rem; padding: 2px 6px; border-radius: 4px; }
-        
+        .ba-badge { position: absolute; top: 5px; left: 5px; background: rgba(0,0,0,0.7); color: var(--gold); font-size: 0.6rem; padding: 2px 6px; border-radius: 4px; font-weight: bold; }
+        .upload-text { font-size: 0.65rem; color: var(--gold); margin-top: 5px; }
+
         .btn-add { width: 100%; background: none; border: 1px solid var(--gold); color: var(--gold); padding: 15px; border-radius: 10px; cursor: pointer; font-weight: bold; margin-bottom: 30px; }
-        .footer { position: fixed; bottom: 0; width: 100%; background: rgba(0,0,0,0.9); padding: 20px; box-sizing: border-box; }
-        .btn-submit { width: 100%; max-width: 460px; display: block; margin: 0 auto; background: linear-gradient(135deg, var(--gold), #eed08c); color: #000; border: none; padding: 18px; border-radius: 40px; font-weight: bold; font-size: 1.1rem; cursor: pointer; }
+        .footer { position: fixed; bottom: 0; width: 100%; background: rgba(0,0,0,0.9); padding: 20px; box-sizing: border-box; border-top: 1px solid #333; backdrop-filter: blur(10px); z-index: 1000; }
+        .btn-submit { width: 100%; max-width: 460px; display: block; margin: 0 auto; background: linear-gradient(135deg, var(--gold), #eed08c); color: #000; border: none; padding: 18px; border-radius: 40px; font-weight: bold; font-size: 1.1rem; cursor: pointer; box-shadow: 0 5px 20px rgba(197, 160, 89, 0.4); }
     </style>
 </head>
 <body>
 
-<div class="header"><h1>RS 施工報告システム</h1></div>
+<div class="header"><h1>施工報告 & LP生成</h1></div>
 
 <div class="container">
-    <div class="card">
-        <label>基本情報</label>
-        <input type="text" id="storeName" placeholder="屋号（例：株式会社KENSIN）">
-        <input type="text" id="info" placeholder="面積・日数（例：50㎡ / 4日間）">
-        <textarea id="comment" rows="4" placeholder="こだわり・お客様の声（箇条書きでOK）"></textarea>
+    <div class="section-title">施工店・集客設定</div>
+    <div class="card" style="border-color: var(--gold);">
+        <label>屋号</label>
+        <input type="text" id="storeName" placeholder="例：株式会社KENSIN">
+        <label>お問合せ先URL（公式LINE等）</label>
+        <input type="url" id="contactUrl" placeholder="https://line.me/R/ti/p/...">
     </div>
 
+    <div class="section-title">施工データ（詳細入力）</div>
+    <div class="card">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <div><label>施工面積</label><input type="text" id="area" placeholder="例：50㎡"></div>
+            <div><label>施工日数</label><input type="text" id="days" placeholder="例：5日間"></div>
+        </div>
+        <label>石色 / 目地色</label>
+        <input type="text" id="colors" placeholder="例：グレー / ブラック">
+    </div>
+
+    <div class="section-title">現場ストーリー（箇条書きでOK）</div>
+    <div class="card">
+        <label>こだわりポイント（AIがリライトします）</label>
+        <textarea id="points" rows="2" placeholder="例：ひび割れを丁寧に補修して、跡が分からないように仕上げました"></textarea>
+        <label>お客様の声</label>
+        <textarea id="voice" rows="2" placeholder="例：新築の時より綺麗になったと驚かれました"></textarea>
+    </div>
+
+    <div class="section-title">比較写真（セットは自由に追加可能）</div>
     <div id="ba-list">
-        <div class="ba-set" id="set-1">
-            <label>セット 1</label>
+        <div class="ba-set">
             <div class="ba-grid">
-                <div class="upload-box" onclick="trigger('b1')"><span class="ba-badge">BEFORE</span><span id="t-b1">📸選択</span><img id="p-b1" style="display:none"><input type="file" id="b1" hidden onchange="preview(this)"></div>
-                <div class="upload-box" onclick="trigger('a1')"><span class="ba-badge">AFTER</span><span id="t-a1">📸選択</span><img id="p-a1" style="display:none"><input type="file" id="a1" hidden onchange="preview(this)"></div>
+                <div class="upload-box" onclick="trigger('b1')">
+                    <span class="ba-badge">BEFORE</span>
+                    <span id="t-b1">📸 写真を選択</span><img id="p-b1" style="display:none">
+                    <input type="file" id="b1" hidden onchange="preview(this)">
+                </div>
+                <div class="upload-box" onclick="trigger('a1')">
+                    <span class="ba-badge">AFTER</span>
+                    <span id="t-a1">📸 写真を選択</span><img id="p-a1" style="display:none">
+                    <input type="file" id="a1" hidden onchange="preview(this)">
+                </div>
             </div>
         </div>
     </div>
-
     <button class="btn-add" onclick="addNewSet()">＋ 比較セットを追加</button>
 </div>
 
 <div class="footer">
-    <button class="btn-submit" onclick="sendToHonbu()">報告ページを生成 & LINE送信</button>
+    <button class="btn-submit" onclick="submitToGas()">報告 & LPページを生成</button>
 </div>
 
 <script>
     let setCount = 1;
     function addNewSet() {
         setCount++;
-        const html = `<div class="ba-set" id="set-${setCount}"><label>セット ${setCount}</label><div class="ba-grid"><div class="upload-box" onclick="trigger('b${setCount}')"><span class="ba-badge">BEFORE</span><span id="t-b${setCount}">📸選択</span><img id="p-b${setCount}" style="display:none"><input type="file" id="b${setCount}" hidden onchange="preview(this)"></div><div class="upload-box" onclick="trigger('a${setCount}')"><span class="ba-badge">AFTER</span><span id="t-a${setCount}">📸選択</span><img id="p-a${setCount}" style="display:none"><input type="file" id="a${setCount}" hidden onchange="preview(this)"></div></div></div>`;
+        const html = `<div class="ba-set" id="set-${setCount}"><div class="ba-grid"><div class="upload-box" onclick="trigger('b${setCount}')"><span class="ba-badge">BEFORE</span><span id="t-b${setCount}">📸 写真を選択</span><img id="p-b${setCount}" style="display:none"><input type="file" id="b${setCount}" hidden onchange="preview(this)"></div><div class="upload-box" onclick="trigger('a${setCount}')"><span class="ba-badge">AFTER</span><span id="t-a${setCount}">📸 写真を選択</span><img id="p-a${setCount}" style="display:none"><input type="file" id="a${setCount}" hidden onchange="preview(this)"></div></div></div>`;
         document.getElementById('ba-list').insertAdjacentHTML('beforeend', html);
     }
     function trigger(id) { document.getElementById(id).click(); }
     function preview(input) {
         const reader = new FileReader();
         reader.onload = (e) => {
-            document.getElementById('p-' + input.id).src = e.target.result;
-            document.getElementById('p-' + input.id).style.display = 'block';
+            const img = document.getElementById('p-' + input.id);
+            img.src = e.target.result; img.style.display = 'block';
             document.getElementById('t-' + input.id).style.display = 'none';
         };
         reader.readAsDataURL(input.files[0]);
     }
 
-    async function sendToHonbu() {
-        // ※ 本来はここにGASのURLを指定してfetchで送信
-        const store = document.getElementById('storeName').value;
-        const msg = `【施工報告：${store}】\nAIリライト済みの報告ページを生成しました。\n\n▼確認・保存URL\nhttps://script.google.com/macros/s/XXXX/exec?id=RE001\n\n（このURLをグループLINEに共有してください）`;
+    function submitToGas() {
+        // ここで生成されるURLが「最強のデモ」になります
+        const url = "https://script.google.com/macros/s/XXXX/exec"; 
+        const msg = `【施工報告】${document.getElementById('storeName').value}\n\n集客LP 兼 報告ページが完成しました。\n${url}\n\n※このリンクをSNSのプロフィールや、グループLINEに共有してください。`;
         
         if (navigator.share) {
-            await navigator.share({ text: msg });
+            navigator.share({ text: msg });
         } else {
-            alert("URLをコピーしました！");
+            alert("URLを生成し、コピーしました。");
             navigator.clipboard.writeText(msg);
         }
     }
