@@ -322,7 +322,7 @@ select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
     <div class="hint" style="margin-bottom:10px;">入力したものだけLPに表示されます</div>
     <div class="contact-row"><span class="contact-icon">💬</span><input type="url" id="lineUrl" placeholder="LINE公式アカウント URL"></div>
     <div class="contact-row"><span class="contact-icon">📸</span><input type="url" id="instaUrl" placeholder="Instagram URL"></div>
-    <div class="contact-row"><span class="contact-icon">📞</span><input type="tel" id="phoneNum" placeholder="電話番号"></div>
+    <div class="contact-row"><span class="contact-icon">📞</span><input type="text" id="phoneNum" placeholder="例：090-1234-5678" inputmode="tel"></div>
   </div>
 
   <!-- ZIP構造 -->
@@ -511,20 +511,34 @@ var kodawariDict = {
 
 var voiceDict = {
   '明るくなった': '「施工後、玄関まわりがガラッと明るくなって、毎日帰ってくるのが楽しみになりました。」',
+  '明るくなり': '「施工後、玄関まわりがガラッと明るくなって、毎日帰ってくるのが楽しみになりました。」',
   '明るい': '「こんなに雰囲気が変わるとは思わなかった。家全体が明るく見えます。」',
   'かっこよくなった': '「想像以上にかっこよくなって、近所の方にも褒めてもらいました！」',
   'かっこよかった': '「完成を見て、思わず声が出るほどかっこよかったです。大満足です。」',
   'かっこいい': '「仕上がりを見た瞬間、これはすごいと思いました。本当にかっこいいです。」',
+  'かっこよ': '「完成を見て、思わず声が出るほどかっこよかったです。大満足です。」',
   '驚いた': '「施工前と施工後の変化に正直驚きました。こんなに変わるものなんですね。」',
-  '喜んでた': '「家族全員が大喜びしていました。やってよかったと心から思っています。」',
+  'びっくり': '「施工前と施工後の変化に正直驚きました。こんなに変わるものなんですね。」',
   '喜んでいた': '「家族全員が大喜びしていました。やってよかったと心から思っています。」',
+  '喜んでた': '「家族全員が大喜びしていました。やってよかったと心から思っています。」',
+  '喜んで': '「家族全員が大喜びしていました。やってよかったと心から思っています。」',
   'また頼みたい': '「次にリフォームするときも、絶対にお願いしたいと思っています。」',
+  'また頼む': '「次にリフォームするときも、絶対にお願いしたいと思っています。」',
   '満足': '「期待以上の出来栄えで、大変満足しています。お願いして本当によかったです。」',
   '感動': '「完成写真を見たとき、感動で言葉が出ませんでした。プロの技術はすごいですね。」',
   '丁寧': '「施工中もとても丁寧に対応していただき、安心してお任せすることができました。」',
   '早かった': '「工事が予想より早く終わって助かりました。生活への影響も最小限でした。」',
+  '早い': '「工事が予想より早く終わって助かりました。生活への影響も最小限でした。」',
   'きれいになった': '「見違えるほどきれいになりました。新築みたいで、友人にも自慢できます。」',
-  '綺麗になった': '「見違えるほどきれいになりました。新築みたいで、友人にも自慢できます。」'
+  'きれいに': '「見違えるほどきれいになりました。新築みたいで、友人にも自慢できます。」',
+  '綺麗になった': '「見違えるほどきれいになりました。新築みたいで、友人にも自慢できます。」',
+  '綺麗に': '「見違えるほどきれいになりました。新築みたいで、友人にも自慙できます。」',
+  'よかった': '「仕上がりが想像以上で、本当によかったです。お願いして正解でした。」',
+  'すごい': '「こんなに変わるとは思わなかった。本当にすごい技術ですね。」',
+  'おしゃれ': '「施工後に近所の方から"おしゃれになったね"と声をかけてもらいました。」',
+  'かわいい': '「イメージ通りの仕上がりで、毎日見るたびに嬉しくなります。」',
+  'きれい': '「細部まで丁寧に仕上げていただいて、本当にきれいです。」',
+  '綺麗': '「細部まで丁寧に仕上げていただいて、本当にきれいです。」'
 };
 
 function optimizeText(targetId) {
@@ -686,7 +700,7 @@ function buildLP(d, t, baHtml, contactHtml, hasMain, hasSub) {
   + '.spec-item{flex:1;min-width:70px;padding:16px 10px;text-align:center;border-right:1px solid ' + t.specBorder + ';}\n'
   + '.spec-item:last-child{border-right:none;}\n'
   + '.spec-label{display:block;font-size:0.55rem;font-weight:700;letter-spacing:0.15em;color:' + t.specLabel + ';margin-bottom:4px;}\n'
-  + '.spec-val{font-size:1.05rem;font-weight:700;letter-spacing:0.03em;}\n'
+  + '.spec-val{font-size:0.78rem;font-weight:700;letter-spacing:0.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}\n'
   + '.spec-val small{font-size:0.65rem;font-weight:400;}\n'
 
   /* セクション共通 */
@@ -737,7 +751,7 @@ function buildLP(d, t, baHtml, contactHtml, hasMain, hasSub) {
   + '<header class="lp-header">\n'
   + '  <div class="lp-badge"><div class="lp-badge-dot"></div><span>ROLLER STONE 認定施工店</span></div>\n'
   + '  <h1 class="lp-shop">' + shopLabel + '</h1>\n'
-  + '  <p class="lp-date"><span>COMPLETED</span>' + esc(d.date) + '</p>\n'
+  + ''
   + '</header>\n'
 
   /* メイン画像 */
