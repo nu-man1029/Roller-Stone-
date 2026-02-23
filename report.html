@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RS施工報告システム PRO</title>
+    <title>RS施工報告 & LP生成 PRO</title>
     <style>
         :root { --gold: #c5a059; --bg: #0a0a0a; --card: #1a1a1a; --border: #333; }
         body { background: var(--bg); color: #fff; font-family: 'Helvetica Neue', Arial, sans-serif; margin: 0; padding-bottom: 120px; }
         .header { background: #000; padding: 20px; text-align: center; border-bottom: 2px solid var(--gold); position: sticky; top: 0; z-index: 100; }
-        .header h1 { color: var(--gold); margin: 0; font-size: 1.1rem; letter-spacing: 2px; }
+        .header h1 { color: var(--gold); margin: 0; font-size: 1rem; letter-spacing: 2px; }
         .container { max-width: 500px; margin: 0 auto; padding: 20px; }
         
         .section-title { color: var(--gold); font-size: 0.8rem; font-weight: bold; margin: 25px 0 10px; display: flex; align-items: center; }
@@ -17,156 +17,150 @@
         .card { background: var(--card); border-radius: 15px; padding: 20px; border: 1px solid var(--border); margin-bottom: 15px; }
         label { display: block; color: #888; font-size: 0.7rem; margin-bottom: 5px; }
         
-        input, textarea { width: 100%; padding: 12px; background: #000; border: 1px solid #444; color: #fff; border-radius: 8px; box-sizing: border-box; font-size: 0.95rem; margin-bottom: 15px; }
-        input:focus, textarea:focus { border-color: var(--gold); outline: none; }
-        ::placeholder { color: #555; font-size: 0.85rem; }
+        input, select, textarea { width: 100%; padding: 12px; background: #000; border: 1px solid #444; color: #fff; border-radius: 8px; box-sizing: border-box; font-size: 0.95rem; margin-bottom: 15px; }
+        input:focus, select:focus, textarea:focus { border-color: var(--gold); outline: none; }
+        ::placeholder { color: #555; }
 
         /* 画像セット */
         .ba-set { background: #111; padding: 15px; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 15px; }
         .ba-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .upload-box { background: #222; border: 1px dashed var(--gold); height: 120px; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 10px; cursor: pointer; overflow: hidden; position: relative; }
+        .upload-box { background: #222; border: 1px dashed var(--gold); height: 110px; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 10px; cursor: pointer; overflow: hidden; position: relative; }
         .upload-box img { width: 100%; height: 100%; object-fit: cover; }
         .ba-badge { position: absolute; top: 5px; left: 5px; background: rgba(0,0,0,0.7); color: var(--gold); font-size: 0.6rem; padding: 2px 6px; border-radius: 4px; font-weight: bold; }
-        .upload-text { font-size: 0.65rem; color: var(--gold); margin-top: 5px; }
 
         .btn-add { width: 100%; background: none; border: 1px solid var(--gold); color: var(--gold); padding: 15px; border-radius: 10px; cursor: pointer; font-weight: bold; margin-bottom: 30px; }
+        
+        /* プレビュー画面（オーバーレイ） */
+        #preview-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 2000; overflow-y: auto; padding-bottom: 100px; }
+        .preview-header { background: #000; padding: 15px; color: var(--gold); text-align: center; border-bottom: 1px solid var(--gold); position: sticky; top: 0; }
+        
         .footer { position: fixed; bottom: 0; width: 100%; background: rgba(0,0,0,0.9); padding: 20px; box-sizing: border-box; border-top: 1px solid #333; backdrop-filter: blur(10px); z-index: 1000; }
-        .btn-submit { width: 100%; max-width: 460px; display: block; margin: 0 auto; background: linear-gradient(135deg, var(--gold), #eed08c); color: #000; border: none; padding: 18px; border-radius: 40px; font-weight: bold; font-size: 1.1rem; cursor: pointer; box-shadow: 0 5px 20px rgba(197, 160, 89, 0.4); }
+        .btn-submit { width: 100%; max-width: 460px; display: block; margin: 0 auto; background: linear-gradient(135deg, var(--gold), #eed08c); color: #000; border: none; padding: 18px; border-radius: 40px; font-weight: bold; font-size: 1.1rem; cursor: pointer; }
+        .btn-close { background: #333; color: #fff; margin-top: 10px; border-radius: 40px; padding: 10px; border: none; width: 100%; }
     </style>
 </head>
 <body>
 
-<div class="header"><h1>施工報告 & LP生成</h1></div>
-
-<div class="container">
-    <div class="section-title">施工店・集客設定</div>
-    <div class="card" style="border-color: var(--gold);">
-        <label>屋号</label>
-        <input type="text" id="storeName" placeholder="例：株式会社KENSIN">
-        <label>お問合せ先URL（公式LINE等）</label>
-        <input type="url" id="contactUrl" placeholder="https://line.me/R/ti/p/...">
-    </div>
-
-    <div class="section-title">施工データ（詳細入力）</div>
-    <div class="card">
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-            <div><label>施工面積</label><input type="text" id="area" placeholder="例：50㎡"></div>
-            <div><label>施工日数</label><input type="text" id="days" placeholder="例：5日間"></div>
+<div id="main-form">
+    <div class="header"><h1>施工報告 & LP生成</h1></div>
+    <div class="container">
+        <div class="section-title">1. 施工店情報</div>
+        <div class="card">
+            <label>認定施工店エリア</label>
+            <select id="pref">
+                <option value="">都道府県を選択</option>
+                <option value="三重県">三重県認定施工店</option>
+                <option value="愛知県">愛知県認定施工店</option>
+                <option value="岐阜県">岐阜県認定施工店</option>
+                </select>
+            <label>屋号</label>
+            <input type="text" id="storeName" placeholder="例：株式会社KENSIN">
         </div>
-        <label>石色 / 目地色</label>
-        <input type="text" id="colors" placeholder="例：グレー / ブラック">
-    </div>
 
-    <div class="section-title">現場ストーリー（箇条書きでOK）</div>
-    <div class="card">
-        <label>こだわりポイント（AIがリライトします）</label>
-        <textarea id="points" rows="2" placeholder="例：ひび割れを丁寧に補修して、跡が分からないように仕上げました"></textarea>
-        <label>お客様の声</label>
-        <textarea id="voice" rows="2" placeholder="例：新築の時より綺麗になったと驚かれました"></textarea>
-    </div>
+        <div class="section-title">2. お問合せ先（LP用）</div>
+        <div class="card">
+            <label>お問合せURL（公式LINE等）</label>
+            <input type="url" id="contactUrl" placeholder="https://line.me/R/ti/p/...">
+            <label>電話番号</label>
+            <input type="tel" id="phone" placeholder="例：090-0000-0000">
+        </div>
 
-    <div class="section-title">比較写真（セットは自由に追加可能）</div>
-    <div id="ba-list">
-        <div class="ba-set">
-            <div class="ba-grid">
-                <div class="upload-box" onclick="trigger('b1')">
-                    <span class="ba-badge">BEFORE</span>
-                    <span id="t-b1">📸 写真を選択</span><img id="p-b1" style="display:none">
-                    <input type="file" id="b1" hidden onchange="preview(this)">
-                </div>
-                <div class="upload-box" onclick="trigger('a1')">
-                    <span class="ba-badge">AFTER</span>
-                    <span id="t-a1">📸 写真を選択</span><img id="p-a1" style="display:none">
-                    <input type="file" id="a1" hidden onchange="preview(this)">
+        <div class="section-title">3. 施工スペック</div>
+        <div class="card">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <div><label>施工面積</label><input type="text" id="area" placeholder="例：50㎡"></div>
+                <div><label>施工日数</label><input type="text" id="days" placeholder="例：4日間"></div>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <div><label>石の色</label><input type="text" id="stoneColor" placeholder="例：ミルクティー"></div>
+                <div><label>目地の色</label><input type="text" id="jointColor" placeholder="例：グレー"></div>
+            </div>
+        </div>
+
+        <div class="section-title">4. 詳細・備考</div>
+        <div class="card">
+            <label>こだわりポイント</label>
+            <textarea id="points" rows="2" placeholder="こだわり：ひび割れ補修を丁寧に行いました"></textarea>
+            <label>お客様の声</label>
+            <textarea id="voice" rows="2" placeholder="お客様の声：明るくなったと喜ばれました"></textarea>
+            <label>自由記述備考欄</label>
+            <textarea id="memo" rows="2" placeholder="入力例：表札はぼかしを入れてください、など"></textarea>
+        </div>
+
+        <div class="section-title">5. 写真 (Before/After)</div>
+        <div id="ba-list">
+            <div class="ba-set">
+                <div class="ba-grid">
+                    <div class="upload-box" onclick="trigger('b1')"><span class="ba-badge">BEFORE</span><img id="p-b1" style="display:none"><input type="file" id="b1" hidden onchange="preview(this)"></div>
+                    <div class="upload-box" onclick="trigger('a1')"><span class="ba-badge">AFTER</span><img id="p-a1" style="display:none"><input type="file" id="a1" hidden onchange="preview(this)"></div>
                 </div>
             </div>
         </div>
+        <button class="btn-add" onclick="addNewSet()">＋ 比較セットを追加</button>
     </div>
-    <button class="btn-add" onclick="addNewSet()">＋ 比較セットを追加</button>
+    <div class="footer"><button class="btn-submit" onclick="showPreview()">内容をプレビュー確認</button></div>
 </div>
 
-<div class="footer">
-    <button class="btn-submit" onclick="submitToGas()">報告 & LPページを生成</button>
+<div id="preview-modal">
+    <div class="preview-header">プレビュー確認</div>
+    <div class="container" id="preview-content">
+        </div>
+    <div class="footer">
+        <button class="btn-submit" onclick="finalSubmit()">これで送信・URL生成</button>
+        <button class="btn-close" onclick="closePreview()">修正する</button>
+    </div>
 </div>
 
 <script>
     let setCount = 1;
-
-    // セットを追加する関数
     function addNewSet() {
         setCount++;
-        const html = `
-            <div class="ba-set" id="set-${setCount}">
-                <div class="ba-grid">
-                    <div class="upload-box" onclick="trigger('b${setCount}')">
-                        <span class="ba-badge">BEFORE</span>
-                        <span id="t-b${setCount}">📸 写真を選択</span><img id="p-b${setCount}" style="display:none">
-                        <input type="file" id="b${setCount}" hidden onchange="preview(this)">
-                    </div>
-                    <div class="upload-box" onclick="trigger('a${setCount}')">
-                        <span class="ba-badge">AFTER</span>
-                        <span id="t-a${setCount}">📸 写真を選択</span><img id="p-a${setCount}" style="display:none">
-                        <input type="file" id="a${setCount}" hidden onchange="preview(this)">
-                    </div>
-                </div>
-            </div>`;
+        const html = `<div class="ba-set"><div class="ba-grid"><div class="upload-box" onclick="trigger('b${setCount}')"><span class="ba-badge">BEFORE</span><img id="p-b${setCount}" style="display:none"><input type="file" id="b${setCount}" hidden onchange="preview(this)"></div><div class="upload-box" onclick="trigger('a${setCount}')"><span class="ba-badge">AFTER</span><img id="p-a${setCount}" style="display:none"><input type="file" id="a${setCount}" hidden onchange="preview(this)"></div></div></div>`;
         document.getElementById('ba-list').insertAdjacentHTML('beforeend', html);
     }
-
     function trigger(id) { document.getElementById(id).click(); }
-
     function preview(input) {
-        if (input.files && input.files[0]) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                const img = document.getElementById('p-' + input.id);
-                const txt = document.getElementById('t-' + input.id);
-                img.src = e.target.result;
-                img.style.display = 'block';
-                txt.style.display = 'none';
-            };
-            reader.readAsDataURL(input.files[0]);
-        }
+        const reader = new FileReader();
+        reader.onload = (e) => { document.getElementById('p-' + input.id).src = e.target.result; document.getElementById('p-' + input.id).style.display = 'block'; };
+        reader.readAsDataURL(input.files[0]);
     }
 
-    // ★★★ ここが一番重要！送信ボタンを押した時の動きです ★★★
-    async function submitToGas() {
+    function showPreview() {
         const store = document.getElementById('storeName').value;
-        if(!store) return alert("屋号を入力してください");
+        const pref = document.getElementById('pref').value;
+        if(!store || !pref) return alert("屋号と都道府県を選択してください");
 
-        // 【画像 image_908dcf.png で発行された最新のURLです】
+        const content = `
+            <div class="card">
+                <h2 style="color:var(--gold); margin:0;">${pref}認定施工店</h2>
+                <h3 style="margin:5px 0;">${store}</h3>
+                <hr style="border:0; border-top:1px solid #333; margin:15px 0;">
+                <p><b>面積:</b> ${document.getElementById('area').value} / <b>日数:</b> ${document.getElementById('days').value}</p>
+                <p><b>石色:</b> ${document.getElementById('stoneColor').value} / <b>目地:</b> ${document.getElementById('jointColor').value}</p>
+                <p style="font-size:0.9rem; color:#ccc;"><b>こだわり:</b><br>${document.getElementById('points').value}</p>
+                <p style="font-size:0.9rem; color:#ccc;"><b>備考:</b><br>${document.getElementById('memo').value}</p>
+            </div>
+            <p style="text-align:center; font-size:0.8rem; color:#888;">※写真は本番URLでスライド形式になります</p>
+        `;
+        document.getElementById('preview-content').innerHTML = content;
+        document.getElementById('preview-modal').style.display = 'block';
+    }
+
+    function closePreview() { document.getElementById('preview-modal').style.display = 'none'; }
+
+    async function finalSubmit() {
+        const store = document.getElementById('storeName').value;
         const gasUrl = "https://script.google.com/macros/s/AKfycbym8JRPn7lfk_wbsOBu7YJZ16FmAW4QEMUCugfuYVyJxN_nZZDLaKZD6o5b_q3P9ZbWig/exec"; 
 
-        const payload = {
-            storeName: store,
-            area: document.getElementById('area').value,
-            days: document.getElementById('days').value,
-            colors: document.getElementById('colors').value,
-            points: document.getElementById('points').value,
-            voice: document.getElementById('voice').value
-        };
+        const msg = `お世話になっております。\n【施工報告】${store}\n集客LP 兼 報告ページ完成です。\nご確認、宜しくお願いします\n${gasUrl}?s=${encodeURIComponent(store)}\n\n※このリンクをSNSのプロフィールや、グループLINEに共有してください。`;
 
-        try {
-            // Googleスプレッドシートへデータを飛ばす
-            await fetch(gasUrl, {
-                method: "POST",
-                mode: "no-cors", 
-                body: JSON.stringify(payload)
-            });
-
-            // LINE送信用の文章を作る
-            const lpUrl = gasUrl + "?s=" + encodeURIComponent(store);
-            const msg = `【施工報告：${store}】\nAIリライト済みの報告ページを生成しました。\n\n▼確認・素材DLページ\n${lpUrl}\n\n（このURLをグループLINEに共有してください）`;
-
-            if (navigator.share) {
-                await navigator.share({ text: msg });
-            } else {
-                navigator.clipboard.writeText(msg);
-                alert("報告ページURLを作成し、コピーしました！LINEに貼り付けてください。");
-            }
-        } catch (e) {
-            alert("送信に失敗しました。ネット接続を確認してください。");
+        if (navigator.share) {
+            await navigator.share({ text: msg });
+        } else {
+            navigator.clipboard.writeText(msg);
+            alert("報告メッセージをコピーしました！LINEに貼り付けてください。");
         }
+        closePreview();
     }
 </script>
 </body>
