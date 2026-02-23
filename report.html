@@ -4,407 +4,556 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>RS施工報告LPジェネレーター</title>
-<!-- 住所自動入力ライブラリ -->
-<script src="https://yubinbango.github.io/yubinbango/yubinbango.js" charset="UTF-8"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
 <style>
-    :root { --gold: #c5a059; --bg: #0a0a0a; --card-bg: #1a1a1a; }
-    body { background: var(--bg); color: #fff; font-family: sans-serif; margin: 0; padding: 20px; box-sizing: border-box; }
-    h1, h2, h3 { color: var(--gold); text-align: center; }
-    
-    /* 入力フォームのスタイル */
-    .input-section { max-width: 600px; margin: 0 auto 40px; background: #222; padding: 20px; border-radius: 15px; border: 1px solid #444; }
-    label { display: block; margin-top: 15px; color: var(--gold); font-weight: bold; font-size: 0.9rem; }
-    input[type="text"], input[type="number"], input[type="date"], input[type="url"], textarea, select {
-        width: 100%; padding: 12px; margin-top: 5px; background: #000; border: 1px solid #555; color: #fff; border-radius: 5px; box-sizing: border-box; font-size: 16px;
-    }
-    textarea { height: 100px; resize: vertical; }
-    
-    /* AIボタン */
-    .btn-ai {
-        background: #333; color: var(--gold); border: 1px solid var(--gold);
-        padding: 8px 15px; border-radius: 20px; font-size: 0.8rem; cursor: pointer;
-        font-weight: bold; margin-top: 5px; display: inline-flex; align-items: center; gap: 5px;
-    }
-    .btn-ai:hover { background: var(--gold); color: #000; }
-    .ai-note { font-size: 0.75rem; color: #aaa; margin-top: 5px; line-height: 1.4; }
+:root { --gold: #c5a059; --bg: #0a0a0a; }
+* { box-sizing: border-box; }
+body { background: var(--bg); color: #fff; font-family: sans-serif; margin: 0; padding: 20px; }
+h1, h2 { color: var(--gold); text-align: center; }
 
-    /* 画像アップロードエリア */
-    .file-input-wrapper { margin-top: 5px; border: 1px dashed #555; padding: 20px; text-align: center; border-radius: 5px; cursor: pointer; position: relative; overflow: hidden; background: #111; }
-    .file-input-wrapper:hover { border-color: var(--gold); }
-    .preview-img { width: 100%; max-height: 200px; object-fit: contain; display: none; margin-top: 10px; border-radius: 5px; border: 1px solid #333; }
+.input-section { max-width: 620px; margin: 0 auto 40px; background: #1c1c1c; padding: 24px; border-radius: 16px; border: 1px solid #3a3a3a; }
 
-    /* メイン操作ボタン */
-    button#generateBtn {
-        display: block; width: 100%; padding: 18px; background: linear-gradient(135deg, #c5a059, #e6c88b); 
-        color: #000; font-weight: bold; border: none; border-radius: 30px; font-size: 1.1rem; margin-top: 30px; cursor: pointer;
-        box-shadow: 0 4px 15px rgba(197, 160, 89, 0.4); transition: transform 0.2s;
-    }
-    button#generateBtn:active { transform: scale(0.98); }
+label { display: block; margin-top: 16px; color: var(--gold); font-weight: bold; font-size: 0.88rem; }
+input[type="text"], input[type="date"], input[type="tel"], input[type="url"], textarea, select {
+  width: 100%; padding: 12px; margin-top: 5px; background: #0d0d0d; border: 1px solid #444; color: #fff; border-radius: 8px; font-size: 16px;
+}
+textarea { height: 90px; resize: vertical; }
+select { cursor: pointer; }
 
-    .line-copy-btn {
-        background: #06c755; color: #fff; border: none; padding: 12px; width: 100%; border-radius: 10px;
-        font-weight: bold; margin-top: 30px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
-    }
+.section-title {
+  font-size: 0.75rem; font-weight: bold; letter-spacing: 0.1em; color: #888;
+  border-bottom: 1px solid #2a2a2a; padding-bottom: 8px; margin-top: 28px; margin-bottom: 4px;
+}
+
+/* テーマ選択 */
+.theme-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 10px; }
+.theme-card { border: 2px solid #333; border-radius: 10px; padding: 12px 8px; text-align: center; cursor: pointer; transition: all 0.2s; }
+.theme-card.selected { border-color: var(--gold); background: #2a2200; }
+.theme-card .theme-name { font-size: 0.8rem; font-weight: bold; margin-top: 6px; }
+.theme-card .theme-desc { font-size: 0.68rem; color: #888; margin-top: 3px; line-height: 1.4; }
+.theme-preview { height: 50px; border-radius: 6px; margin-bottom: 4px; }
+
+/* 画像アップロード */
+.file-input-wrapper {
+  border: 1px dashed #555; padding: 16px; text-align: center; border-radius: 8px;
+  cursor: pointer; position: relative; overflow: hidden; background: #0d0d0d; margin-top: 6px;
+}
+.file-input-wrapper:hover { border-color: var(--gold); }
+.file-input-wrapper input[type="file"] { opacity:0; position:absolute; top:0; left:0; width:100%; height:100%; cursor:pointer; }
+.preview-img { width: 100%; max-height: 160px; object-fit: contain; display: none; margin-top: 8px; border-radius: 6px; }
+.preview-label { font-size: 0.78rem; color: #888; }
+
+/* BAペア */
+.ba-pair { background: #141414; border: 1px solid #2e2e2e; border-radius: 10px; padding: 14px; margin-top: 12px; position: relative; }
+.ba-pair .pair-num { font-size: 0.75rem; color: var(--gold); font-weight: bold; margin-bottom: 8px; }
+.ba-pair .remove-btn { position: absolute; top: 10px; right: 10px; background: #3a0000; color: #e74c3c; border: 1px solid #e74c3c; border-radius: 20px; padding: 3px 10px; font-size: 0.72rem; cursor: pointer; }
+.ba-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.add-ba-btn { width: 100%; margin-top: 10px; padding: 10px; background: #1a1a1a; border: 1px dashed var(--gold); color: var(--gold); border-radius: 8px; cursor: pointer; font-size: 0.85rem; font-weight: bold; }
+.add-ba-btn:hover { background: #2a2200; }
+
+/* AIボタン */
+.ai-row { display: flex; align-items: flex-start; gap: 8px; margin-top: 6px; }
+.ai-row textarea { flex: 1; margin-top: 0; }
+.btn-ai { background: #1a1a00; color: var(--gold); border: 1px solid var(--gold); padding: 10px 14px; border-radius: 8px; font-size: 0.8rem; cursor: pointer; font-weight: bold; white-space: nowrap; flex-shrink: 0; line-height: 1.4; }
+.btn-ai:hover { background: var(--gold); color: #000; }
+.ai-hint { font-size: 0.73rem; color: #777; margin-top: 4px; line-height: 1.5; }
+
+/* カラー・グリッド */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+/* お問い合わせ */
+.contact-grid { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
+.contact-item { display: flex; align-items: center; gap: 8px; }
+.contact-item .icon { font-size: 1.2rem; flex-shrink: 0; }
+.contact-item input { margin-top: 0; flex: 1; }
+
+/* ボタン */
+.line-copy-btn { background: #06c755; color: #fff; border: none; padding: 14px; width: 100%; border-radius: 10px; font-weight: bold; margin-top: 24px; cursor: pointer; font-size: 1rem; display: flex; align-items: center; justify-content: center; gap: 8px; }
+#generateZipBtn { display: block; width: 100%; padding: 18px; background: linear-gradient(135deg, #c5a059, #e6c88b); color: #000; font-weight: bold; border: none; border-radius: 30px; font-size: 1.1rem; margin-top: 14px; cursor: pointer; box-shadow: 0 4px 15px rgba(197,160,89,0.4); transition: transform 0.2s; }
+#generateZipBtn:active { transform: scale(0.98); }
+#generateZipBtn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.zip-info { background: #0d0d0d; border: 1px solid #2a2a2a; border-radius: 8px; padding: 12px; margin-top: 10px; font-size: 0.76rem; color: #777; font-family: monospace; line-height: 1.8; }
+.zip-info .g { color: #9f9; } .zip-info .b { color: #6cf; }
 </style>
 </head>
 <body>
 
-    <h1 style="margin-bottom: 5px;">RSW DX PORTAL</h1>
-    <h2 style="font-size: 1rem; color: #888; margin-top: 0;">施工報告LPジェネレーター</h2>
+<h1 style="margin-bottom:4px;">RSW DX PORTAL</h1>
+<h2 style="font-size:0.95rem; color:#666; margin-top:0; font-weight:normal;">施工報告LPジェネレーター</h2>
 
-    <!-- 入力フォーム -->
-    <div class="input-section h-adr">
-        <span class="p-country-name" style="display:none;">Japan</span>
-        
-        <label>施工完了日</label>
-        <input type="date" id="date">
+<div class="input-section">
 
-        <label>顧客名 (様)</label>
-        <input type="text" id="customerName" placeholder="例：山田 太郎">
+  <!-- 基本情報 -->
+  <div class="section-title">基本情報</div>
+  <label>施工完了日</label>
+  <input type="date" id="date">
 
-        <label>郵便番号 (ハイフンなし)</label>
-        <input type="text" class="p-postal-code" size="8" maxlength="8" placeholder="1234567">
-        
-        <label>住所 (自動入力)</label>
-        <input type="text" class="p-region p-locality p-street-address p-extended-address" id="address">
-
-        <label>認定施工店名</label>
-        <input type="text" id="shopName" value="認定施工店">
-
-        <hr style="border-color: #333; margin: 20px 0;">
-
-        <label>メイン画像 (完了写真)</label>
-        <div class="file-input-wrapper">
-            <span id="text-imgMain">タップして写真を選択</span>
-            <input type="file" id="imgMain" accept="image/*" style="opacity:0; position:absolute; top:0; left:0; width:100%; height:100%; cursor:pointer;" onchange="previewFile('imgMain')">
-            <img id="preview-imgMain" class="preview-img">
-        </div>
-
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-            <div>
-                <label>Before画像</label>
-                <div class="file-input-wrapper">
-                    <span id="text-imgBefore">選択</span>
-                    <input type="file" id="imgBefore" accept="image/*" style="opacity:0; position:absolute; top:0; left:0; width:100%; height:100%; cursor:pointer;" onchange="previewFile('imgBefore')">
-                    <img id="preview-imgBefore" class="preview-img">
-                </div>
-            </div>
-            <div>
-                <label>After画像</label>
-                <div class="file-input-wrapper">
-                    <span id="text-imgAfter">選択</span>
-                    <input type="file" id="imgAfter" accept="image/*" style="opacity:0; position:absolute; top:0; left:0; width:100%; height:100%; cursor:pointer;" onchange="previewFile('imgAfter')">
-                    <img id="preview-imgAfter" class="preview-img">
-                </div>
-            </div>
-        </div>
-
-        <label>施工風景 / 集合写真 (任意)</label>
-        <div class="file-input-wrapper">
-            <span id="text-imgSub">タップして写真を選択</span>
-            <input type="file" id="imgSub" accept="image/*" style="opacity:0; position:absolute; top:0; left:0; width:100%; height:100%; cursor:pointer;" onchange="previewFile('imgSub')">
-            <img id="preview-imgSub" class="preview-img">
-        </div>
-
-        <hr style="border-color: #333; margin: 20px 0;">
-
-        <label>こだわりポイント</label>
-        <div class="ai-note">💡 単語入力でOK（例：早かった、綺麗、かっこいい）</div>
-        <textarea id="kodawari" placeholder="例：既存のひび割れを活かしたデザインにしました..."></textarea>
-        <button class="btn-ai" onclick="optimizeText('kodawari')">✨ AIで文章を整える</button>
-
-        <div style="display: flex; gap: 10px; margin-top:15px;">
-            <div style="flex:1;">
-                <label>施工面積 (㎡)</label>
-                <input type="text" id="area" placeholder="30">
-            </div>
-            <div style="flex:1;">
-                <label>施工日数 (日)</label>
-                <input type="text" id="days" placeholder="3">
-            </div>
-        </div>
-        <label>使用カラー</label>
-        <input type="text" id="color" placeholder="ミルクティー, ブラック">
-
-        <label>お客様の声</label>
-        <div class="ai-note">💡 単語入力でOK（例：喜んでた、明るくなった）</div>
-        <textarea id="voice" placeholder="例：想像以上の仕上がりで感動しました！"></textarea>
-        <button class="btn-ai" onclick="optimizeText('voice')">✨ AIで文章を整える</button>
-
-        <label>公式LINE URL (問い合わせボタン用)</label>
-        <input type="text" id="lineUrl" placeholder="https://line.me/...">
-
-        <button class="line-copy-btn" onclick="copyLineText()">
-            💬 LINE報告用テキストをコピー
-        </button>
-
-        <button id="generateBtn" onclick="generateAndDownload()">報告書LPを作成＆ダウンロード</button>
+  <div class="two-col" style="margin-top:10px;">
+    <div>
+      <label>都道府県</label>
+      <select id="prefecture">
+        <option value="">選択してください</option>
+        <option>北海道</option><option>青森県</option><option>岩手県</option><option>宮城県</option>
+        <option>秋田県</option><option>山形県</option><option>福島県</option><option>茨城県</option>
+        <option>栃木県</option><option>群馬県</option><option>埼玉県</option><option>千葉県</option>
+        <option>東京都</option><option>神奈川県</option><option>新潟県</option><option>富山県</option>
+        <option>石川県</option><option>福井県</option><option>山梨県</option><option>長野県</option>
+        <option>岐阜県</option><option>静岡県</option><option>愛知県</option><option>三重県</option>
+        <option>滋賀県</option><option>京都府</option><option>大阪府</option><option>兵庫県</option>
+        <option>奈良県</option><option>和歌山県</option><option>鳥取県</option><option>島根県</option>
+        <option>岡山県</option><option>広島県</option><option>山口県</option><option>徳島県</option>
+        <option>香川県</option><option>愛媛県</option><option>高知県</option><option>福岡県</option>
+        <option>佐賀県</option><option>長崎県</option><option>熊本県</option><option>大分県</option>
+        <option>宮崎県</option><option>鹿児島県</option><option>沖縄県</option>
+      </select>
     </div>
+    <div>
+      <label>認定施工店名</label>
+      <input type="text" id="shopName" placeholder="例：山田外構工事店">
+    </div>
+  </div>
+
+  <!-- LPデザインテーマ -->
+  <div class="section-title">LPデザインテーマ</div>
+  <div class="theme-grid">
+    <div class="theme-card selected" onclick="selectTheme('luxury', this)">
+      <div class="theme-preview" style="background:linear-gradient(135deg,#0a0a0a,#1a1a1a); border:1px solid #c5a059;"></div>
+      <div class="theme-name" style="color:#c5a059;">LUXURY</div>
+      <div class="theme-desc">黒×ゴールド<br>高級感</div>
+    </div>
+    <div class="theme-card" onclick="selectTheme('natural', this)">
+      <div class="theme-preview" style="background:linear-gradient(135deg,#f5f0e8,#e8dcc8);"></div>
+      <div class="theme-name" style="color:#6b5c3e;">NATURAL</div>
+      <div class="theme-desc">ベージュ×茶<br>温かみ</div>
+    </div>
+    <div class="theme-card" onclick="selectTheme('cool', this)">
+      <div class="theme-preview" style="background:linear-gradient(135deg,#0d1b2a,#1b2a3b); border:1px solid #4a9eda;"></div>
+      <div class="theme-name" style="color:#4a9eda;">COOL</div>
+      <div class="theme-desc">ネイビー×青<br>スタイリッシュ</div>
+    </div>
+  </div>
+  <input type="hidden" id="selectedTheme" value="luxury">
+
+  <!-- メイン画像 -->
+  <div class="section-title">メイン完了写真</div>
+  <div class="file-input-wrapper">
+    <span id="text-imgMain" class="preview-label">📷 タップして写真を選択</span>
+    <input type="file" id="imgMain" accept="image/*" onchange="previewFile('imgMain')">
+    <img id="preview-imgMain" class="preview-img">
+  </div>
+
+  <!-- ビフォーアフター -->
+  <div class="section-title">Before / After</div>
+  <div id="baPairsContainer"></div>
+  <button class="add-ba-btn" onclick="addBaPair()">＋ Before / After を追加する</button>
+
+  <!-- 施工風景 -->
+  <div class="section-title">施工風景 / 集合写真（任意）</div>
+  <div class="file-input-wrapper">
+    <span id="text-imgSub" class="preview-label">📷 タップして写真を選択</span>
+    <input type="file" id="imgSub" accept="image/*" onchange="previewFile('imgSub')">
+    <img id="preview-imgSub" class="preview-img">
+  </div>
+
+  <!-- こだわりポイント -->
+  <div class="section-title">こだわりポイント</div>
+  <div class="ai-hint">💡 単語でOK（例：早い、綺麗、かっこいい）→ 右の「✨ 文章を整える」ボタンで自動変換！</div>
+  <div class="ai-row" style="margin-top:8px;">
+    <textarea id="kodawari" placeholder="例：早い、丁寧、掃除しやすい、かっこいい"></textarea>
+    <button class="btn-ai" onclick="optimizeText('kodawari')">✨ 文章を<br>整える</button>
+  </div>
+
+  <!-- 施工詳細 -->
+  <div class="section-title">施工詳細</div>
+  <div class="two-col">
+    <div><label>施工面積 (㎡)</label><input type="text" id="area" placeholder="30"></div>
+    <div><label>施工日数 (日)</label><input type="text" id="days" placeholder="3"></div>
+  </div>
+  <div class="two-col" style="margin-top:10px;">
+    <div><label>メインカラー</label><input type="text" id="colorMain" placeholder="例：ミルクティー"></div>
+    <div><label>目地カラー</label><input type="text" id="colorJoint" placeholder="例：ブラック"></div>
+  </div>
+
+  <!-- お客様の声 -->
+  <div class="section-title">お客様の声</div>
+  <div class="ai-hint">💡 単語でOK（例：喜んでた、明るくなった）→ 右の「✨ 文章を整える」ボタンで自動変換！</div>
+  <div class="ai-row" style="margin-top:8px;">
+    <textarea id="voice" placeholder="例：喜んでた、明るい、かっこよかった"></textarea>
+    <button class="btn-ai" onclick="optimizeText('voice')">✨ 文章を<br>整える</button>
+  </div>
+
+  <!-- お問い合わせ -->
+  <div class="section-title">お問い合わせ先（入力したものだけLPに表示）</div>
+  <div class="contact-grid">
+    <div class="contact-item"><span class="icon">💬</span><input type="url" id="lineUrl" placeholder="公式LINE URL（https://line.me/...）"></div>
+    <div class="contact-item"><span class="icon">📸</span><input type="url" id="instaUrl" placeholder="Instagram URL（https://instagram.com/...）"></div>
+    <div class="contact-item"><span class="icon">📞</span><input type="tel" id="phoneNum" placeholder="電話番号（例：090-1234-5678）"></div>
+  </div>
+
+  <!-- ZIP構造案内 -->
+  <div class="zip-info" style="margin-top:24px;">
+    <span class="b">📁 report_日付_施工店名.zip</span><br>
+    &nbsp;&nbsp;<span class="b">📄 index.html</span> — 閲覧用LP<br>
+    &nbsp;&nbsp;<span class="g">🖼 main.jpg</span> — SNS素材<br>
+    &nbsp;&nbsp;<span class="g">🖼 before_1.jpg / after_1.jpg …</span> — SNS素材<br>
+    &nbsp;&nbsp;<span class="g">🖼 sub.jpg</span> — SNS素材（任意）
+  </div>
+
+  <button class="line-copy-btn" onclick="copyLineText()">💬 LINE報告用テキストをコピー</button>
+  <button id="generateZipBtn" onclick="generateZip()">📦 報告書セット (ZIP) を作成</button>
+  <p style="text-align:center; color:#666; font-size:0.78rem; margin-top:8px;">※ LINEで本部へ送信するファイルが生成されます</p>
+
+</div>
 
 <script>
-    // 今日の日付をセット
-    document.getElementById('date').valueAsDate = new Date();
+// ===== 初期化 =====
+window.onload = function() {
+  const params = new URLSearchParams(window.location.search);
+  if (params.has('shop')) document.getElementById('shopName').value = params.get('shop');
+  if (params.has('line')) document.getElementById('lineUrl').value = params.get('line');
+  document.getElementById('date').valueAsDate = new Date();
+  addBaPair();
+};
 
-    // AI辞書（簡易置換ロジック）
-    const dictionary = {
-        "早かった": "熟練の技術により、スピーディーかつ丁寧に仕上げました。",
-        "早い": "短期間での施工を実現し、お客様の負担を最小限に抑えました。",
-        "綺麗": "まるで本石のような、高級感あふれる美しい仕上がりを実現しました。",
-        "きれい": "細部までこだわり、洗練された美しいデザインに仕上げました。",
-        "かっこいい": "圧倒的な存在感を放つ、クールでスタイリッシュな空間に生まれ変わりました。",
-        "すごい": "通行人も足を止めるほどの、インパクトある仕上がりとなりました。",
-        "喜んでた": "「想像以上の出来栄え！」と、施主様にも大変お喜びいただけました。",
-        "明るい": "空間全体がパッと明るくなり、開放感のある仕上がりとなりました。",
-        "掃除": "特殊加工により、日々のお手入れや掃除も驚くほど簡単になります。",
-        "丁寧": "細部の目地にいたるまで、職人のこだわりを詰め込んだ丁寧な施工です。",
-        "安い": "コストを抑えつつも、最高級のクオリティを実現いたしました。"
+// ===== テーマ選択 =====
+function selectTheme(name, el) {
+  document.querySelectorAll('.theme-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  document.getElementById('selectedTheme').value = name;
+}
+
+// ===== ビフォーアフター =====
+let baPairCount = 0;
+const baPairImages = {};
+
+function addBaPair() {
+  baPairCount++;
+  const id = baPairCount;
+  const div = document.createElement('div');
+  div.className = 'ba-pair';
+  div.id = 'baPair_' + id;
+  div.innerHTML =
+    '<div class="pair-num">Before / After — ' + id + '組目</div>' +
+    (id > 1 ? '<button class="remove-btn" onclick="removeBaPair(' + id + ')">✕ 削除</button>' : '') +
+    '<div class="ba-inner">' +
+      '<div>' +
+        '<div style="color:var(--gold); font-size:0.8rem; font-weight:bold; margin-bottom:4px;">BEFORE</div>' +
+        '<div class="file-input-wrapper">' +
+          '<span id="text-before_' + id + '" class="preview-label">選択</span>' +
+          '<input type="file" accept="image/*" onchange="previewBaFile(\'before\',' + id + ',this)">' +
+          '<img id="preview-before_' + id + '" class="preview-img">' +
+        '</div>' +
+      '</div>' +
+      '<div>' +
+        '<div style="color:var(--gold); font-size:0.8rem; font-weight:bold; margin-bottom:4px;">AFTER</div>' +
+        '<div class="file-input-wrapper">' +
+          '<span id="text-after_' + id + '" class="preview-label">選択</span>' +
+          '<input type="file" accept="image/*" onchange="previewBaFile(\'after\',' + id + ',this)">' +
+          '<img id="preview-after_' + id + '" class="preview-img">' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+  document.getElementById('baPairsContainer').appendChild(div);
+}
+
+function removeBaPair(id) {
+  const el = document.getElementById('baPair_' + id);
+  if (el) el.remove();
+  delete baPairImages['before_' + id];
+  delete baPairImages['after_' + id];
+}
+
+function previewBaFile(type, id, input) {
+  const file = input.files[0];
+  if (!file) return;
+  const key = type + '_' + id;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const img = new Image();
+    img.onload = function() {
+      const canvas = document.createElement('canvas');
+      const MAX = 1200; let w = img.width, h = img.height;
+      if (w > MAX) { h = Math.round(h * MAX / w); w = MAX; }
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+      baPairImages[key] = dataUrl;
+      const prev = document.getElementById('preview-' + key);
+      prev.src = dataUrl; prev.style.display = 'block';
+      document.getElementById('text-' + key).style.display = 'none';
     };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
 
-    function optimizeText(targetId) {
-        let text = document.getElementById(targetId).value;
-        const shop = document.getElementById('shopName').value;
-        if(!text) return;
+// ===== 単体画像プレビュー =====
+const singleImages = {};
+function previewFile(id) {
+  const file = document.getElementById(id).files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const img = new Image();
+    img.onload = function() {
+      const canvas = document.createElement('canvas');
+      const MAX = 1200; let w = img.width, h = img.height;
+      if (w > MAX) { h = Math.round(h * MAX / w); w = MAX; }
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+      singleImages[id] = dataUrl;
+      document.getElementById('preview-' + id).src = dataUrl;
+      document.getElementById('preview-' + id).style.display = 'block';
+      document.getElementById('text-' + id).style.display = 'none';
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
 
-        // キーワード置換
-        Object.keys(dictionary).forEach(key => {
-            const reg = new RegExp(key, 'g');
-            text = text.replace(reg, dictionary[key]);
-        });
+// ===== 文章整形 =====
+const kodawariDict = {
+  "早かった":"熟練の技術により、スピーディーかつ丁寧に仕上げました。",
+  "早い":"短期間での施工を実現し、お客様の負担を最小限に抑えました。",
+  "綺麗":"まるで本石のような、高級感あふれる美しい仕上がりを実現しました。",
+  "きれい":"細部までこだわり、洗練された美しいデザインに仕上げました。",
+  "かっこいい":"圧倒的な存在感を放つ、クールでスタイリッシュな空間に生まれ変わりました。",
+  "掃除しやすい":"特殊加工により、日々のお手入れも驚くほど簡単になります。",
+  "掃除":"特殊加工により、日々のお手入れも驚くほど簡単になります。",
+  "丁寧":"細部の目地にいたるまで、職人のこだわりを詰め込んだ丁寧な施工です。",
+  "安い":"コストを抑えつつも、最高級のクオリティを実現いたしました。",
+  "強い":"耐久性に優れた施工により、長期間にわたって美しさを保ちます。",
+  "おしゃれ":"洗練されたデザインで、周囲と差のつくおしゃれな仕上がりになりました。",
+  "明るい":"空間全体がパッと明るくなり、開放感のある仕上がりとなりました。"
+};
+const voiceDict = {
+  "喜んでた":"「想像以上の出来栄えで大感動です！」と、施主様に大変お喜びいただけました。",
+  "喜んでいた":"「想像以上の出来栄えで大感動です！」と、施主様に大変お喜びいただけました。",
+  "よかった":"「仕上がりが本当に素晴らしい！」と、大変ご満足いただけました。",
+  "良かった":"「仕上がりが本当に素晴らしい！」と、大変ご満足いただけました。",
+  "明るくなった":"「家全体が明るくなって、毎日見るのが楽しみです！」とのお言葉をいただきました。",
+  "かっこよかった":"「こんなにかっこよくなるとは思っていなかった！」と大変驚いていただけました。",
+  "かっこよくなった":"「こんなにかっこよくなるとは思っていなかった！」と大変驚いていただけました。",
+  "綺麗になった":"「まるで新築みたい！」と、仕上がりに大変感動していただけました。",
+  "きれいになった":"「まるで新築みたい！」と、仕上がりに大変感動していただけました。",
+  "満足":"「期待以上の仕上がりで、大満足です！」とのうれしいお声をいただきました。",
+  "感動":"「こんなに素敵になるとは！」と、施工後の変わりようにとても感動していただけました。",
+  "早かった":"「工事が思ったよりずっと早く終わって助かりました！」とご好評をいただきました。",
+  "丁寧":"「職人さんがとても丁寧で、安心してお任せできました」とのお声をいただきました。",
+  "おしゃれ":"「近所の方にもおしゃれになったねと褒められました！」と喜んでいただけました。",
+  "また頼みたい":"「次のリフォームもぜひお願いしたい！」と、大変うれしいお言葉をいただきました。"
+};
 
-        // ハッシュタグ追加（こだわり欄のみ）
-        if (targetId === 'kodawari') {
-            const tags = `\n\n#ローラーストーン #${shop} #認定施工店 #外構工事 #リフォーム #おしゃれな家 #グランドアートウォール`;
-            if(!text.includes('#ローラーストーン')) text += tags;
-        }
+function optimizeText(targetId) {
+  let text = document.getElementById(targetId).value.trim();
+  if (!text) { alert('まず単語やキーワードを入力してください。'); return; }
+  const dict = targetId === 'voice' ? voiceDict : kodawariDict;
+  Object.keys(dict).forEach(function(key) {
+    text = text.replace(new RegExp(key, 'g'), dict[key]);
+  });
+  if (targetId === 'kodawari') {
+    const shop = document.getElementById('shopName').value;
+    const tags = '\n\n#ローラーストーン #' + shop + ' #認定施工店 #外構工事 #リフォーム #おしゃれな家';
+    if (text.indexOf('#ローラーストーン') === -1) text += tags;
+  }
+  document.getElementById(targetId).value = text;
+  alert('✨ 文章を整えました！');
+}
 
-        document.getElementById(targetId).value = text;
-        alert("文章を最適化しました！");
-    }
+// ===== ユーティリティ =====
+function escapeHtml(str) {
+  if (!str) return '';
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function isValidUrl(url) {
+  try { var u = new URL(url); return u.protocol==='https:' || u.protocol==='http:'; } catch(e) { return false; }
+}
+function dataUrlToBlob(dataUrl) {
+  var parts = dataUrl.split(',');
+  var mime = parts[0].match(/:(.*?);/)[1];
+  var binary = atob(parts[1]);
+  var arr = new Uint8Array(binary.length);
+  for (var i = 0; i < binary.length; i++) arr[i] = binary.charCodeAt(i);
+  return new Blob([arr], { type: mime });
+}
+function getFormData() {
+  return {
+    date: document.getElementById('date').value,
+    pref: document.getElementById('prefecture').value,
+    p: document.getElementById('shopName').value || '認定施工店',
+    k: document.getElementById('kodawari').value,
+    sc: document.getElementById('area').value,
+    jc: document.getElementById('days').value,
+    cm: document.getElementById('colorMain').value,
+    cj: document.getElementById('colorJoint').value,
+    v: document.getElementById('voice').value,
+    lineUrl: document.getElementById('lineUrl').value,
+    instaUrl: document.getElementById('instaUrl').value,
+    phone: document.getElementById('phoneNum').value,
+    theme: document.getElementById('selectedTheme').value
+  };
+}
 
-    // LINE用テキストコピー
-    function copyLineText() {
-        const d = {
-            date: document.getElementById('date').value,
-            s: document.getElementById('customerName').value || "お客様",
-            addr: document.getElementById('address').value,
-            p: document.getElementById('shopName').value,
-            k: document.getElementById('kodawari').value,
-            sc: document.getElementById('area').value,
-            jc: document.getElementById('days').value,
-            m: document.getElementById('color').value
-        };
+// ===== LINE テキストコピー =====
+function copyLineText() {
+  var d = getFormData();
+  var shopLabel = d.pref ? d.pref + ' ' + d.p : d.p;
+  var text = '【施工完了報告】\n担当：' + shopLabel + '\n日時：' + d.date +
+    '\n\n[施工内容]\n・面積：' + d.sc + '㎡\n・日数：' + d.jc + '日\n・メインカラー：' + d.cm +
+    '\n・目地カラー：' + d.cj + '\n\n[こだわり]\n' + d.k +
+    '\n\n※詳細は添付のZIPファイルをご確認ください。';
+  navigator.clipboard.writeText(text)
+    .then(function() { alert('LINE用テキストをコピーしました！'); })
+    .catch(function() { alert('コピーに失敗しました。'); });
+}
 
-        const text = `【施工完了報告】
-担当：${d.p}
-日時：${d.date}
-顧客：${d.s} 様
-住所：${d.addr}
+// ===== テーマ定義 =====
+var themes = {
+  luxury: {
+    bodyBg:'#0a0a0a', bodyColor:'#ffffff', accent:'#c5a059',
+    cardBg:'#1a1a1a', cardBorder:'#333333', labelColor:'#c5a059',
+    baLabelColor:'#c5a059', footerColor:'#555555',
+    headerGradient:'linear-gradient(180deg,#1a1200 0%,#0a0a0a 100%)',
+    headingColor:'#c5a059'
+  },
+  natural: {
+    bodyBg:'#f5f0e8', bodyColor:'#3a2e1e', accent:'#8b6f47',
+    cardBg:'#fffdf7', cardBorder:'#d9c9b0', labelColor:'#6b5030',
+    baLabelColor:'#8b6f47', footerColor:'#b0a090',
+    headerGradient:'linear-gradient(180deg,#ede3d0 0%,#f5f0e8 100%)',
+    headingColor:'#6b5030'
+  },
+  cool: {
+    bodyBg:'#0d1b2a', bodyColor:'#e0eaf4', accent:'#4a9eda',
+    cardBg:'#152536', cardBorder:'#1e3a52', labelColor:'#4a9eda',
+    baLabelColor:'#4a9eda', footerColor:'#3a5a6a',
+    headerGradient:'linear-gradient(180deg,#0a1520 0%,#0d1b2a 100%)',
+    headingColor:'#4a9eda'
+  }
+};
 
-[施工内容]
-・面積：${d.sc}㎡
-・日数：${d.jc}日
-・カラー：${d.m}
+// ===== ZIP生成 =====
+async function generateZip() {
+  var btn = document.getElementById('generateZipBtn');
+  var d = getFormData();
+  if (!d.p || d.p === '認定施工店') {
+    alert('認定施工店名を入力してください。');
+    document.getElementById('shopName').focus(); return;
+  }
+  btn.innerText = '作成中...'; btn.disabled = true;
 
-[こだわり・詳細]
-${d.k.replace(/<br>/g, '\n')}
+  try {
+    var t = themes[d.theme] || themes.luxury;
+    var shopLabel = d.pref ? d.pref + ' ' + d.p : d.p;
 
-詳細写真は添付のHTMLファイルをご覧ください。`;
+    // 有効なBAペアを収集
+    var activePairEls = document.querySelectorAll('.ba-pair');
+    var activePairIds = Array.from(activePairEls).map(function(el) { return el.id.replace('baPair_',''); });
 
-        navigator.clipboard.writeText(text).then(() => {
-            alert("LINE用の報告テキストをコピーしました！");
-        }).catch(err => {
-            alert("コピーに失敗しました。");
-        });
-    }
+    // BA HTML生成
+    var baHtml = '';
+    activePairIds.forEach(function(pid, idx) {
+      var hasBefore = !!baPairImages['before_' + pid];
+      var hasAfter  = !!baPairImages['after_' + pid];
+      if (!hasBefore && !hasAfter) return;
+      baHtml +=
+        '<div style="margin-bottom:28px;">' +
+        (activePairIds.length > 1 ? '<p style="color:' + t.labelColor + ';font-size:0.78rem;font-weight:bold;margin-bottom:10px;">' + (idx+1) + '組目</p>' : '') +
+        '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">' +
+          '<div style="text-align:center;">' +
+            '<span style="display:block;font-size:0.78rem;color:' + t.baLabelColor + ';font-weight:bold;margin-bottom:6px;">BEFORE</span>' +
+            (hasBefore ? '<img src="before_' + pid + '.jpg" style="width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:8px;border:1px solid ' + t.cardBorder + ';">' : '<div style="aspect-ratio:1/1;background:' + t.cardBg + ';border-radius:8px;border:1px solid ' + t.cardBorder + ';"></div>') +
+          '</div>' +
+          '<div style="text-align:center;">' +
+            '<span style="display:block;font-size:0.78rem;color:' + t.baLabelColor + ';font-weight:bold;margin-bottom:6px;">AFTER</span>' +
+            (hasAfter ? '<img src="after_' + pid + '.jpg" style="width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:8px;border:1px solid ' + t.cardBorder + ';">' : '<div style="aspect-ratio:1/1;background:' + t.cardBg + ';border-radius:8px;border:1px solid ' + t.cardBorder + ';"></div>') +
+          '</div>' +
+        '</div>' +
+        '</div>';
+    });
 
-    // 画像プレビュー＆圧縮処理
-    function previewFile(id) {
-        const fileInput = document.getElementById(id);
-        const file = fileInput.files[0];
-        if (!file) return;
+    // お問い合わせHTML
+    var contactHtml = '';
+    if (d.lineUrl && isValidUrl(d.lineUrl))
+      contactHtml += '<a href="' + escapeHtml(d.lineUrl) + '" style="display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:16px;background:#06c755;color:#fff;text-decoration:none;border-radius:50px;font-weight:bold;margin-bottom:12px;box-sizing:border-box;font-size:1rem;">💬 公式LINEでお問い合わせ</a>';
+    if (d.instaUrl && isValidUrl(d.instaUrl))
+      contactHtml += '<a href="' + escapeHtml(d.instaUrl) + '" style="display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:16px;background:linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);color:#fff;text-decoration:none;border-radius:50px;font-weight:bold;margin-bottom:12px;box-sizing:border-box;font-size:1rem;">📸 Instagramで事例をもっと見る</a>';
+    if (d.phone)
+      contactHtml += '<a href="tel:' + escapeHtml(d.phone) + '" style="display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:16px;background:' + t.accent + ';color:#000;text-decoration:none;border-radius:50px;font-weight:bold;margin-bottom:12px;box-sizing:border-box;font-size:1.05rem;">📞 ' + escapeHtml(d.phone) + '</a>';
 
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const img = new Image();
-            img.onload = function() {
-                // Canvasでリサイズ（最大幅1000pxに圧縮）
-                const canvas = document.createElement('canvas');
-                const MAX_WIDTH = 1000;
-                let width = img.width;
-                let height = img.height;
+    var im  = singleImages['imgMain'] || null;
+    var iff = singleImages['imgSub']  || null;
 
-                if (width > MAX_WIDTH) {
-                    height *= MAX_WIDTH / width;
-                    width = MAX_WIDTH;
-                }
+    // LP HTML
+    var htmlContent = '<!DOCTYPE html>\n<html lang="ja">\n<head>\n' +
+      '<meta charset="UTF-8">\n' +
+      '<meta name="viewport" content="width=device-width, initial-scale=1.0">\n' +
+      '<title>施工報告 | ' + escapeHtml(shopLabel) + '</title>\n' +
+      '<style>\n' +
+      '*{box-sizing:border-box;margin:0;padding:0;}\n' +
+      'body{background:' + t.bodyBg + ';color:' + t.bodyColor + ';font-family:"Helvetica Neue",Arial,sans-serif;text-align:center;padding-bottom:60px;}\n' +
+      '.header{background:' + t.headerGradient + ';padding:32px 20px 24px;border-bottom:2px solid ' + t.accent + ';}\n' +
+      '.header .tag{font-size:0.72rem;color:' + t.accent + ';letter-spacing:0.15em;font-weight:bold;}\n' +
+      '.header h1{font-size:1.5rem;color:' + t.bodyColor + ';margin:8px 0 6px;}\n' +
+      '.header .date{font-size:0.82rem;color:' + t.footerColor + ';}\n' +
+      '.main-img{width:100%;max-height:480px;object-fit:cover;display:block;}\n' +
+      '.container{padding:24px 20px;max-width:600px;margin:auto;}\n' +
+      '.card{background:' + t.cardBg + ';padding:20px;border-radius:14px;border:1px solid ' + t.cardBorder + ';margin-bottom:20px;text-align:left;}\n' +
+      '.card-label{color:' + t.labelColor + ';font-size:0.75rem;font-weight:bold;letter-spacing:0.1em;display:block;margin-bottom:10px;}\n' +
+      '.card p{line-height:1.7;color:' + t.bodyColor + ';white-space:pre-wrap;opacity:0.9;}\n' +
+      '.specs{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px;padding-top:14px;border-top:1px solid ' + t.cardBorder + ';}\n' +
+      '.spec-item{font-size:0.82rem;color:' + t.bodyColor + ';opacity:0.7;}\n' +
+      '.section-heading{color:' + t.headingColor + ';font-size:1.1rem;font-weight:bold;margin:30px 0 16px;text-align:center;}\n' +
+      '.sub-img{width:100%;border-radius:14px;margin-top:20px;border:1px solid ' + t.cardBorder + ';display:block;}\n' +
+      '.footer{margin-top:50px;color:' + t.footerColor + ';font-size:0.7rem;}\n' +
+      '</style>\n</head>\n<body>\n' +
+      '<div class="header">\n' +
+      '  <div class="tag">ROLLER STONE 認定施工店</div>\n' +
+      '  <h1>' + escapeHtml(shopLabel) + '</h1>\n' +
+      '  <div class="date">施工完了日：' + escapeHtml(d.date) + '</div>\n' +
+      '</div>\n' +
+      (im ? '<img src="main.jpg" class="main-img" alt="施工完了写真">\n' : '') +
+      '<div class="container">\n' +
+      (d.k ? '<div class="card"><span class="card-label">✦ こだわりポイント</span><p>' + escapeHtml(d.k) + '</p><div class="specs">' +
+        (d.sc ? '<span class="spec-item">📐 面積：' + escapeHtml(d.sc) + '㎡</span>' : '') +
+        (d.jc ? '<span class="spec-item">📅 工期：' + escapeHtml(d.jc) + '日</span>' : '') +
+        (d.cm ? '<span class="spec-item">🎨 メイン：' + escapeHtml(d.cm) + '</span>' : '') +
+        (d.cj ? '<span class="spec-item">⬛ 目地：' + escapeHtml(d.cj) + '</span>' : '') +
+        '</div></div>\n' : '') +
+      (baHtml ? '<div class="section-heading">Before / After</div>' + baHtml + '\n' : '') +
+      (d.v ? '<div class="card"><span class="card-label">💬 お客様の声</span><p style="font-style:italic;">「' + escapeHtml(d.v) + '」</p></div>\n' : '') +
+      (iff ? '<img src="sub.jpg" class="sub-img" alt="施工風景">\n' : '') +
+      (contactHtml ? '<div style="margin-top:40px;"><div class="section-heading">お問い合わせはこちら</div>' + contactHtml + '</div>\n' : '') +
+      '<div class="footer">Generated by RSW DX PORTAL / ' + escapeHtml(d.date) + '</div>\n' +
+      '</div>\n</body>\n</html>';
 
-                canvas.width = width;
-                canvas.height = height;
-                const ctx = canvas.getContext('2d');
-                ctx.drawImage(img, 0, 0, width, height);
+    // ZIP構築
+    var zip = new JSZip();
+    zip.file('index.html', htmlContent);
+    if (im)  zip.file('main.jpg', dataUrlToBlob(im));
+    if (iff) zip.file('sub.jpg',  dataUrlToBlob(iff));
+    activePairIds.forEach(function(pid) {
+      if (baPairImages['before_' + pid]) zip.file('before_' + pid + '.jpg', dataUrlToBlob(baPairImages['before_' + pid]));
+      if (baPairImages['after_' + pid])  zip.file('after_' + pid + '.jpg',  dataUrlToBlob(baPairImages['after_' + pid]));
+    });
 
-                // 圧縮後のBase64データをプレビュー画像のsrcにセット
-                const dataUrl = canvas.toDataURL('image/jpeg', 0.8); // 画質80%
-                const previewImg = document.getElementById('preview-' + id);
-                previewImg.src = dataUrl;
-                previewImg.style.display = 'block';
-                document.getElementById('text-' + id).style.display = 'none';
-            };
-            img.src = e.target.result;
-        };
-        reader.readAsDataURL(file);
-    }
+    var content = await zip.generateAsync({ type: 'blob' });
+    saveAs(content, 'report_' + d.date + '_' + d.p + '.zip');
 
-    async function generateAndDownload() {
-        const btn = document.getElementById('generateBtn');
-        btn.innerText = "生成中...";
-        btn.disabled = true;
+    btn.innerText = '✅ 作成完了！もう一度作成する';
+    btn.disabled = false;
+    alert('📦 ZIPを作成しました！\n① LINE報告テキストをコピー\n② ZIPをLINEに添付して送信');
 
-        try {
-            // 入力値の取得
-            const d = {
-                date: document.getElementById('date').value,
-                s: document.getElementById('customerName').value || "お客様",
-                addr: document.getElementById('address').value,
-                p: document.getElementById('shopName').value,
-                k: document.getElementById('kodawari').value,
-                sc: document.getElementById('area').value,
-                jc: document.getElementById('days').value,
-                m: document.getElementById('color').value,
-                v: document.getElementById('voice').value,
-                cu: document.getElementById('lineUrl').value
-            };
-
-            // プレビュー画像から圧縮済みBase64データを取得
-            const getImgSrc = (id) => {
-                const img = document.getElementById('preview-' + id);
-                return img.style.display === 'block' ? img.src : null;
-            };
-
-            const im = getImgSrc('imgMain');
-            const ib1 = getImgSrc('imgBefore');
-            const ia1 = getImgSrc('imgAfter');
-            const iff = getImgSrc('imgSub');
-
-            // HTMLテンプレートの構築
-            const htmlContent = `
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>施工完了報告 | ${d.s}様邸</title>
-<!-- Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-9KY5C7XC36"><\/script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-9KY5C7XC36');
-<\/script>
-<style>
-    body { background: #0a0a0a; color: #fff; font-family: "Helvetica Neue", Arial, sans-serif; margin: 0; text-align: center; padding-bottom: 50px; }
-    .main-img { width: 100%; max-height: 450px; object-fit: contain; border-bottom: 2px solid #c5a059; background: #000; }
-    .container { padding: 20px; max-width: 600px; margin: auto; }
-    .card { background: #1a1a1a; padding: 20px; border-radius: 15px; border: 1px solid #333; margin-bottom: 20px; text-align: left; box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
-    .label { color: #c5a059; font-size: 0.8rem; font-weight: bold; display: block; margin-bottom: 8px; letter-spacing: 0.05em; }
-    h1 { margin: 10px 0 20px; font-size: 1.8rem; text-align: center; color: #fff; }
-    p { line-height: 1.6; color: #ddd; white-space: pre-wrap; }
-    .ba-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
-    .ba-box { text-align: center; }
-    .ba-box span { display: block; font-size: 0.8rem; color: #c5a059; margin-bottom: 5px; font-weight: bold; }
-    .ba-box img { width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 8px; border: 1px solid #555; background: #000; }
-    .btn-contact { display: block; width: 100%; padding: 18px; background: #06c755; color: white; text-decoration: none; border-radius: 50px; font-weight: bold; margin-top: 10px; box-sizing: border-box; text-align: center; font-size: 1.1rem; box-shadow: 0 4px 10px rgba(6, 199, 85, 0.4); }
-    .footer { margin-top: 40px; padding-bottom: 20px; color: #555; font-size: 0.7rem; }
-    
-    /* 本部用ダウンロードボタン */
-    .dl-btn {
-        display: inline-block; margin-top: 5px; padding: 5px 12px; background: rgba(255,255,255,0.1); 
-        color: #aaa; border: 1px solid #444; border-radius: 4px; font-size: 0.7rem; text-decoration: none;
-    }
-    .dl-btn:hover { background: var(--gold); color: #000; border-color: var(--gold); }
-</style>
-</head>
-<body>
-    ${im ? `
-        <img src="${im}" class="main-img">
-        <br><a href="${im}" download="main_image.jpg" class="dl-btn">📷 メイン画像を保存</a>
-    ` : ''}
-    
-    <div class="container">
-        <p class="label" style="text-align:center;">${d.p} 施工報告</p>
-        <h1>${d.s} 様</h1>
-        <p style="text-align:center; color:#888; font-size:0.9rem; margin-top:-10px; margin-bottom:30px;">
-            ${d.addr ? d.addr : ''}
-        </p>
-
-        <div class="card">
-            <span class="label">こだわりポイント</span>
-            <p style="margin-top:0;">${d.k || '素晴らしい仕上がりになりました。'}</p>
-            
-            <div style="border-top: 1px solid #333; margin-top:15px; padding-top:15px; font-size: 0.9rem; color:#aaa;">
-                <span style="margin-right:10px;">📐 面積: ${d.sc}㎡</span>
-                <span style="margin-right:10px;">📅 工期: ${d.jc}日</span>
-                <span>🎨 色: ${d.m}</span>
-            </div>
-        </div>
-
-        <h2 style="color:#c5a059; font-size: 1.2rem; margin: 30px 0 15px;">Before / After</h2>
-        <div class="ba-grid">
-            <div class="ba-box">
-                <span>BEFORE</span>
-                ${ib1 ? `<img src="${ib1}"><br><a href="${ib1}" download="before.jpg" class="dl-btn">📷 保存</a>` : '<div style="background:#222; height:100%; border-radius:8px;"></div>'}
-            </div>
-            <div class="ba-box">
-                <span>AFTER</span>
-                ${ia1 ? `<img src="${ia1}"><br><a href="${ia1}" download="after.jpg" class="dl-btn">📷 保存</a>` : '<div style="background:#222; height:100%; border-radius:8px;"></div>'}
-            </div>
-        </div>
-
-        ${d.v ? `
-        <div class="card">
-            <span class="label">お客様の声</span>
-            <p style="margin-top:0; font-style: italic;">「${d.v}」</p>
-        </div>` : ''}
-
-        ${iff ? `
-            <img src="${iff}" style="width:100%; border-radius:15px; margin-top:20px; border:1px solid #444;">
-            <br><a href="${iff}" download="sub_image.jpg" class="dl-btn">📷 施工風景を保存</a>
-        ` : ''}
-
-        <div style="margin-top:40px;">
-            ${d.cu ? `<a href="${d.cu}" class="btn-contact">公式LINEでお問い合わせ</a>` : ''}
-        </div>
-
-        <div class="footer">
-            Generated by RSW DX PORTAL<br>
-            Date: ${d.date}
-        </div>
-    </div>
-</body>
-</html>`;
-
-            // ダウンロード処理
-            const blob = new Blob([htmlContent], { type: 'text/html' });
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = `report_${d.date}_${d.s}様.html`;
-            link.click();
-
-            // ボタンの状態を戻す
-            btn.innerText = "作成完了！もう一度作成する";
-            btn.disabled = false;
-            
-            alert("報告書LPの作成が完了しました！\n1. 「LINE報告用テキスト」をコピー\n2. ダウンロードされたHTMLファイルを添付\nしてLINE送信してください。");
-
-        } catch (error) {
-            console.error(error);
-            alert("エラーが発生しました。");
-            btn.innerText = "報告書LPを作成＆ダウンロード";
-            btn.disabled = false;
-        }
-    }
+  } catch(err) {
+    console.error(err);
+    alert('エラーが発生しました。画像が大きすぎる場合は再選択してください。');
+    btn.innerText = '📦 報告書セット (ZIP) を作成';
+    btn.disabled = false;
+  }
+}
 </script>
-
 </body>
 </html>
