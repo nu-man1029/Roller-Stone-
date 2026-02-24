@@ -638,9 +638,23 @@ function preparePublish() {
     a.href = URL.createObjectURL(blob);
     a.download = 'index.html';
     a.click();
+
+    // さりげない通知
+    const notice = document.createElement('div');
+    notice.textContent = '✔ index.html を保存しました';
+    notice.style.cssText = `
+        position:fixed; bottom:24px; left:50%; transform:translateX(-50%);
+        background:#1a1a1a; color:#D4AF37; border:1px solid rgba(212,175,55,0.4);
+        padding:12px 28px; font-size:0.82rem; letter-spacing:2px;
+        border-radius:3px; z-index:9999; opacity:0;
+        transition:opacity 0.3s;
+    `;
+    document.body.appendChild(notice);
+    setTimeout(() => notice.style.opacity = '1', 10);
     setTimeout(() => {
-        alert('index.html を保存しました。\nGitHub のリポジトリにドラッグ＆ドロップしてアップロードしてください。');
-    }, 300);
+        notice.style.opacity = '0';
+        setTimeout(() => notice.remove(), 300);
+    }, 2500);
 }
 
 window.onload = function() {
