@@ -534,7 +534,7 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Serif JP','Cormora
 
 .ba-container{position:relative;width:88%;max-width:960px;margin:0 auto;aspect-ratio:16/9;overflow:hidden;border:1px solid var(--border);cursor:ew-resize;user-select:none;}
 .ba-img{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;pointer-events:none;}
-.ba-after{clip-path:inset(0 50% 0 0);z-index:2;}
+.ba-after{clip-path:inset(0 0 0 50%);z-index:2;}
 .ba-handle{position:absolute;top:0;bottom:0;left:50%;transform:translateX(-50%);width:44px;z-index:10;display:flex;flex-direction:column;align-items:center;pointer-events:none;}
 .ba-handle-line{width:2px;flex:1;background:var(--gold);}
 .ba-handle-pill{background:var(--gold);color:#000;font-size:.55rem;letter-spacing:2px;padding:6px 10px;white-space:nowrap;font-weight:700;}
@@ -603,7 +603,7 @@ document.querySelectorAll('.ba-container').forEach(function(container){
     function update(clientX){
         var rect=container.getBoundingClientRect();
         var pos=Math.max(0,Math.min(100,((clientX-rect.left)/rect.width)*100));
-        afterImg.style.clipPath='inset(0 '+(100-pos)+'% 0 0)';
+        afterImg.style.clipPath='inset(0 0 0 '+pos+'%)';
         handle.style.left=pos+'%';
         handle.style.transform='translateX(-50%)';
     }
