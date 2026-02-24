@@ -311,14 +311,40 @@ function esc(str) { return (str || '').replace(/"/g, '&quot;'); }
 
 function renderBASets() {
     const container = document.getElementById('ba-sets');
-    container.innerHTML = '';
+
+    // 既存のセットIDリスト
+    const existingIds = Array.from(container.querySelectorAll('.ba-set')).map(el => parseInt(el.dataset.id));
+
+    // 削除されたセットをDOMから除去
+    existingIds.forEach(id => {
+        if (!baSets.find(s => s.id === id)) {
+            const el = container.querySelector(`.ba-set[data-id="${id}"]`);
+            if (el) el.remove();
+        }
+    });
+
+    // 新しいセットのみ追加（既存は触らない）
     baSets.forEach((set, idx) => {
+        // セットタイトルだけ番号更新（順番が変わった時のため）
+        const existing = container.querySelector(`.ba-set[data-id="${set.id}"]`);
+        if (existing) {
+            const titleEl = existing.querySelector('.ba-set-title');
+            if (titleEl) titleEl.textContent = `SET ${String(idx+1).padStart(2,'0')}`;
+            // 削除ボタン表示制御
+            const removeBtn = existing.querySelector('.btn-remove-ba');
+            if (removeBtn) removeBtn.style.display = baSets.length > 1 ? 'inline-block' : 'none';
+            return; // 既存セットはスキップ
+        }
+
+        // 新規セットのみ生成
         const div = document.createElement('div');
         div.className = 'ba-set';
+        div.dataset.id = set.id;
         div.innerHTML = `
             <div class="ba-set-header">
                 <span class="ba-set-title">SET ${String(idx+1).padStart(2,'0')}</span>
-                ${baSets.length > 1 ? `<button class="btn-remove-ba" onclick="removeBASet(${set.id})">削除</button>` : ''}
+                <button class="btn-remove-ba" onclick="removeBASet(${set.id})"
+                    style="display:${baSets.length > 1 ? 'inline-block' : 'none'}">削除</button>
             </div>
 
             <input type="text" placeholder="セクションタイトル（例：床ローラーストーン・正形タイル調）"
@@ -365,6 +391,7 @@ function renderBASets() {
         `;
         container.appendChild(div);
     });
+
     const addBtn = document.getElementById('btn-add-ba');
     if (addBtn) addBtn.style.display = baSets.length >= 5 ? 'none' : 'block';
 }
