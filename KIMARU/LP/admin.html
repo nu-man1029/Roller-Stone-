@@ -70,6 +70,14 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans JP',sans-seri
 /* INFO FIELDS */
 .info-fields{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px;}
 .sample-row{display:flex;align-items:center;gap:14px;}
+/* Drive URL options */
+.drive-opt{display:flex;align-items:center;gap:10px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px 14px;cursor:pointer;transition:all .2s;}
+.drive-opt:hover{border-color:var(--gold);}
+.drive-opt.selected{border-color:var(--gold);background:rgba(201,168,76,.08);}
+.drive-opt-num{font-family:"Cormorant Garamond",serif;font-size:1.3rem;color:var(--gold);opacity:.6;line-height:1;flex-shrink:0;}
+.drive-opt-info{flex:1;min-width:0;}
+.drive-opt-label{font-size:.78rem;font-weight:500;color:var(--text);margin-bottom:3px;}
+.drive-opt-url{font-size:.65rem;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 /* Theme picker */
 .theme-picker{display:flex;gap:10px;}
 .theme-btn{flex:1;background:var(--bg3);border:2px solid var(--border);border-radius:10px;padding:14px 10px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:7px;transition:all .2s;}
@@ -243,7 +251,28 @@ textarea{resize:vertical;line-height:1.9;}
       <div class="card">
         <div class="card-head"><span class="card-icon">🎬</span><span class="card-name">動画</span><span class="card-desc">Cinematic View</span></div>
         <div class="card-body">
-          <div class="form-row"><label class="field-label">動画ファイルURL（MP4）</label><input type="url" id="video-url" placeholder="https://... （GitHubのRaw URLなど）" oninput="markDirty()"><div class="hint">GitHubに動画をアップしてRaw URLを使うのがおすすめです。</div></div>
+          <div class="form-row">
+            <label class="field-label">GoogleドライブURL → 自動変換</label>
+            <div style="display:flex;gap:8px;">
+              <input type="url" id="drive-raw-url" placeholder="https://drive.google.com/file/d/XXXXX/view" style="flex:1;">
+              <button class="btn btn-primary" style="white-space:nowrap;flex-shrink:0;" onclick="convertDriveUrl()">変換する</button>
+            </div>
+            <div class="hint">ドライブのURLをそのまま貼って「変換する」を押してください。<br>共有設定は <strong style="color:var(--gold)">「リンクを知っている全員が閲覧可」</strong> にしてください。</div>
+          </div>
+          <div id="drive-results" style="display:none;">
+            <div class="form-row">
+              <label class="field-label">変換結果 — 使うURLを選んでください</label>
+              <div id="drive-url-options" style="display:flex;flex-direction:column;gap:8px;"></div>
+              <div class="hint" style="margin-top:8px;">
+                <strong style="color:var(--gold)">① 直接DL</strong> が一番シンプル。大きいファイル(100MB超)は②を試してください。<br>
+                うまく再生できない場合は③の埋め込みiframeをお試しください（見た目が変わります）。
+              </div>
+            </div>
+          </div>
+          <div class="form-row">
+            <label class="field-label">動画URL（直接入力・または上から自動入力）</label>
+            <input type="url" id="video-url" placeholder="https://drive.google.com/uc?export=download&id=..." oninput="markDirty()">
+          </div>
           <div class="form-row"><label class="field-label">サムネイル画像URL（任意）</label><input type="url" id="video-poster" placeholder="https://..." oninput="markDirty()"></div>
           <div class="toggle-row">
             <div class="toggle-info"><div class="t-label">動画セクションを表示する</div><div class="t-desc">OFFにするとセクションごと非表示</div></div>
@@ -415,6 +444,72 @@ function showPage(id,el){
 }
 
 // ===== DIRTY =====
+// ===== Google Drive URL 変換 =====
+function extractDriveId(url){
+  var m=url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+  if(m)return m[1];
+  m=url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+  if(m)return m[1];
+  return null;
+}
+
+function convertDriveUrl(){
+  var raw=document.getElementById('drive-raw-url').value.trim();
+  if(!raw){showToast('⚠ GoogleドライブURLを入力してください');return;}
+  var id=extractDriveId(raw);
+  if(!id){showToast('⚠ ファイルIDが取得できません。URLを確認してください');return;}
+
+  // 3パターン生成
+  var opts=[
+    {
+      num:'①',
+      label:'直接ダウンロード（推奨・100MB以下）',
+      url:'https://drive.google.com/uc?export=download&id='+id
+    },
+    {
+      num:'②',
+      label:'強制ダウンロード（大容量ファイル向け）',
+      url:'https://drive.usercontent.google.com/download?id='+id+'&export=download&authuser=0&confirm=t'
+    },
+    {
+      num:'③',
+      label:'プレビュー埋め込み（再生できない時の代替）',
+      url:'https://drive.google.com/file/d/'+id+'/preview'
+    }
+  ];
+
+  var container=document.getElementById('drive-url-options');
+  // store urls globally for index access
+  window._driveOpts=opts;
+  container.innerHTML=opts.map(function(opt,i){
+    return '<div class="drive-opt" onclick="selectDriveUrlByIndex('+i+',this)">'
+      +'<span class="drive-opt-num">'+opt.num+'</span>'
+      +'<div class="drive-opt-info">'
+      +'<div class="drive-opt-label">'+opt.label+'</div>'
+      +'<div class="drive-opt-url">'+opt.url+'</div>'
+      +'</div>'
+      +'</div>';
+  }).join('');
+
+  document.getElementById('drive-results').style.display='block';
+  // デフォルト①を自動セット
+  selectDriveUrlByIndex(0, container.firstChild);
+  showToast('✅ 変換しました。URLを選択してください。');
+}
+
+function selectDriveUrlByIndex(i, el){
+  var opts=window._driveOpts||[];
+  if(!opts[i])return;
+  selectDriveUrl(el, opts[i].url);
+}
+
+function selectDriveUrl(el, url){
+  document.querySelectorAll('.drive-opt').forEach(function(o){o.classList.remove('selected');});
+  el.classList.add('selected');
+  document.getElementById('video-url').value=url;
+  markDirty();
+}
+
 function selectTheme(theme, el){
   document.querySelectorAll('.theme-btn').forEach(function(btn){ btn.classList.remove('active'); });
   el.classList.add('active');
@@ -765,7 +860,8 @@ function generateAndDownload(){
     .then(r=>{if(!r.ok)throw new Error();return r.text();})
     .then(html=>{
       html=applySettings(html,s);
-      downloadHTML(html,'kimaru_pr_'+theme+'.html');
+      var themeName=theme.charAt(0).toUpperCase()+theme.slice(1);
+      downloadHTML(html,'KIMARU_'+themeName+'.html');
       dirty=false;
       document.getElementById('save-bar').classList.remove('show');
       showToast('HTMLをダウンロードしました！GitHubにアップしてください。');
