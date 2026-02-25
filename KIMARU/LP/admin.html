@@ -765,7 +765,7 @@ function generateAndDownload(){
     .then(r=>{if(!r.ok)throw new Error();return r.text();})
     .then(html=>{
       html=applySettings(html,s);
-      downloadHTML(html,'kimaru_pr.html');
+      downloadHTML(html,'kimaru_pr_'+theme+'.html');
       dirty=false;
       document.getElementById('save-bar').classList.remove('show');
       showToast('HTMLをダウンロードしました！GitHubにアップしてください。');
