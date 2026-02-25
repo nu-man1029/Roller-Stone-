@@ -70,6 +70,29 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans JP',sans-seri
 /* INFO FIELDS */
 .info-fields{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px;}
 .sample-row{display:flex;align-items:center;gap:14px;}
+/* Theme picker */
+.theme-picker{display:flex;gap:10px;}
+.theme-btn{flex:1;background:var(--bg3);border:2px solid var(--border);border-radius:10px;padding:14px 10px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:7px;transition:all .2s;}
+.theme-btn:hover{border-color:rgba(201,168,76,.5);}
+.theme-btn.active{border-color:var(--gold);background:rgba(201,168,76,.08);}
+.theme-swatch{width:36px;height:36px;border-radius:50%;border:2px solid rgba(255,255,255,.15);}
+.dark-swatch{background:#111;box-shadow:inset 0 0 0 8px #c9a84c;}
+.light-swatch{background:#f5f3ef;box-shadow:inset 0 0 0 8px #c9a84c;}
+.ink-swatch{background:#f8f7f4;box-shadow:inset 0 0 0 8px #1a1a1a;}
+.theme-label{font-size:.82rem;font-weight:500;color:var(--text);}
+.theme-desc{font-size:.65rem;color:var(--text2);text-align:center;}
+/* Project save/load */
+.proj-modal{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:500;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s;}
+.proj-modal.open{opacity:1;pointer-events:all;}
+.proj-box{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:28px;width:420px;max-width:90vw;max-height:80vh;overflow-y:auto;}
+.proj-box h3{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:300;color:var(--gold);letter-spacing:2px;margin-bottom:20px;}
+.proj-item{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;background:var(--bg3);border-radius:6px;margin-bottom:8px;cursor:pointer;transition:background .2s;border:1px solid transparent;}
+.proj-item:hover{background:rgba(201,168,76,.1);border-color:var(--border);}
+.proj-item-name{font-size:.85rem;}
+.proj-item-date{font-size:.68rem;color:var(--text2);}
+.proj-item-btns{display:flex;gap:6px;flex-shrink:0;}
+.proj-empty{font-size:.8rem;color:var(--text2);text-align:center;padding:24px;}
+
 .sample-preview-wrap{position:relative;width:64px;height:64px;flex-shrink:0;}
 .sample-preview{width:64px;height:64px;border-radius:7px;object-fit:cover;border:1px solid var(--border);display:none;}
 .sample-preview.visible{display:block;}
@@ -153,6 +176,9 @@ textarea{resize:vertical;line-height:1.9;}
     <button class="nav-item" onclick="showPage('logos',this)"><span>🏷</span>ロゴ</button>
     <button class="nav-item" onclick="showPage('profile',this)"><span>👤</span>プロフィール</button>
     <button class="nav-item" onclick="showPage('sections',this)"><span>⚙️</span>セクション設定</button>
+    <div class="sidebar-label" style="margin-top:16px;">プロジェクト</div>
+    <button class="nav-item" onclick="openSaveModal()"><span>💾</span>保存する</button>
+    <button class="nav-item" onclick="openLoadModal()"><span>📂</span>呼び出す</button>
   </nav>
 
   <main class="main">
@@ -170,14 +196,46 @@ textarea{resize:vertical;line-height:1.9;}
       <div class="page-title">URL 設定</div>
       <div class="page-sub">LINE・Instagram・動画のURLを設定します。</div>
       <div class="card">
-        <div class="card-head"><span class="card-icon">💬</span><span class="card-name">LINE</span><span class="card-desc">メインCTA</span></div>
+        <div class="card-head"><span class="card-icon">🎨</span><span class="card-name">テーマ</span><span class="card-desc">書き出すLPの配色</span></div>
+        <div class="card-body">
+          <div class="form-row">
+            <label class="field-label">テーマを選択</label>
+            <div class="theme-picker" id="theme-picker">
+              <button class="theme-btn active" data-theme="dark"  onclick="selectTheme('dark',this)">
+                <span class="theme-swatch dark-swatch"></span>
+                <span class="theme-label">Dark</span>
+                <span class="theme-desc">黒背景・金アクセント</span>
+              </button>
+              <button class="theme-btn" data-theme="light" onclick="selectTheme('light',this)">
+                <span class="theme-swatch light-swatch"></span>
+                <span class="theme-label">Light</span>
+                <span class="theme-desc">ベージュ・温かみ</span>
+              </button>
+              <button class="theme-btn" data-theme="ink"   onclick="selectTheme('ink',this)">
+                <span class="theme-swatch ink-swatch"></span>
+                <span class="theme-label">Ink</span>
+                <span class="theme-desc">白黒・シャープ</span>
+              </button>
+            </div>
+            <div class="hint" style="margin-top:10px;">書き出したHTMLはこのテーマで完全固定されます（切り替えボタンなし）。</div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head"><span class="card-icon">📊</span><span class="card-name">GA4 設定</span><span class="card-desc">Google Analytics</span></div>
+        <div class="card-body">
+          <div class="form-row"><label class="field-label">測定ID（GA4）</label><input type="text" id="ga4-id" placeholder="G-XXXXXXXXXX" oninput="markDirty()"><div class="hint">現在の設定: G-0VF277F6RX　変更する場合のみ入力してください。</div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head"><span class="card-icon">💬</span><span class="card-name">LINE</span><span class="card-desc">メインCTA イベント: click / cta / line_pr</span></div>
         <div class="card-body">
           <div class="form-row"><label class="field-label">LINE URL</label><input type="url" id="line-url" placeholder="https://lin.ee/xxxxxxx" oninput="markDirty()"><div class="hint"><a href="https://manager.line.biz/" target="_blank">LINE Official Account Manager</a> → 友だち追加ガイド</div></div>
           <div class="form-row"><label class="field-label">CTAボタンのテキスト</label><input type="text" id="line-btn-text" placeholder="LINE でお問い合わせ" oninput="markDirty()"></div>
         </div>
       </div>
       <div class="card">
-        <div class="card-head"><span class="card-icon">📷</span><span class="card-name">Instagram</span></div>
+        <div class="card-head"><span class="card-icon">📷</span><span class="card-name">Instagram</span><span class="card-desc">イベント: click / social / instagram_numan</span></div>
         <div class="card-body">
           <div class="form-row"><label class="field-label">Instagram URL</label><input type="url" id="ig-url" placeholder="https://www.instagram.com/cementart_numan/" oninput="markDirty()"></div>
         </div>
@@ -217,6 +275,15 @@ textarea{resize:vertical;line-height:1.9;}
         <div class="card-head"><span class="card-icon">📣</span><span class="card-name">CTA</span></div>
         <div class="card-body">
           <div class="form-row"><label class="field-label">CTAタイトル</label><textarea id="cta-title" rows="2" oninput="markDirty()"></textarea></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head"><span class="card-icon">🗂</span><span class="card-name">その他の施工事例（ギャラリー）</span><span class="card-desc">準備中バナー</span></div>
+        <div class="card-body">
+          <div class="form-row"><label class="field-label">セクションタイトル</label><input type="text" id="gallery-title" placeholder="その他の施工事例はこちら" oninput="markDirty()"></div>
+          <div class="form-row"><label class="field-label">説明テキスト</label><textarea id="gallery-body" rows="2" placeholder="パターン別・素材別のポートフォリオギャラリーを準備しています。" oninput="markDirty()"></textarea></div>
+          <div class="form-row"><label class="field-label">ボタンテキスト</label><input type="text" id="gallery-btn-text" placeholder="施工事例ギャラリーを見る" oninput="markDirty()"></div>
+          <div class="form-row"><label class="field-label">ギャラリーURL（完成後に入力）</label><input type="url" id="gallery-url" placeholder="https://... （空欄のままだと「準備中」表示）" oninput="markDirty()"><div class="hint">URLを入力するとボタンがリンクになり、「準備中」バッジが消えます。</div></div>
         </div>
       </div>
     </div>
@@ -348,6 +415,12 @@ function showPage(id,el){
 }
 
 // ===== DIRTY =====
+function selectTheme(theme, el){
+  document.querySelectorAll('.theme-btn').forEach(function(btn){ btn.classList.remove('active'); });
+  el.classList.add('active');
+  markDirty();
+}
+
 function markDirty(){dirty=true;document.getElementById('save-bar').classList.add('show');}
 function resetAll(){if(!confirm('変更をリセットしますか？'))return;dirty=false;document.getElementById('save-bar').classList.remove('show');loadDefaults();}
 
@@ -382,61 +455,137 @@ function renderBaCards(){
 }
 
 function buildBaCardHTML(item,i){
-  var num=(i+1<10?'0'+(i+1):''+(i+1));
+  var num=(i+1<10?'0'+(i+1):String(i+1));
+  var angles=item.angles||[];
+  var anglesUI=angles.map(function(ang,ai){
+    return '<div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:10px;">'
+      +'<div><div class="img-drop'+(ang.src?' has-img':'')+'" style="width:120px;height:90px;" id="drop-ang-'+item.id+'-'+ai+'" onclick="triggerUpload(\'file-ang-'+item.id+'-'+ai+'\')">'
+      +(ang.src?'<img class="preview" src="'+ang.src+'" alt="">':'')
+      +'<div class="img-drop-overlay"><span class="img-drop-icon" style="font-size:1.2rem;">&#128247;</span></div>'
+      +'<input type="file" id="file-ang-'+item.id+'-'+ai+'" accept="image/*" onchange="handleAngleImage(this,\''+item.id+'\','+ai+')">'
+      +'</div></div>'
+      +'<div style="flex:1;">'
+      +'<label class="field-label">ラベル</label>'
+      +'<input type="text" style="margin-bottom:8px;" placeholder="例：鳥観図、夜景、ライトアップ" value="'+escHtml(ang.label||'')+'" oninput="updateAngleLabel(\''+item.id+'\','+ai+',this.value)">'
+      +'<button class="btn btn-danger" style="padding:5px 12px;font-size:.7rem;" onclick="removeAngle(\''+item.id+'\','+ai+')">&#10005; 削除</button>'
+      +'</div></div>';
+  }).join('');
+
+  var beforeHasImg=item.before?'has-img':'';
+  var afterHasImg=item.after?'has-img':'';
+  var sampleHasImg=item.sample?'has-img':'';
+
   return '<div class="ba-card-head">'
     +'<span class="ba-card-num">'+num+'</span>'
     +'<input class="ba-card-title-input" type="text" placeholder="タイトル（例：RSタイル調 玄関アプローチ）" value="'+escHtml(item.title)+'" oninput="updateBaField(\''+item.id+'\',\'title\',this.value)">'
     +'<button class="btn btn-danger" onclick="removeBaCard(\''+item.id+'\')">削除</button>'
     +'</div>'
     +'<div class="ba-card-body">'
-    // Preview
     +'<div class="ba-preview-panel">'
     +'<div class="ba-preview-slider" id="preview-slider-'+item.id+'">'
     +(item.before?'<img class="ba-preview-img" src="'+item.before+'" alt="">':'')
-    +(item.after?'<img class="ba-preview-img ba-preview-after" id="prev-after-'+item.id+'" src="'+item.after+'" alt="">':'')
+    +(item.after?'<img class="ba-preview-img ba-preview-after" src="'+item.after+'" alt="">':'')
     +(item.before||item.after?'<div class="ba-preview-handle"><div class="ba-preview-line"></div><div class="ba-preview-pill">SLIDE</div></div>':'<div class="ba-preview-empty">画像をアップするとここにプレビューが表示されます</div>')
-    +'</div>'
-    +'</div>'
-    // Upload areas
+    +'</div></div>'
     +'<div class="ba-img-grid">'
-    +'<div>'
-    +'<div class="img-drop-label">Before（施工前）</div>'
-    +'<div class="img-drop'+(item.before?' has-img':'')+'" id="drop-b-'+item.id+'" onclick="triggerUpload(\'file-b-'+item.id+'\')">'
+    +'<div><div class="img-drop-label">Before（施工前）</div>'
+    +'<div class="img-drop '+beforeHasImg+'" id="drop-b-'+item.id+'" onclick="triggerUpload(\'file-b-'+item.id+'\')">'
     +(item.before?'<img class="preview" src="'+item.before+'" alt="">':'')
-    +'<div class="img-drop-overlay"><span class="img-drop-icon">📷</span><span class="img-drop-text">施工前の写真</span></div>'
+    +'<div class="img-drop-overlay"><span class="img-drop-icon">&#128247;</span><span class="img-drop-text">施工前の写真</span></div>'
     +'<input type="file" id="file-b-'+item.id+'" accept="image/*" onchange="handleBaImage(this,\''+item.id+'\',\'before\')">'
-    +'</div>'
-    +'<div class="img-fname" id="fn-b-'+item.id+'">'+(item.before&&item.before.startsWith('data:')?'画像設定済み':item.before?item.before:'未設定')+'</div>'
-    +'</div>'
-    +'<div>'
-    +'<div class="img-drop-label">After（施工後）</div>'
-    +'<div class="img-drop'+(item.after?' has-img':'')+'" id="drop-a-'+item.id+'" onclick="triggerUpload(\'file-a-'+item.id+'\')">'
+    +'</div></div>'
+    +'<div><div class="img-drop-label">After（施工後）</div>'
+    +'<div class="img-drop '+afterHasImg+'" id="drop-a-'+item.id+'" onclick="triggerUpload(\'file-a-'+item.id+'\')">'
     +(item.after?'<img class="preview" src="'+item.after+'" alt="">':'')
-    +'<div class="img-drop-overlay"><span class="img-drop-icon">📷</span><span class="img-drop-text">施工後の写真</span></div>'
+    +'<div class="img-drop-overlay"><span class="img-drop-icon">&#128247;</span><span class="img-drop-text">施工後の写真</span></div>'
     +'<input type="file" id="file-a-'+item.id+'" accept="image/*" onchange="handleBaImage(this,\''+item.id+'\',\'after\')">'
+    +'</div></div>'
     +'</div>'
-    +'<div class="img-fname" id="fn-a-'+item.id+'">'+(item.after&&item.after.startsWith('data:')?'画像設定済み':item.after?item.after:'未設定')+'</div>'
-    +'</div>'
-    +'</div>'
-    // Info fields
     +'<div class="info-fields">'
     +'<div><label class="field-label">仕上げ名</label><input type="text" placeholder="RSタイル調" value="'+escHtml(item.finish)+'" oninput="updateBaField(\''+item.id+'\',\'finish\',this.value)"></div>'
     +'<div><label class="field-label">カラー</label><input type="text" placeholder="グレー" value="'+escHtml(item.color)+'" oninput="updateBaField(\''+item.id+'\',\'color\',this.value)"></div>'
     +'<div><label class="field-label">目地</label><input type="text" placeholder="ブラック" value="'+escHtml(item.grout)+'" oninput="updateBaField(\''+item.id+'\',\'grout\',this.value)"></div>'
     +'</div>'
-    // Sample image
-    +'<div class="sample-row">'
-    +'<div>'
-    +'<div class="img-drop-label" style="margin-bottom:6px;">素材サンプル画像（任意）</div>'
-    +'<div class="img-drop has-img" style="width:80px;height:80px;aspect-ratio:1;" id="drop-s-'+item.id+'" onclick="triggerUpload(\'file-s-'+item.id+'\')">'
+    +'<div class="sample-row" style="margin-bottom:16px;">'
+    +'<div><div class="img-drop-label" style="margin-bottom:6px;">素材サンプル画像（任意）</div>'
+    +'<div class="img-drop '+sampleHasImg+'" style="width:80px;height:80px;aspect-ratio:1;" id="drop-s-'+item.id+'" onclick="triggerUpload(\'file-s-'+item.id+'\')">'
     +(item.sample?'<img class="preview" src="'+item.sample+'" alt="">':'')
-    +'<div class="img-drop-overlay"><span class="img-drop-icon" style="font-size:1.2rem;">📷</span></div>'
+    +'<div class="img-drop-overlay"><span class="img-drop-icon" style="font-size:1.2rem;">&#128247;</span></div>'
     +'<input type="file" id="file-s-'+item.id+'" accept="image/*" onchange="handleBaImage(this,\''+item.id+'\',\'sample\')">'
+    +'</div></div>'
+    +'<div style="font-size:.72rem;color:var(--text2);line-height:2;">クリックで拡大できる小さなサムネイル<br>として仕上げ説明の横に表示されます。</div>'
     +'</div>'
+    +'<div><div class="img-drop-label" style="margin-bottom:8px;">追加アングル写真（鳥観図・夜景・ライトアップなど）</div>'
+    +'<div class="angles-list" id="angles-'+item.id+'">'
+    +anglesUI
     +'</div>'
-    +'<div style="font-size:.72rem;color:var(--text2);line-height:2;">クリックで拡大できる小さなサムネイルとして、<br>仕上げ説明の横に表示されます。</div>'
+    +'<button class="btn btn-add" style="margin-top:10px;padding:10px;" onclick="addAngle(\''+item.id+'\')">＋ アングル写真を追加</button>'
     +'</div>'
     +'</div>';
+}
+
+function buildAnglesHTML(item){
+  var angles=item.angles||[];
+  return angles.map(function(ang,ai){
+    return '<div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:10px;">'
+      +'<div><div class="img-drop'+(ang.src?' has-img':'')+'" style="width:120px;height:90px;" id="drop-ang-'+item.id+'-'+ai+'" onclick="triggerUpload(\'file-ang-'+item.id+'-'+ai+'\')">'
+      +(ang.src?'<img class="preview" src="'+ang.src+'" alt="">':'')
+      +'<div class="img-drop-overlay"><span class="img-drop-icon" style="font-size:1.2rem;">&#128247;</span></div>'
+      +'<input type="file" id="file-ang-'+item.id+'-'+ai+'" accept="image/*" onchange="handleAngleImage(this,\''+item.id+'\','+ai+')">'
+      +'</div></div>'
+      +'<div style="flex:1;">'
+      +'<label class="field-label">ラベル</label>'
+      +'<input type="text" style="margin-bottom:8px;" placeholder="例：鳥観図、夜景、ライトアップ" value="'+escHtml(ang.label||'')+'" oninput="updateAngleLabel(\''+item.id+'\','+ai+',this.value)">'
+      +'<button class="btn btn-danger" style="padding:5px 12px;font-size:.7rem;" onclick="removeAngle(\''+item.id+'\','+ai+')">&#10005; 削除</button>'
+      +'</div></div>';
+  }).join('');
+}
+
+function addAngle(cardId){
+  var item=baCards.find(function(c){return c.id===cardId;});
+  if(!item)return;
+  if(!item.angles)item.angles=[];
+  item.angles.push({src:'',label:''});
+  var container=document.getElementById('angles-'+cardId);
+  if(container)container.innerHTML=buildAnglesHTML(item);
+  markDirty();
+}
+
+function removeAngle(cardId,ai){
+  var item=baCards.find(function(c){return c.id===cardId;});
+  if(!item||!item.angles)return;
+  item.angles.splice(ai,1);
+  var container=document.getElementById('angles-'+cardId);
+  if(container)container.innerHTML=buildAnglesHTML(item);
+  markDirty();
+}
+
+function updateAngleLabel(cardId,ai,val){
+  var item=baCards.find(function(c){return c.id===cardId;});
+  if(!item||!item.angles||!item.angles[ai])return;
+  item.angles[ai].label=val;
+  markDirty();
+}
+
+function handleAngleImage(input,cardId,ai){
+  var file=input.files[0];if(!file)return;
+  var reader=new FileReader();
+  reader.onload=function(e){
+    var item=baCards.find(function(c){return c.id===cardId;});
+    if(!item)return;
+    if(!item.angles)item.angles=[];
+    if(!item.angles[ai])item.angles[ai]={src:'',label:''};
+    item.angles[ai].src=e.target.result;
+    var drop=document.getElementById('drop-ang-'+cardId+'-'+ai);
+    if(drop){
+      drop.classList.add('has-img');
+      var prev=drop.querySelector('img.preview');
+      if(prev)prev.src=e.target.result;
+      else{var img=document.createElement('img');img.className='preview';img.src=e.target.result;drop.insertBefore(img,drop.firstChild);}
+    }
+    markDirty();
+  };
+  reader.readAsDataURL(file);
 }
 
 function escHtml(s){return (s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
@@ -531,6 +680,7 @@ function handleLogo(input,key,previewId,dropId){
 function loadDefaults(){
   var s={};
   try{s=JSON.parse(localStorage.getItem('kimaru-settings')||'{}');}catch(e){}
+  setVal('ga4-id',s['ga4-id']||'');
   setVal('line-url',s['line-url']||'https://lin.ee/xxxxxxx');
   setVal('line-btn-text',s['line-btn-text']||'LINE でお問い合わせ');
   setVal('ig-url',s['ig-url']||'https://www.instagram.com/cementart_numan/');
@@ -542,6 +692,15 @@ function loadDefaults(){
   setVal('msg-main',s['msg-main']||'サンプルを持って行っても契約が取れない、\nそんな時代は<span>もう終わり</span>にしませんか。');
   setVal('msg-body',s['msg-body']||'技術は本物なのに、伝え方が追いついていないだけ。\nKIMARUを使えば、お客様が自分で「決める」ようになります。');
   setVal('cta-title',s['cta-title']||'気になった方は、\nまずLINEで話しましょう。');
+  // テーマ復元
+  var savedTheme = s['theme'] || 'dark';
+  document.querySelectorAll('.theme-btn').forEach(function(btn){
+    btn.classList.toggle('active', btn.dataset.theme === savedTheme);
+  });
+  setVal('gallery-title',s['gallery-title']||'その他の施工事例はこちら');
+  setVal('gallery-body',s['gallery-body']||'パターン別・素材別のポートフォリオギャラリーを準備しています。');
+  setVal('gallery-btn-text',s['gallery-btn-text']||'施工事例ギャラリーを見る');
+  setVal('gallery-url',s['gallery-url']||'');
   setVal('numan-name-ja',s['numan-name-ja']||'セメントアーティスト\nぬーまん');
   setVal('numan-name-en',s['numan-name-en']||'Cement Artist Nu☆Man');
   setVal('numan-location',s['numan-location']||'三重県 松阪市');
@@ -567,6 +726,8 @@ function getCheck(id){var el=document.getElementById(id);return el?el.checked:fa
 // ===== SAVE SETTINGS =====
 function saveSettings(){
   var s={
+    'theme': document.querySelector('.theme-btn.active')?.dataset.theme || 'dark',
+    'ga4-id':getVal('ga4-id'),
     'line-url':getVal('line-url'),
     'line-btn-text':getVal('line-btn-text'),
     'ig-url':getVal('ig-url'),
@@ -578,6 +739,10 @@ function saveSettings(){
     'msg-main':getVal('msg-main'),
     'msg-body':getVal('msg-body'),
     'cta-title':getVal('cta-title'),
+    'gallery-title':getVal('gallery-title'),
+    'gallery-body':getVal('gallery-body'),
+    'gallery-btn-text':getVal('gallery-btn-text'),
+    'gallery-url':getVal('gallery-url'),
     'numan-name-ja':getVal('numan-name-ja'),
     'numan-name-en':getVal('numan-name-en'),
     'numan-location':getVal('numan-location'),
@@ -611,10 +776,27 @@ function generateAndDownload(){
 function applySettings(html,s){
   // BA data JSON
   var baJson=JSON.stringify(baCards.map(function(item){
-    return {title:item.title,before:item.before||'',after:item.after||'',finish:item.finish||'',color:item.color||'',grout:item.grout||'',sample:item.sample||''};
+    return {
+      title  : item.title   || '',
+      before : item.before  || '',
+      after  : item.after   || '',
+      finish : item.finish  || '',
+      color  : item.color   || '',
+      grout  : item.grout   || '',
+      sample : item.sample  || '',
+      angles : (item.angles || []).map(function(a){ return {src:a.src||'', label:a.label||''}; })
+    };
   }));
   html=html.replace(/(<script type="application\/json" id="ba-data">)([\s\S]*?)(<\/script>)/,'$1'+baJson+'$3');
 
+  // テーマ固定（切り替えボタンは削除済み）
+  var theme = s['theme'] || 'dark';
+  html = html.replace(/data-theme="%%KIMARU_THEME%%"/, 'data-theme="'+theme+'"');
+
+  // GA4 測定ID
+  if(s['ga4-id'] && s['ga4-id'].trim()){
+    html=html.replace(/G-0VF277F6RX/g, s['ga4-id'].trim());
+  }
   // LINE URL
   html=html.replace(/href="[^"]*"(\s*class="cta-btn)/g,'href="'+s['line-url']+'"$1');
   // Instagram URL
@@ -636,6 +818,20 @@ function applySettings(html,s){
   html=html.replace(/(<p class="message-body">)([\s\S]*?)(<\/p>)/,'$1'+s['msg-body'].replace(/\n/g,'<br>')+'$3');
   // CTA title
   html=html.replace(/(<h2 class="cta-title reveal">)([\s\S]*?)(<\/h2>)/,'$1'+s['cta-title'].replace(/\n/g,'<br>')+'$3');
+  // Gallery teaser
+  var galleryTitle   = s['gallery-title']   || 'その他の施工事例はこちら';
+  var galleryBody    = s['gallery-body']    || 'パターン別・素材別のポートフォリオギャラリーを準備しています。';
+  var galleryBtnText = s['gallery-btn-text']|| '施工事例ギャラリーを見る';
+  var galleryUrl     = s['gallery-url']     || '';
+  html = html.replace(/(<h2 class="section-title" style="margin-bottom:12px;">)[^<]*(<\/h2>)/, '$1'+galleryTitle+'$2');
+  html = html.replace(/(<p class="section-body" style="max-width:480px;margin:0 auto 28px;">)[^<]*(<\/p>)/, '$1'+galleryBody+'$2');
+  // ボタンテキスト（SVGの前のテキストノード）
+  html = html.replace(/(gallery-teaser-btn[^>]*>[\s\S]*?<\/span>\s*)([^<]+)(\s*<svg)/, '$1'+galleryBtnText+'$3');
+  if(galleryUrl){
+    // URLあり → リンク有効化・バッジ非表示
+    html = html.replace(/href="#" class="gallery-teaser-btn" onclick="return false;"/, 'href="'+galleryUrl+'" class="gallery-teaser-btn" target="_blank" rel="noopener"');
+    html = html.replace(/<span class="gallery-teaser-badge">準備中<\/span>\s*/, '');
+  }
   // Numan name
   html=html.replace(/(<h2 class="numan-name">)([\s\S]*?)(<\/h2>)/,'$1'+s['numan-name-ja'].replace(/\n/g,'<br>')+'$3');
   html=html.replace(/(<p class="numan-title">)([\s\S]*?)(<\/p>)/,'$1'+s['numan-name-en']+'$3');
@@ -680,8 +876,105 @@ function showToast(msg){
   t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3500);
 }
 
+
+// ===== PROJECT SAVE / LOAD =====
+function openSaveModal(){
+  document.getElementById('proj-save-name').value='';
+  document.getElementById('modal-save').classList.add('open');
+  setTimeout(()=>document.getElementById('proj-save-name').focus(),100);
+}
+function openLoadModal(){
+  renderProjList();
+  document.getElementById('modal-load').classList.add('open');
+}
+function closeProjModal(id){document.getElementById(id).classList.remove('open');}
+
+function saveProject(){
+  var name=document.getElementById('proj-save-name').value.trim();
+  if(!name){alert('プロジェクト名を入力してください');return;}
+  var s=saveSettings();
+  var projects={};
+  try{projects=JSON.parse(localStorage.getItem('kimaru-projects')||'{}');}catch(e){}
+  projects[name]={settings:s,savedAt:new Date().toLocaleString('ja-JP')};
+  localStorage.setItem('kimaru-projects',JSON.stringify(projects));
+  closeProjModal('modal-save');
+  showToast('「'+name+'」を保存しました。');
+}
+
+function renderProjList(){
+  var projects={};
+  try{projects=JSON.parse(localStorage.getItem('kimaru-projects')||'{}');}catch(e){}
+  var names=Object.keys(projects);
+  var list=document.getElementById('proj-list');
+  if(!names.length){list.innerHTML='<div class="proj-empty">保存済みのプロジェクトがありません</div>';return;}
+  window._projNames=names;
+  list.innerHTML=names.map(function(name,idx){
+    var p=projects[name];
+    return '<div class="proj-item">'
+      +'<div style="flex:1;min-width:0;">'
+      +'<div class="proj-item-name">'+escHtml(name)+'</div>'
+      +'<div class="proj-item-date">'+p.savedAt+'</div>'
+      +'</div>'
+      +'<div class="proj-item-btns">'
+      +'<button class="btn btn-primary" style="padding:6px 14px;font-size:.7rem;" onclick="loadProjectByIndex('+idx+')">呼び出す</button>'
+      +'<button class="btn btn-danger" style="padding:6px 10px;" onclick="deleteProjectByIndex('+idx+')">&#10005;</button>'
+      +'</div>'
+      +'</div>';
+  }).join('');
+}
+
+function loadProjectByIndex(i){
+  var name=window._projNames&&window._projNames[i];
+  if(name)loadProject(name);
+}
+function deleteProjectByIndex(i){
+  var name=window._projNames&&window._projNames[i];
+  if(name)deleteProject(name);
+}
+
+function loadProject(name){
+  var projects={};
+  try{projects=JSON.parse(localStorage.getItem('kimaru-projects')||'{}');}catch(e){}
+  if(!projects[name])return;
+  if(!confirm('「'+name+'」を読み込みます。現在の編集内容は上書きされます。よろしいですか？'))return;
+  localStorage.setItem('kimaru-settings',JSON.stringify(projects[name].settings));
+  closeProjModal('modal-load');
+  loadDefaults();
+  showToast('「'+name+'」を読み込みました。');
+}
+
+function deleteProject(name){
+  if(!confirm('「'+name+'」を削除しますか？'))return;
+  var projects={};
+  try{projects=JSON.parse(localStorage.getItem('kimaru-projects')||'{}');}catch(e){}
+  delete projects[name];
+  localStorage.setItem('kimaru-projects',JSON.stringify(projects));
+  renderProjList();
+  showToast('削除しました。');
+}
+
 // INIT
 loadDefaults();
 </script>
+
+<!-- PROJECT SAVE MODAL -->
+<div class="proj-modal" id="modal-save" onclick="if(event.target===this)closeProjModal('modal-save')">
+  <div class="proj-box">
+    <h3>プロジェクトを保存</h3>
+    <div class="form-row"><label class="field-label">プロジェクト名</label><input type="text" id="proj-save-name" placeholder="例：玄関アプローチ提案 Aパターン"></div>
+    <div style="display:flex;gap:10px;margin-top:16px;">
+      <button class="btn btn-primary" style="flex:1;" onclick="saveProject()">💾 保存する</button>
+      <button class="btn btn-secondary" onclick="closeProjModal('modal-save')">キャンセル</button>
+    </div>
+  </div>
+</div>
+<!-- PROJECT LOAD MODAL -->
+<div class="proj-modal" id="modal-load" onclick="if(event.target===this)closeProjModal('modal-load')">
+  <div class="proj-box">
+    <h3>プロジェクトを呼び出す</h3>
+    <div id="proj-list"></div>
+    <button class="btn btn-secondary" style="width:100%;margin-top:12px;" onclick="closeProjModal('modal-load')">閉じる</button>
+  </div>
+</div>
 </body>
 </html>
