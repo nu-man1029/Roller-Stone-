@@ -36,7 +36,7 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans JP',sans-seri
 @keyframes pulse{0%,100%{opacity:0.4;}50%{opacity:1;}}
 
 /* CATCH */
-.catch-item{display:none;font-family:'Noto Serif JP',serif;font-size:clamp(1.5rem,4.5vw,2.6rem);font-weight:400;line-height:1.6;letter-spacing:1px;color:var(--text);text-align:center;padding:0 16px;transition:color .4s;}
+.catch-item{display:none;font-family:'Noto Serif JP',serif;font-size:clamp(1.3rem,5.5vw,2.6rem);font-weight:400;line-height:1.5;letter-spacing:.5px;color:var(--text);text-align:center;padding:0 20px;transition:color .4s;}
 .catch-item.active{display:block;animation:fadeUp .6s cubic-bezier(.22,1,.36,1) both;}
 .catch-item span{color:var(--gold);transition:color .4s;}
 
@@ -51,7 +51,7 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans JP',sans-seri
 .hero-dots{display:flex;gap:8px;justify-content:center;margin-bottom:32px;animation:fadeIn .6s .8s both;}
 .hero-dot{width:6px;height:6px;border-radius:50%;background:var(--gold-dim);cursor:pointer;transition:background .3s;}
 .hero-dot.active{background:var(--gold);}
-.hero-sub{font-size:clamp(.9rem,2vw,1.05rem);color:var(--text2);font-weight:300;line-height:2.2;animation:fadeUp .6s .5s both;transition:color .4s;}
+.hero-sub{font-size:clamp(.85rem,3.5vw,1.05rem);color:var(--text2);font-weight:300;line-height:1.9;animation:fadeUp .6s .5s both;transition:color .4s;text-align:center;padding:0 48px 0 16px;}
 .hero-scroll{position:absolute;bottom:32px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;animation:fadeIn .6s 1.2s both;}
 .hero-scroll span{font-size:.55rem;letter-spacing:3px;color:var(--text2);text-transform:uppercase;}
 .scroll-bar{width:1px;height:28px;background:linear-gradient(to bottom,var(--gold),transparent);animation:pulse 2s infinite;}
@@ -118,9 +118,9 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans JP',sans-seri
 
 /* MESSAGE */
 .message-box{background:var(--msg-bg);border:1px solid var(--border);border-radius:var(--radius);padding:48px 40px;text-align:center;transition:background .4s,border-color .4s;}
-.message-main{font-family:'Noto Serif JP',serif;font-size:clamp(1.05rem,2.5vw,1.4rem);font-weight:400;line-height:2;margin-bottom:24px;}
+.message-main{font-family:'Noto Serif JP',serif;font-size:clamp(.95rem,4vw,1.4rem);font-weight:400;line-height:1.8;margin-bottom:20px;}
 .message-main span{color:var(--gold);transition:color .4s;}
-.message-body{font-size:.95rem;color:var(--text2);font-weight:300;line-height:2.4;transition:color .4s;}
+.message-body{font-size:.88rem;color:var(--text2);font-weight:300;line-height:2.0;transition:color .4s;}
 
 /* CTA */
 .cta-section{padding:80px 24px 100px;text-align:center;position:relative;overflow:hidden;}
@@ -181,9 +181,9 @@ footer>*:not(.wm){position:relative;z-index:1;}
 /* WHY KIMARU STORY SECTION */
 .why-section { background: var(--bg); transition: background .4s; }
 .why-inner { max-width: 760px; margin: 0 auto; }
-.why-lead { font-family: 'Noto Serif JP', serif; font-size: clamp(1.15rem,2.5vw,1.5rem); font-weight: 400; line-height: 2.2; letter-spacing: 1px; color: var(--text); margin-bottom: 48px; border-left: 2px solid var(--gold-line); padding-left: 24px; transition: color .4s, border-color .4s; }
+.why-lead { font-family: 'Noto Serif JP', serif; font-size: clamp(1.05rem,3.5vw,1.5rem); font-weight: 400; line-height: 1.9; letter-spacing: .5px; color: var(--text); margin-bottom: 32px; border-left: 2px solid var(--gold-line); padding-left: 20px; transition: color .4s, border-color .4s; }
 .why-lead em { color: var(--gold); font-style: normal; transition: color .4s; }
-.why-body { font-size: .95rem; color: var(--text2); line-height: 2.8; font-weight: 300; margin-bottom: 32px; transition: color .4s; }
+.why-body { font-size: .92rem; color: var(--text2); line-height: 2.2; font-weight: 300; margin-bottom: 24px; transition: color .4s; }
 .why-body strong { color: var(--text); font-weight: 500; }
 .why-divider { width: 40px; height: 1px; background: var(--gold-line); margin: 40px 0; transition: background .4s; }
 .why-quote { position: relative; background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 32px 36px; margin: 40px 0; transition: background .4s, border-color .4s; }
