@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>KIMARU 管理画面</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500&family=Cormorant+Garamond:wght@300;400&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --gold:#c9a84c;
+  --bg:#0e0e0e;
+  --bg2:#161616;
+  --bg3:#1e1e1e;
+  --border:rgba(201,168,76,0.18);
+  --text:#eeebe4;
+  --text2:#888;
+  --radius:10px;
+  --green:#4caf7d;
+  --red:#e05555;
+}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans JP',sans-serif;font-weight:300;min-height:100vh;}
+
+/* ===== HEADER ===== */
+.header{background:var(--bg2);border-bottom:1px solid var(--border);padding:20px 32px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.header-logo{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:300;color:var(--gold);letter-spacing:4px;}
+.header-logo span{color:var(--text2);font-size:.75rem;letter-spacing:2px;margin-left:12px;font-family:'Noto Sans JP',sans-serif;}
+.btn-primary{background:var(--gold);color:#111;font-size:.8rem;font-weight:500;letter-spacing:2px;padding:12px 28px;border:none;border-radius:6px;cursor:pointer;transition:opacity .2s,transform .2s;display:flex;align-items:center;gap:8px;}
+.btn-primary:hover{opacity:.88;transform:translateY(-1px);}
+.btn-secondary{background:transparent;color:var(--text2);font-size:.8rem;letter-spacing:1px;padding:10px 20px;border:1px solid var(--border);border-radius:6px;cursor:pointer;transition:all .2s;}
+.btn-secondary:hover{border-color:var(--gold);color:var(--gold);}
+
+/* ===== LAYOUT ===== */
+.layout{display:grid;grid-template-columns:220px 1fr;min-height:calc(100vh - 65px);}
+
+/* ===== SIDEBAR ===== */
+.sidebar{background:var(--bg2);border-right:1px solid var(--border);padding:24px 0;}
+.sidebar-section{padding:0 16px;margin-bottom:8px;}
+.sidebar-label{font-size:.62rem;letter-spacing:3px;color:var(--text2);padding:16px 12px 8px;text-transform:uppercase;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:6px;cursor:pointer;font-size:.82rem;color:var(--text2);transition:all .2s;border:none;background:none;width:100%;text-align:left;}
+.nav-item:hover{background:var(--bg3);color:var(--text);}
+.nav-item.active{background:rgba(201,168,76,0.1);color:var(--gold);border-left:2px solid var(--gold);}
+.nav-icon{font-size:1rem;width:20px;text-align:center;}
+.nav-badge{margin-left:auto;background:var(--red);color:#fff;font-size:.6rem;padding:2px 6px;border-radius:10px;}
+
+/* ===== MAIN ===== */
+.main{padding:40px;}
+.page{display:none;}
+.page.active{display:block;}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:300;color:var(--text);margin-bottom:6px;letter-spacing:2px;}
+.page-sub{font-size:.8rem;color:var(--text2);margin-bottom:36px;}
+
+/* ===== SECTIONS ===== */
+.section-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:24px;overflow:hidden;}
+.section-head{padding:18px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;}
+.section-icon{font-size:1.1rem;}
+.section-name{font-size:.9rem;font-weight:500;letter-spacing:1px;}
+.section-desc{font-size:.75rem;color:var(--text2);margin-left:auto;}
+.section-body{padding:24px;}
+
+/* ===== FORM ===== */
+.form-row{margin-bottom:20px;}
+.form-row:last-child{margin-bottom:0;}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+label{display:block;font-size:.72rem;letter-spacing:2px;color:var(--text2);margin-bottom:8px;text-transform:uppercase;}
+input[type=text],input[type=url],textarea{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:12px 14px;color:var(--text);font-family:'Noto Sans JP',sans-serif;font-size:.88rem;font-weight:300;outline:none;transition:border-color .2s;}
+input[type=text]:focus,input[type=url]:focus,textarea:focus{border-color:var(--gold);}
+textarea{resize:vertical;line-height:1.8;}
+.input-hint{font-size:.7rem;color:var(--text2);margin-top:6px;}
+.input-hint a{color:var(--gold);text-decoration:none;}
+
+/* ===== IMAGE UPLOAD ===== */
+.img-upload-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;}
+.img-upload-item{position:relative;}
+.img-upload-item label{font-size:.7rem;color:var(--text2);margin-bottom:8px;display:block;letter-spacing:2px;text-transform:uppercase;}
+.img-drop{border:2px dashed var(--border);border-radius:8px;overflow:hidden;aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;position:relative;background:var(--bg3);}
+.img-drop:hover{border-color:var(--gold);}
+.img-drop.has-image{border-style:solid;border-color:rgba(201,168,76,0.4);}
+.img-drop img{width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0;}
+.img-drop-overlay{position:absolute;inset:0;background:rgba(0,0,0,0.6);display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;transition:opacity .2s;z-index:1;}
+.img-drop:hover .img-drop-overlay{opacity:1;}
+.img-drop-icon{font-size:2rem;margin-bottom:8px;color:var(--gold);}
+.img-drop-text{font-size:.7rem;color:var(--text2);text-align:center;}
+.img-drop input[type=file]{display:none;}
+.img-filename{font-size:.7rem;color:var(--text2);margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+
+/* BA画像は横長 */
+.img-drop.wide{aspect-ratio:16/9;}
+
+/* ===== TOGGLE ===== */
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid rgba(255,255,255,0.04);}
+.toggle-row:last-child{border-bottom:none;}
+.toggle-info{flex:1;}
+.toggle-info .toggle-label{font-size:.85rem;font-weight:400;}
+.toggle-info .toggle-desc{font-size:.73rem;color:var(--text2);margin-top:3px;}
+.toggle{position:relative;width:44px;height:24px;flex-shrink:0;margin-left:16px;}
+.toggle input{display:none;}
+.toggle-track{display:block;width:100%;height:100%;background:var(--bg3);border:1px solid var(--border);border-radius:12px;transition:all .2s;cursor:pointer;}
+.toggle input:checked + .toggle-track{background:rgba(201,168,76,0.3);border-color:var(--gold);}
+.toggle-thumb{position:absolute;top:3px;left:3px;width:16px;height:16px;background:var(--text2);border-radius:50%;transition:all .2s;pointer-events:none;}
+.toggle input:checked ~ .toggle-thumb{left:23px;background:var(--gold);}
+
+/* ===== SAVE BAR ===== */
+.save-bar{position:fixed;bottom:0;left:0;right:0;background:var(--bg2);border-top:1px solid var(--border);padding:16px 40px;display:flex;align-items:center;justify-content:space-between;transform:translateY(100%);transition:transform .3s;z-index:200;}
+.save-bar.visible{transform:translateY(0);}
+.save-bar-msg{font-size:.8rem;color:var(--text2);}
+.save-bar-msg strong{color:var(--gold);}
+.save-bar-btns{display:flex;gap:12px;}
+
+/* ===== STATUS ===== */
+.status-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:6px;}
+.status-dot.ok{background:var(--green);}
+.status-dot.ng{background:var(--red);}
+.status-dot.warn{background:#f0a500;}
+
+/* ===== TOAST ===== */
+.toast{position:fixed;top:80px;right:24px;background:var(--bg2);border:1px solid var(--green);border-radius:8px;padding:14px 20px;font-size:.82rem;color:var(--text);display:flex;align-items:center;gap:10px;transform:translateX(120%);transition:transform .3s;z-index:300;}
+.toast.show{transform:translateX(0);}
+.toast-icon{color:var(--green);font-size:1rem;}
+
+/* ===== PREVIEW HINT ===== */
+.preview-hint{background:rgba(201,168,76,0.06);border:1px solid var(--border);border-radius:8px;padding:16px 20px;font-size:.78rem;color:var(--text2);margin-top:24px;line-height:2;}
+.preview-hint strong{color:var(--gold);}
+
+@media(max-width:768px){
+  .layout{grid-template-columns:1fr;}
+  .sidebar{display:none;}
+  .form-grid{grid-template-columns:1fr;}
+  .main{padding:24px 16px;}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-logo">KIMARU <span>管理画面</span></div>
+  <div style="display:flex;gap:12px;">
+    <button class="btn-secondary" onclick="previewLP()">👁 プレビュー</button>
+    <button class="btn-primary" onclick="generateAndDownload()">⬇ HTMLをダウンロード</button>
+  </div>
+</header>
+
+<!-- LAYOUT -->
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <nav class="sidebar">
+    <div class="sidebar-label">ページ設定</div>
+    <div class="sidebar-section">
+      <button class="nav-item active" onclick="showPage('urls',this)"><span class="nav-icon">🔗</span>URL設定</button>
+      <button class="nav-item" onclick="showPage('text',this)"><span class="nav-icon">✏️</span>テキスト</button>
+      <button class="nav-item" onclick="showPage('images',this)"><span class="nav-icon">🖼</span>画像</button>
+      <button class="nav-item" onclick="showPage('profile',this)"><span class="nav-icon">👤</span>プロフィール</button>
+      <button class="nav-item" onclick="showPage('sections',this)"><span class="nav-icon">⚙️</span>セクション設定</button>
+    </div>
+  </nav>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- ===== URL設定 ===== -->
+    <div class="page active" id="page-urls">
+      <div class="page-title">URL 設定</div>
+      <div class="page-sub">LINE・Instagram・動画のURLを設定します。</div>
+
+      <div class="section-card">
+        <div class="section-head">
+          <span class="section-icon">💬</span>
+          <span class="section-name">LINE</span>
+          <span class="section-desc">メインCTA</span>
+        </div>
+        <div class="section-body">
+          <div class="form-row">
+            <label>LINE URL</label>
+            <input type="url" id="line-url" placeholder="https://lin.ee/xxxxxxx" oninput="markDirty()">
+            <div class="input-hint">LINE公式アカウントの友だち追加URLを入力してください。<br><a href="https://manager.line.biz/" target="_blank">LINE Official Account Manager</a> → アカウント → 友だち追加ガイド</div>
+          </div>
+          <div class="form-row">
+            <label>CTAボタンのテキスト</label>
+            <input type="text" id="line-btn-text" placeholder="LINE でお問い合わせ" oninput="markDirty()">
+          </div>
+        </div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-head">
+          <span class="section-icon">📷</span>
+          <span class="section-name">Instagram</span>
+          <span class="section-desc">プロフィールセクション</span>
+        </div>
+        <div class="section-body">
+          <div class="form-row">
+            <label>Instagram URL</label>
+            <input type="url" id="ig-url" placeholder="https://www.instagram.com/cementart_numan/" oninput="markDirty()">
+          </div>
+        </div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-head">
+          <span class="section-icon">🎬</span>
+          <span class="section-name">動画</span>
+          <span class="section-desc">Cinematic Viewセクション</span>
+        </div>
+        <div class="section-body">
+          <div class="form-row">
+            <label>動画ファイルURL</label>
+            <input type="url" id="video-url" placeholder="https://... （MP4ファイルのURL）" oninput="markDirty()">
+            <div class="input-hint">YouTube等ではなくMP4ファイルの直リンクが必要です。GitHubに動画をアップして、Raw URLを使うのがおすすめです。</div>
+          </div>
+          <div class="form-row">
+            <label>サムネイル画像URL（任意）</label>
+            <input type="url" id="video-poster" placeholder="https://... （動画が読み込まれる前に表示される画像）" oninput="markDirty()">
+          </div>
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <div class="toggle-label">動画セクションを表示する</div>
+              <div class="toggle-desc">OFFにするとセクションごと非表示になります</div>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" id="video-visible" onchange="markDirty()">
+              <span class="toggle-track"></span>
+              <span class="toggle-thumb"></span>
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== テキスト ===== -->
+    <div class="page" id="page-text">
+      <div class="page-title">テキスト 編集</div>
+      <div class="page-sub">キャッチコピー・メッセージ・CTAのテキストを編集します。</div>
+
+      <div class="section-card">
+        <div class="section-head">
+          <span class="section-icon">🏆</span>
+          <span class="section-name">Hero（トップ）</span>
+        </div>
+        <div class="section-body">
+          <div class="form-row">
+            <label>メインキャッチコピー</label>
+            <textarea id="hero-catch" rows="3" placeholder="施工の現場が、最高の提案書になる。" oninput="markDirty()"></textarea>
+            <div class="input-hint">改行は &lt;br&gt; を使います。例：施工の現場が、&lt;br&gt;最高の提案書になる。</div>
+          </div>
+          <div class="form-row">
+            <label>サブコピー</label>
+            <textarea id="hero-sub" rows="2" placeholder="施工の現場が、そのまま最高の提案書になる。" oninput="markDirty()"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-head">
+          <span class="section-icon">💌</span>
+          <span class="section-name">メッセージボックス</span>
+        </div>
+        <div class="section-body">
+          <div class="form-row">
+            <label>メインメッセージ</label>
+            <textarea id="msg-main" rows="3" placeholder="サンプルを持って行っても契約が取れない、&#10;そんな時代はもう終わりにしませんか。" oninput="markDirty()"></textarea>
+            <div class="input-hint">金色にしたい部分を &lt;span&gt; 〜 &lt;/span&gt; で囲んでください。</div>
+          </div>
+          <div class="form-row">
+            <label>サブテキスト</label>
+            <textarea id="msg-body" rows="3" placeholder="技術は本物なのに、伝え方が追いついていないだけ。" oninput="markDirty()"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-head">
+          <span class="section-icon">📣</span>
+          <span class="section-name">CTA（お問い合わせ）</span>
+        </div>
+        <div class="section-body">
+          <div class="form-row">
+            <label>CTAタイトル</label>
+            <textarea id="cta-title" rows="2" placeholder="気になった方は、&#10;まずLINEで話しましょう。" oninput="markDirty()"></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== 画像 ===== -->
+    <div class="page" id="page-images">
+      <div class="page-title">画像 管理</div>
+      <div class="page-sub">各セクションの画像を設定します。画像をクリックまたはドラッグ＆ドロップで変更できます。</div>
+
+      <div class="section-card">
+        <div class="section-head">
+          <span class="section-icon">🏷</span>
+          <span class="section-name">ロゴ</span>
+          <span class="section-desc">透かし・フッターに使用</span>
+        </div>
+        <div class="section-body">
+          <div class="img-upload-grid" style="grid-template-columns:repeat(3,1fr);">
+            <div class="img-upload-item">
+              <label>ダーク用ロゴ</label>
+              <div class="img-drop" id="drop-footer-dark" onclick="triggerUpload('file-footer-dark')">
+                <img id="prev-footer-dark" src="images/footer_logo_dark.jpg" alt="">
+                <div class="img-drop-overlay"><span class="img-drop-icon">📷</span><span class="img-drop-text">クリックして変更</span></div>
+                <input type="file" id="file-footer-dark" accept="image/*" onchange="handleImageUpload(this,'footer-logo-dark','prev-footer-dark')">
+              </div>
+              <div class="img-filename" id="fn-footer-dark">footer_logo_dark.jpg（現在）</div>
+            </div>
+            <div class="img-upload-item">
+              <label>ライト用ロゴ</label>
+              <div class="img-drop" id="drop-footer-light" onclick="triggerUpload('file-footer-light')">
+                <img id="prev-footer-light" src="images/footer_logo_light.jpg" alt="">
+                <div class="img-drop-overlay"><span class="img-drop-icon">📷</span><span class="img-drop-text">クリックして変更</span></div>
+                <input type="file" id="file-footer-light" accept="image/*" onchange="handleImageUpload(this,'footer-logo-light','prev-footer-light')">
+              </div>
+              <div class="img-filename" id="fn-footer-light">footer_logo_light.jpg（現在）</div>
+            </div>
+            <div class="img-upload-item">
+              <label>透かし用ロゴ（PNG推奨）</label>
+              <div class="img-drop" id="drop-logo" onclick="triggerUpload('file-logo')">
+                <img id="prev-logo" src="images/logo.png" alt="">
+                <div class="img-drop-overlay"><span class="img-drop-icon">📷</span><span class="img-drop-text">クリックして変更</span></div>
+                <input type="file" id="file-logo" accept="image/*" onchange="handleImageUpload(this,'logo','prev-logo')">
+              </div>
+              <div class="img-filename" id="fn-logo">logo.png（現在）</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-head">
+          <span class="section-icon">↔️</span>
+          <span class="section-name">BAスライダー</span>
+          <span class="section-desc">Before / Afterの施工事例写真</span>
+        </div>
+        <div class="section-body">
+          <div style="margin-bottom:20px;">
+            <div style="font-size:.78rem;color:var(--text2);margin-bottom:12px;">スライダー 1</div>
+            <div class="img-upload-grid">
+              <div class="img-upload-item">
+                <label>Before</label>
+                <div class="img-drop wide" onclick="triggerUpload('file-ba1-before')">
+                  <div class="img-drop-overlay" style="opacity:1;"><span class="img-drop-icon">📷</span><span class="img-drop-text">施工前の写真</span></div>
+                  <input type="file" id="file-ba1-before" accept="image/*" onchange="handleImageUpload(this,'ba1-before',null)">
+                </div>
+                <div class="img-filename" id="fn-ba1-before">未設定（プレースホルダー使用中）</div>
+              </div>
+              <div class="img-upload-item">
+                <label>After</label>
+                <div class="img-drop wide" onclick="triggerUpload('file-ba1-after')">
+                  <div class="img-drop-overlay" style="opacity:1;"><span class="img-drop-icon">📷</span><span class="img-drop-text">施工後の写真</span></div>
+                  <input type="file" id="file-ba1-after" accept="image/*" onchange="handleImageUpload(this,'ba1-after',null)">
+                </div>
+                <div class="img-filename" id="fn-ba1-after">未設定（プレースホルダー使用中）</div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div style="font-size:.78rem;color:var(--text2);margin-bottom:12px;">スライダー 2</div>
+            <div class="img-upload-grid">
+              <div class="img-upload-item">
+                <label>Before</label>
+                <div class="img-drop wide" onclick="triggerUpload('file-ba2-before')">
+                  <div class="img-drop-overlay" style="opacity:1;"><span class="img-drop-icon">📷</span><span class="img-drop-text">施工前の写真</span></div>
+                  <input type="file" id="file-ba2-before" accept="image/*" onchange="handleImageUpload(this,'ba2-before',null)">
+                </div>
+                <div class="img-filename" id="fn-ba2-before">未設定（プレースホルダー使用中）</div>
+              </div>
+              <div class="img-upload-item">
+                <label>After</label>
+                <div class="img-drop wide" onclick="triggerUpload('file-ba2-after')">
+                  <div class="img-drop-overlay" style="opacity:1;"><span class="img-drop-icon">📷</span><span class="img-drop-text">施工後の写真</span></div>
+                  <input type="file" id="file-ba2-after" accept="image/*" onchange="handleImageUpload(this,'ba2-after',null)">
+                </div>
+                <div class="img-filename" id="fn-ba2-after">未設定（プレースホルダー使用中）</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== プロフィール ===== -->
+    <div class="page" id="page-profile">
+      <div class="page-title">プロフィール 編集</div>
+      <div class="page-sub">ぬーまんのプロフィールセクションを編集します。</div>
+
+      <div class="section-card">
+        <div class="section-head">
+          <span class="section-icon">👤</span>
+          <span class="section-name">基本情報</span>
+        </div>
+        <div class="section-body">
+          <div class="form-grid">
+            <div class="form-row">
+              <label>名前（日本語）</label>
+              <input type="text" id="numan-name-ja" placeholder="セメントアーティスト ぬーまん" oninput="markDirty()">
+            </div>
+            <div class="form-row">
+              <label>名前（英語）</label>
+              <input type="text" id="numan-name-en" placeholder="Cement Artist Nu☆Man" oninput="markDirty()">
+            </div>
+          </div>
+          <div class="form-grid">
+            <div class="form-row">
+              <label>📍 場所</label>
+              <input type="text" id="numan-location" placeholder="三重県 松阪市" oninput="markDirty()">
+            </div>
+            <div class="form-row">
+              <label>🗓 経歴</label>
+              <input type="text" id="numan-career" placeholder="ローラーストーン歴 2019年〜" oninput="markDirty()">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-head">
+          <span class="section-icon">📖</span>
+          <span class="section-name">プロフィール文</span>
+        </div>
+        <div class="section-body">
+          <div class="form-row">
+            <textarea id="numan-body" rows="10" placeholder="16歳から建設業界に飛び込み..." oninput="markDirty()"></textarea>
+            <div class="input-hint">改行はそのまま改行で入力してください。</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-head">
+          <span class="section-icon">🖼</span>
+          <span class="section-name">プロフィール写真</span>
+        </div>
+        <div class="section-body">
+          <div class="img-upload-grid" style="grid-template-columns:200px 160px;">
+            <div class="img-upload-item">
+              <label>メイン写真（カラー）</label>
+              <div class="img-drop" onclick="triggerUpload('file-numan-main')">
+                <img id="prev-numan-main" src="images/numan_color.jpg" alt="">
+                <div class="img-drop-overlay"><span class="img-drop-icon">📷</span><span class="img-drop-text">クリックして変更</span></div>
+                <input type="file" id="file-numan-main" accept="image/*" onchange="handleImageUpload(this,'numan-color','prev-numan-main')">
+              </div>
+              <div class="img-filename" id="fn-numan-main">numan_color.jpg（現在）</div>
+            </div>
+            <div class="img-upload-item">
+              <label>サブ写真</label>
+              <div class="img-drop" onclick="triggerUpload('file-numan-sub')">
+                <img id="prev-numan-sub" src="images/numan_portrait.jpg" alt="">
+                <div class="img-drop-overlay"><span class="img-drop-icon">📷</span><span class="img-drop-text">クリックして変更</span></div>
+                <input type="file" id="file-numan-sub" accept="image/*" onchange="handleImageUpload(this,'numan-portrait','prev-numan-sub')">
+              </div>
+              <div class="img-filename" id="fn-numan-sub">numan_portrait.jpg（現在）</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== セクション設定 ===== -->
+    <div class="page" id="page-sections">
+      <div class="page-title">セクション 設定</div>
+      <div class="page-sub">各セクションの表示・非表示を切り替えます。</div>
+
+      <div class="section-card">
+        <div class="section-head">
+          <span class="section-icon">⚙️</span>
+          <span class="section-name">表示設定</span>
+        </div>
+        <div class="section-body">
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <div class="toggle-label">BAスライダーセクション</div>
+              <div class="toggle-desc">Before / After の施工事例スライダー</div>
+            </div>
+            <label class="toggle"><input type="checkbox" id="sec-ba" checked onchange="markDirty()"><span class="toggle-track"></span><span class="toggle-thumb"></span></label>
+          </div>
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <div class="toggle-label">動画セクション（Cinematic View）</div>
+              <div class="toggle-desc">動画URLが設定されている場合に表示</div>
+            </div>
+            <label class="toggle"><input type="checkbox" id="sec-video" onchange="markDirty();document.getElementById('video-visible').checked=this.checked;"><span class="toggle-track"></span><span class="toggle-thumb"></span></label>
+          </div>
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <div class="toggle-label">プロフィールセクション（ぬーまん）</div>
+              <div class="toggle-desc">サービス提供者のプロフィール</div>
+            </div>
+            <label class="toggle"><input type="checkbox" id="sec-profile" checked onchange="markDirty()"><span class="toggle-track"></span><span class="toggle-thumb"></span></label>
+          </div>
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <div class="toggle-label">Why KIMARUセクション</div>
+              <div class="toggle-desc">サービス誕生ストーリー</div>
+            </div>
+            <label class="toggle"><input type="checkbox" id="sec-why" checked onchange="markDirty()"><span class="toggle-track"></span><span class="toggle-thumb"></span></label>
+          </div>
+        </div>
+      </div>
+
+      <div class="preview-hint">
+        💡 <strong>設定を変更したら</strong>、右上の「HTMLをダウンロード」ボタンを押して新しいHTMLを取得し、GitHubの <code>KIMARU/LP/kimaru_pr.html</code> を上書きアップロードしてください。
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- SAVE BAR -->
+<div class="save-bar" id="save-bar">
+  <div class="save-bar-msg">⚠ <strong>未保存の変更があります。</strong>　ダウンロードしてGitHubにアップしてください。</div>
+  <div class="save-bar-btns">
+    <button class="btn-secondary" onclick="resetChanges()">リセット</button>
+    <button class="btn-primary" onclick="generateAndDownload()">⬇ ダウンロード</button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <span class="toast-icon">✅</span>
+  <span id="toast-msg">HTMLをダウンロードしました。</span>
+</div>
+
+<script>
+// ===== STATE =====
+var dirty = false;
+var imageData = {}; // key: 'numan-color', value: {base64, filename, ext}
+
+// ===== NAVIGATION =====
+function showPage(id, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  el.classList.add('active');
+}
+
+// ===== DIRTY =====
+function markDirty() {
+  dirty = true;
+  document.getElementById('save-bar').classList.add('visible');
+}
+
+function resetChanges() {
+  if (!confirm('変更をリセットしますか？')) return;
+  dirty = false;
+  document.getElementById('save-bar').classList.remove('visible');
+  loadDefaults();
+}
+
+// ===== IMAGE UPLOAD =====
+function triggerUpload(inputId) {
+  document.getElementById(inputId).click();
+}
+
+function handleImageUpload(input, key, previewId) {
+  var file = input.files[0];
+  if (!file) return;
+  var ext = file.name.split('.').pop().toLowerCase();
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    imageData[key] = { base64: e.target.result, filename: file.name, ext: ext };
+    if (previewId) {
+      var prev = document.getElementById(previewId);
+      if (prev) { prev.src = e.target.result; prev.closest('.img-drop').classList.add('has-image'); }
+    }
+    // Update filename display
+    var fnEl = document.getElementById('fn-' + input.id.replace('file-',''));
+    if (fnEl) fnEl.textContent = file.name + '（変更あり）';
+    // Update overlay
+    var overlay = input.closest('.img-drop').querySelector('.img-drop-overlay');
+    if (overlay) overlay.style.opacity = '';
+    markDirty();
+  };
+  reader.readAsDataURL(file);
+}
+
+// ===== LOAD DEFAULTS =====
+function loadDefaults() {
+  // Load from localStorage if available, else defaults
+  var saved = {};
+  try { saved = JSON.parse(localStorage.getItem('kimaru-settings') || '{}'); } catch(e) {}
+
+  setVal('line-url', saved['line-url'] || 'https://lin.ee/xxxxxxx');
+  setVal('line-btn-text', saved['line-btn-text'] || 'LINE でお問い合わせ');
+  setVal('ig-url', saved['ig-url'] || 'https://www.instagram.com/cementart_numan/');
+  setVal('video-url', saved['video-url'] || '');
+  setVal('video-poster', saved['video-poster'] || '');
+  setCheck('video-visible', saved['video-visible'] || false);
+  setVal('hero-catch', saved['hero-catch'] || '施工の現場が、そのまま<br>最高の提案書になる。');
+  setVal('hero-sub', saved['hero-sub'] || '施工の現場が、そのまま最高の提案書になる。\nKIMARUが、あなたの営業を変えます。');
+  setVal('msg-main', saved['msg-main'] || 'サンプルを持って行っても契約が取れない、\nそんな時代は<span>もう終わり</span>にしませんか。');
+  setVal('msg-body', saved['msg-body'] || '技術は本物なのに、伝え方が追いついていないだけ。\nKIMARUを使えば、お客様が自分で「決める」ようになります。');
+  setVal('cta-title', saved['cta-title'] || '気になった方は、\nまずLINEで話しましょう。');
+  setVal('numan-name-ja', saved['numan-name-ja'] || 'セメントアーティスト\nぬーまん');
+  setVal('numan-name-en', saved['numan-name-en'] || 'Cement Artist Nu☆Man');
+  setVal('numan-location', saved['numan-location'] || '三重県 松阪市');
+  setVal('numan-career', saved['numan-career'] || 'ローラーストーン歴 2019年〜');
+  setVal('numan-body', saved['numan-body'] || '16歳から建設業界に飛び込み、長年にわたって仮設事業・下請けの世界で働いてきた。\n\nいつしか、「カタチに残る仕事がしたい」と思うようになった。\nそんなとき出会ったのが、ローラーストーン。\n\nお客さんの喜ぶ声、笑顔に直接ふれられる仕事。\nそして、この仕事に真剣に向き合う熱い思いを持った仲間たちと定期的に会える環境。\n出会うたびに気づきがあり、学びがある。\n\nこの素晴らしい仕事を、もっと多くの人に知ってもらいたい。\n高い技術を持つ仲間たちに、もっと自信を持って輝ける機会を届けたい。\nそして、私自身を育ててくれたROLLER STONEという業界に、このプロジェクトで恩返しがしたい。\n\nそれが、KIMARUの原点です。');
+  setCheck('sec-ba', saved['sec-ba'] !== false);
+  setCheck('sec-video', saved['sec-video'] || false);
+  setCheck('sec-profile', saved['sec-profile'] !== false);
+  setCheck('sec-why', saved['sec-why'] !== false);
+}
+
+function setVal(id, val) { var el = document.getElementById(id); if (el) el.value = val; }
+function setCheck(id, val) { var el = document.getElementById(id); if (el) el.checked = val; }
+function getVal(id) { var el = document.getElementById(id); return el ? el.value : ''; }
+function getCheck(id) { var el = document.getElementById(id); return el ? el.checked : false; }
+
+// ===== SAVE SETTINGS =====
+function saveSettings() {
+  var s = {
+    'line-url': getVal('line-url'),
+    'line-btn-text': getVal('line-btn-text'),
+    'ig-url': getVal('ig-url'),
+    'video-url': getVal('video-url'),
+    'video-poster': getVal('video-poster'),
+    'video-visible': getCheck('video-visible'),
+    'hero-catch': getVal('hero-catch'),
+    'hero-sub': getVal('hero-sub'),
+    'msg-main': getVal('msg-main'),
+    'msg-body': getVal('msg-body'),
+    'cta-title': getVal('cta-title'),
+    'numan-name-ja': getVal('numan-name-ja'),
+    'numan-name-en': getVal('numan-name-en'),
+    'numan-location': getVal('numan-location'),
+    'numan-career': getVal('numan-career'),
+    'numan-body': getVal('numan-body'),
+    'sec-ba': getCheck('sec-ba'),
+    'sec-video': getCheck('sec-video'),
+    'sec-profile': getCheck('sec-profile'),
+    'sec-why': getCheck('sec-why'),
+  };
+  try { localStorage.setItem('kimaru-settings', JSON.stringify(s)); } catch(e) {}
+  return s;
+}
+
+// ===== GENERATE HTML =====
+function generateAndDownload() {
+  var s = saveSettings();
+
+  // Read the original HTML via fetch (works when served locally or via GitHub Pages)
+  fetch('kimaru_pr.html')
+    .then(r => r.text())
+    .then(html => {
+      html = applySettings(html, s);
+      downloadHTML(html, 'kimaru_pr.html');
+      dirty = false;
+      document.getElementById('save-bar').classList.remove('visible');
+      showToast('HTMLをダウンロードしました！GitHubにアップしてください。');
+    })
+    .catch(() => {
+      showToast('⚠ kimaru_pr.htmlが見つかりません。同じフォルダに置いてください。');
+    });
+}
+
+function applySettings(html, s) {
+  // LINE URL
+  html = html.replace(/href="https:\/\/lin\.ee\/[^"]*"(\s*class="cta-btn)/g,
+    'href="' + s['line-url'] + '"$1');
+
+  // LINE button text
+  html = html.replace(/(class="cta-btn[^>]*>[\s\S]*?<span class="cta-btn-icon">📱<\/span>\s*)(LINE でお問い合わせ|[^<]+)(\s*<\/a>)/,
+    '$1' + s['line-btn-text'] + '$3');
+
+  // Instagram URL
+  html = html.replace(/href="https:\/\/www\.instagram\.com\/[^"]*"(\s*class="numan-ig)/g,
+    'href="' + s['ig-url'] + '"$1');
+
+  // Video
+  html = html.replace(/(<video[^>]*src=")[^"]*(")/,
+    '$1' + s['video-url'] + '$2');
+  html = html.replace(/(<video[^>]*poster=")[^"]*(")/,
+    '$1' + s['video-poster'] + '$2');
+
+  // Video section visibility
+  if (!s['sec-video']) {
+    html = html.replace(/(<section[^>]*class="[^"]*video-section[^"]*"[^>]*>)([\s\S]*?)(<\/section>)/,
+      '$1<div style="display:none">$2</div>$3');
+  }
+
+  // Hero catch - find the catchphrase spans
+  var catchLines = s['hero-catch'].split('\n').filter(l => l.trim());
+  if (catchLines.length > 0) {
+    var newCatch = catchLines.map(l => '<span>' + l + '</span>').join('');
+    html = html.replace(/(<div class="hero-catch-wrap">[\s\S]*?<div class="hero-catch">)([\s\S]*?)(<\/div>[\s\S]*?<\/div>)/,
+      function(m, p1, p2, p3) { return p1 + newCatch + p3; });
+  }
+
+  // Hero sub
+  var subHtml = s['hero-sub'].replace(/\n/g, '<br>');
+  html = html.replace(/(<p class="hero-sub">)([\s\S]*?)(<\/p>)/,
+    '$1' + subHtml + '$3');
+
+  // Message main
+  var msgMainHtml = s['msg-main'].replace(/\n/g, '<br>');
+  html = html.replace(/(<p class="message-main">)([\s\S]*?)(<\/p>)/,
+    '$1' + msgMainHtml + '$3');
+
+  // Message body
+  var msgBodyHtml = s['msg-body'].replace(/\n/g, '<br>');
+  html = html.replace(/(<p class="message-body">)([\s\S]*?)(<\/p>)/,
+    '$1' + msgBodyHtml + '$3');
+
+  // CTA title
+  var ctaHtml = s['cta-title'].replace(/\n/g, '<br>');
+  html = html.replace(/(<h2 class="cta-title reveal">)([\s\S]*?)(<\/h2>)/,
+    '$1' + ctaHtml + '$3');
+
+  // Numan name
+  var nameLines = s['numan-name-ja'].split('\n');
+  var nameHtml = nameLines.join('<br>');
+  html = html.replace(/(<h2 class="numan-name">)([\s\S]*?)(<\/h2>)/,
+    '$1' + nameHtml + '$3');
+
+  // Numan title (EN)
+  html = html.replace(/(<p class="numan-title">)([\s\S]*?)(<\/p>)/,
+    '$1' + s['numan-name-en'] + '$3');
+
+  // Numan location & career
+  html = html.replace(/(<span class="numan-meta-text">)(三重県 松阪市|[^<]*)(<\/span>)/,
+    '$1' + s['numan-location'] + '$3');
+  html = html.replace(/(<span class="numan-meta-text">)(ローラーストーン歴[^<]*|[^<]*)(<\/span>)/,
+    '$1' + s['numan-career'] + '$3');
+
+  // Numan body
+  var numanBodyHtml = s['numan-body'].replace(/\n\n/g, '</p><p class="numan-body reveal">').replace(/\n/g, '<br>');
+  html = html.replace(/(<p class="numan-body reveal">)([\s\S]*?)(<\/p>[\s\S]*?<a href)/,
+    '$1' + numanBodyHtml + '$3');
+
+  // BA section visibility
+  if (!s['sec-ba']) {
+    html = html.replace(/(<!-- BA（透かしなし） -->)([\s\S]*?)(<!-- VIDEO)/,
+      '$1<div style="display:none">$2</div>$3');
+  }
+
+  // Profile section visibility
+  if (!s['sec-profile']) {
+    html = html.replace(/(<!-- NUMAN SECTION -->)([\s\S]*?)(<!-- WHY)/,
+      '$1<div style="display:none">$2</div>$3');
+  }
+
+  // Why section visibility
+  if (!s['sec-why']) {
+    html = html.replace(/(<!-- WHY KIMARU STORY -->)([\s\S]*?)(<!-- CTA)/,
+      '$1<div style="display:none">$2</div>$3');
+  }
+
+  // Images (replace file paths with base64 if new images were uploaded)
+  var imgKeyMap = {
+    'numan-color':   { src: 'images/numan_color.jpg' },
+    'numan-portrait': { src: 'images/numan_portrait.jpg' },
+    'footer-logo-dark': { src: 'images/footer_logo_dark.jpg' },
+    'footer-logo-light': { src: 'images/footer_logo_light.jpg' },
+    'logo': { src: 'images/logo.png' },
+    'ba1-before': { selector: 'ba1-before' },
+    'ba1-after':  { selector: 'ba1-after' },
+    'ba2-before': { selector: 'ba2-before' },
+    'ba2-after':  { selector: 'ba2-after' },
+  };
+
+  Object.keys(imageData).forEach(function(key) {
+    var d = imageData[key];
+    var map = imgKeyMap[key];
+    if (!map) return;
+    if (map.src) {
+      html = html.replace(new RegExp('src="' + map.src.replace(/\./g, '\\.') + '"', 'g'),
+        'src="' + d.base64 + '"');
+    }
+  });
+
+  // BA images via placeholder replacement
+  if (imageData['ba1-before']) {
+    html = html.replace(/src="https:\/\/via\.placeholder\.com\/1200x675\/111\/[^"]*text=BEFORE"(\s*class="ba-img" alt="Before")/, 'src="' + imageData['ba1-before'].base64 + '"$1');
+  }
+  if (imageData['ba1-after']) {
+    html = html.replace(/src="https:\/\/via\.placeholder\.com\/1200x675\/1a1208\/[^"]*text=AFTER"(\s*class="ba-img ba-after" alt="After")/, 'src="' + imageData['ba1-after'].base64 + '"$1');
+  }
+  if (imageData['ba2-before']) {
+    html = html.replace(/src="https:\/\/via\.placeholder\.com\/1200x675\/111\/[^"]*text=BEFORE"(\s*class="ba-img" alt="Before" id)/, 'src="' + imageData['ba2-before'].base64 + '"$1');
+  }
+  if (imageData['ba2-after']) {
+    html = html.replace(/src="https:\/\/via\.placeholder\.com\/1200x675\/0f1a0a\/[^"]*text=AFTER"(\s*class="ba-img ba-after" alt="After" id)/, 'src="' + imageData['ba2-after'].base64 + '"$1');
+  }
+
+  return html;
+}
+
+function downloadHTML(html, filename) {
+  var blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+function previewLP() {
+  var s = saveSettings();
+  fetch('kimaru_pr.html')
+    .then(r => r.text())
+    .then(html => {
+      var modified = applySettings(html, s);
+      var blob = new Blob([modified], { type: 'text/html' });
+      window.open(URL.createObjectURL(blob), '_blank');
+    })
+    .catch(() => showToast('⚠ kimaru_pr.htmlが見つかりません。'));
+}
+
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  document.getElementById('toast-msg').textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3500);
+}
+
+// ===== INIT =====
+loadDefaults();
+</script>
+</body>
+</html>
