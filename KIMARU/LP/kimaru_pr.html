@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KIMARU | 提案が変わると、契約が変わる</title>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-0VF277F6RX"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-0VF277F6RX');
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Noto+Serif+JP:wght@300;400;600&family=Cormorant+Garamond:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+:root { --gold:#C9A84C;--gold-dim:rgba(201,168,76,0.15);--gold-line:rgba(201,168,76,0.3);--radius:8px; }
+[data-theme="dark"]  { --bg:#111;--bg2:#181818;--bg3:#202020;--text:#eeebe4;--text2:#aaa49a;--border:rgba(201,168,76,0.18);--wm-opacity:0.06;--wm-filter:none;--badge-bg:rgba(201,168,76,0.12);--card-bg:#181818;--msg-bg:#181818; }
+[data-theme="light"] { --bg:#f5f3ef;--bg2:#eceae4;--bg3:#e2dfd8;--text:#1a1814;--text2:#6b6560;--border:rgba(100,80,40,0.18);--wm-opacity:0.07;--wm-filter:none;--badge-bg:rgba(201,168,76,0.15);--card-bg:#eceae4;--msg-bg:#eceae4; }
+[data-theme="ink"]   { --bg:#f8f7f4;--bg2:#fff;--bg3:#eeece8;--text:#111;--text2:#555;--border:rgba(0,0,0,0.12);--gold:#1a1a1a;--gold-dim:rgba(0,0,0,0.08);--gold-line:rgba(0,0,0,0.2);--wm-opacity:0.09;--wm-filter:none;--badge-bg:rgba(0,0,0,0.06);--card-bg:#fff;--msg-bg:#fff; }
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans JP',sans-serif;overflow-x:hidden;line-height:1.7;transition:background .4s,color .4s;}
+
+/* WATERMARK - 3箇所のみ */
+.wm{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;z-index:0;overflow:hidden;}
+.wm img{width:min(65%,480px);opacity:var(--wm-opacity);filter:var(--wm-filter);object-fit:contain;user-select:none;transition:opacity .4s;}
+
+/* MODE BAR */
+.mode-bar{position:fixed;top:14px;right:14px;z-index:999;display:flex;gap:4px;background:var(--bg2);border:1px solid var(--border);border-radius:100px;padding:5px;transition:background .4s,border-color .4s;box-shadow:0 2px 12px rgba(0,0,0,0.15);}
+.mode-btn{border:none;background:transparent;cursor:pointer;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.95rem;transition:background .2s;}
+.mode-btn:hover{background:var(--gold-dim);}
+.mode-btn.active{background:var(--gold-dim);outline:1px solid var(--gold-line);}
+
+/* ANIMS */
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+@keyframes pulse{0%,100%{opacity:0.4;}50%{opacity:1;}}
+
+/* CATCH */
+.catch-item{display:none;font-family:'Noto Serif JP',serif;font-size:clamp(1.5rem,4.5vw,2.6rem);font-weight:400;line-height:1.6;letter-spacing:1px;color:var(--text);text-align:center;padding:0 16px;transition:color .4s;}
+.catch-item.active{display:block;animation:fadeUp .6s cubic-bezier(.22,1,.36,1) both;}
+.catch-item span{color:var(--gold);transition:color .4s;}
+
+/* HERO */
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:80px 24px 120px;position:relative;overflow:hidden;transition:background .4s;}
+[data-theme="dark"] .hero{background:radial-gradient(ellipse 80% 60% at 50% 40%,rgba(201,168,76,.06) 0%,transparent 65%),var(--bg);}
+[data-theme="light"] .hero{background:radial-gradient(ellipse 80% 60% at 50% 40%,rgba(201,168,76,.08) 0%,transparent 65%),var(--bg);}
+[data-theme="ink"] .hero{background:var(--bg);}
+.hero>*:not(.wm){position:relative;z-index:1;}
+.hero-badge{display:inline-block;background:var(--badge-bg);border:1px solid var(--gold-line);color:var(--gold);font-size:.7rem;font-weight:500;letter-spacing:4px;padding:7px 20px;border-radius:100px;margin-bottom:40px;animation:fadeIn .6s .2s both;transition:background .4s,color .4s,border-color .4s;}
+.hero-catch-wrap{width:100%;max-width:760px;min-height:100px;display:flex;align-items:center;justify-content:center;margin-bottom:24px;}
+.hero-dots{display:flex;gap:8px;justify-content:center;margin-bottom:32px;animation:fadeIn .6s .8s both;}
+.hero-dot{width:6px;height:6px;border-radius:50%;background:var(--gold-dim);cursor:pointer;transition:background .3s;}
+.hero-dot.active{background:var(--gold);}
+.hero-sub{font-size:clamp(.9rem,2vw,1.05rem);color:var(--text2);font-weight:300;line-height:2.2;animation:fadeUp .6s .5s both;transition:color .4s;}
+.hero-scroll{position:absolute;bottom:32px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;animation:fadeIn .6s 1.2s both;}
+.hero-scroll span{font-size:.55rem;letter-spacing:3px;color:var(--text2);text-transform:uppercase;}
+.scroll-bar{width:1px;height:28px;background:linear-gradient(to bottom,var(--gold),transparent);animation:pulse 2s infinite;}
+
+/* SECTIONS */
+.section{padding:80px 24px;position:relative;overflow:hidden;transition:background .4s;}
+.section-inner{max-width:900px;margin:0 auto;position:relative;z-index:1;}
+.section-tag{display:inline-flex;align-items:center;gap:10px;font-size:.68rem;font-weight:500;letter-spacing:4px;color:var(--gold);text-transform:uppercase;margin-bottom:16px;transition:color .4s;}
+.section-tag::before{content:'';display:block;width:20px;height:1px;background:var(--gold);transition:background .4s;}
+.section-title{font-family:'Noto Serif JP',serif;font-size:clamp(1.3rem,3vw,2rem);font-weight:400;line-height:1.7;margin-bottom:16px;transition:color .4s;}
+.section-body{font-size:1rem;color:var(--text2);font-weight:300;line-height:2.4;transition:color .4s;}
+
+/* INTRO */
+.intro{background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border);transition:background .4s,border-color .4s;}
+.intro-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);margin-top:40px;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:background .4s,border-color .4s;}
+.intro-card{background:var(--card-bg);padding:28px 20px;text-align:center;transition:background .4s;}
+.intro-card-num{font-family:'Cormorant Garamond',serif;font-size:2.4rem;font-weight:300;color:var(--gold);opacity:.45;line-height:1;margin-bottom:10px;transition:color .4s;}
+.intro-card-title{font-size:.92rem;font-weight:500;margin-bottom:6px;}
+.intro-card-body{font-size:.8rem;color:var(--text2);font-weight:300;line-height:1.8;transition:color .4s;}
+
+/* BA */
+.ba-wrap{margin-bottom:60px;}
+.ba-label-row{display:flex;align-items:center;gap:12px;margin-bottom:14px;}
+.ba-num{font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:300;color:var(--gold);opacity:.4;line-height:1;transition:color .4s;}
+.ba-title{font-size:.95rem;color:var(--text2);transition:color .4s;}
+.ba-container{position:relative;width:100%;aspect-ratio:16/9;overflow:hidden;border-radius:var(--radius);border:1px solid var(--border);cursor:ew-resize;user-select:none;transition:border-color .4s;}
+.ba-img{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;pointer-events:none;}
+.ba-after{clip-path:inset(0 0 0 50%);z-index:2;}
+.ba-handle{position:absolute;top:0;bottom:0;left:50%;transform:translateX(-50%);width:40px;z-index:10;display:flex;flex-direction:column;align-items:center;pointer-events:none;}
+.ba-handle-line{width:2px;flex:1;background:var(--gold);opacity:.9;transition:background .4s;}
+.ba-handle-pill{background:var(--gold);color:#fff;font-size:.5rem;font-weight:700;letter-spacing:2px;padding:5px 8px;transition:background .4s;}
+.ba-tags{position:absolute;bottom:12px;left:0;right:0;display:flex;justify-content:space-between;padding:0 14px;z-index:5;pointer-events:none;}
+.ba-tag{background:rgba(0,0,0,.55);color:#999;font-size:.6rem;letter-spacing:2px;padding:4px 10px;border-radius:2px;border:1px solid rgba(255,255,255,.1);}
+.ba-tag.after{color:var(--gold);border-color:rgba(201,168,76,.4);transition:color .4s;}
+.ba-caption{margin-top:10px;font-size:.85rem;color:var(--text2);font-weight:300;transition:color .4s;}
+
+/* VIDEO */
+.video-section{background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border);transition:background .4s,border-color .4s;}
+.video-wrap{position:relative;width:100%;aspect-ratio:16/9;background:var(--bg3);border-radius:var(--radius);border:1px solid var(--border);overflow:hidden;margin-top:32px;display:flex;align-items:center;justify-content:center;transition:background .4s,border-color .4s;}
+.video-wrap video{width:100%;height:100%;object-fit:cover;}
+.video-placeholder{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:var(--text2);}
+.video-icon{width:52px;height:52px;border:1px solid var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;transition:border-color .4s;}
+.video-placeholder span{font-size:.72rem;letter-spacing:2px;}
+
+/* MESSAGE */
+.message-box{background:var(--msg-bg);border:1px solid var(--border);border-radius:var(--radius);padding:48px 40px;text-align:center;transition:background .4s,border-color .4s;}
+.message-main{font-family:'Noto Serif JP',serif;font-size:clamp(1.05rem,2.5vw,1.4rem);font-weight:400;line-height:2;margin-bottom:24px;}
+.message-main span{color:var(--gold);transition:color .4s;}
+.message-body{font-size:.95rem;color:var(--text2);font-weight:300;line-height:2.4;transition:color .4s;}
+
+/* CTA */
+.cta-section{padding:80px 24px 100px;text-align:center;position:relative;overflow:hidden;}
+.cta-section>*:not(.wm){position:relative;z-index:1;}
+.cta-inner{max-width:560px;margin:0 auto;}
+.cta-title{font-family:'Noto Serif JP',serif;font-size:clamp(1.2rem,3vw,1.7rem);font-weight:400;line-height:1.8;margin-bottom:10px;}
+.cta-sub{font-size:.88rem;color:var(--text2);margin-bottom:36px;font-weight:300;transition:color .4s;}
+.cta-btn{display:inline-flex;align-items:center;justify-content:center;gap:12px;background:#06C755;color:#fff;text-decoration:none;padding:20px 48px;font-size:1rem;font-weight:500;letter-spacing:2px;border-radius:100px;transition:opacity .2s,transform .2s;min-width:270px;box-shadow:0 6px 28px rgba(6,199,85,.2);}
+.cta-btn:hover{opacity:.88;transform:translateY(-2px);}
+.cta-note{margin-top:16px;font-size:.75rem;color:var(--text2);transition:color .4s;}
+
+/* FOOTER */
+footer{padding:48px 24px;text-align:center;border-top:1px solid var(--border);position:relative;overflow:hidden;transition:border-color .4s;}
+footer>*:not(.wm){position:relative;z-index:1;}
+.footer-logo-dark,.footer-logo-light{margin:0 auto 20px;display:block;transition:opacity .4s;max-width:min(58%,560px);width:100%;}
+.footer-logo-dark{opacity:.95;}
+.footer-logo-light{opacity:.85;}
+[data-theme="dark"]  .footer-logo-dark  {display:block;}
+[data-theme="dark"]  .footer-logo-light {display:none;}
+[data-theme="light"] .footer-logo-dark  {display:none;}
+[data-theme="light"] .footer-logo-light {display:block;}
+[data-theme="ink"]   .footer-logo-dark  {display:none;}
+[data-theme="ink"]   .footer-logo-light {display:block;opacity:.75;}
+[data-theme="light"] .footer-logo{opacity:.35;}
+[data-theme="ink"] .footer-logo{opacity:.55;}
+.footer-tagline{font-family:'Cormorant Garamond',serif;font-size:.95rem;font-weight:300;letter-spacing:4px;color:var(--text2);margin-bottom:10px;transition:color .4s;}
+.footer-copy{font-size:.6rem;letter-spacing:2px;color:var(--text2);opacity:.5;transition:color .4s;}
+
+
+/* NUMAN SECTION */
+.numan-section { background: var(--bg2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); transition: background .4s, border-color .4s; }
+.numan-inner { max-width: 900px; margin: 0 auto; display: grid; grid-template-columns: 280px 1fr; gap: 60px; align-items: center; }
+.numan-photos { display: flex; flex-direction: column; gap: 16px; align-items: center; }
+.numan-photo-main { width: 200px; height: 200px; border-radius: 50%; object-fit: cover; border: 3px solid var(--gold-line); transition: border-color .4s; }
+.numan-photo-sub { width: 140px; height: 140px; border-radius: 50%; object-fit: cover; opacity: .75; border: 2px solid var(--border); transition: border-color .4s, opacity .4s; }
+.numan-name { font-family: 'Noto Serif JP', serif; font-size: clamp(1.4rem,3vw,1.9rem); font-weight: 400; letter-spacing: 2px; margin-bottom: 4px; }
+.numan-title { font-size: .75rem; letter-spacing: 4px; color: var(--gold); text-transform: uppercase; margin-bottom: 24px; font-weight: 500; transition: color .4s; }
+.numan-title::before { content: '— '; }
+.numan-body { font-size: .95rem; color: var(--text2); font-weight: 300; line-height: 2.6; margin-bottom: 28px; transition: color .4s; }
+.numan-body strong { color: var(--text); font-weight: 500; }
+.numan-meta { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 28px; }
+.numan-tag { display: inline-flex; align-items: center; gap: 6px; font-size: .72rem; letter-spacing: 2px; color: var(--text2); border: 1px solid var(--border); padding: 5px 14px; border-radius: 100px; transition: color .4s, border-color .4s; }
+.numan-ig { display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045); color: #fff; text-decoration: none; font-size: .8rem; font-weight: 500; letter-spacing: 2px; padding: 12px 28px; border-radius: 100px; transition: opacity .2s, transform .2s; }
+.numan-ig:hover { opacity: .88; transform: translateY(-2px); }
+@media(max-width:700px) {
+    .numan-inner { grid-template-columns: 1fr; gap: 32px; }
+    .numan-photos { flex-direction: row; justify-content: center; }
+    .numan-photo-main { width: 150px; height: 150px; }
+    .numan-photo-sub { width: 100px; height: 100px; }
+}
+
+
+/* WHY KIMARU STORY SECTION */
+.why-section { background: var(--bg); transition: background .4s; }
+.why-inner { max-width: 760px; margin: 0 auto; }
+.why-lead { font-family: 'Noto Serif JP', serif; font-size: clamp(1.15rem,2.5vw,1.5rem); font-weight: 400; line-height: 2.2; letter-spacing: 1px; color: var(--text); margin-bottom: 48px; border-left: 2px solid var(--gold-line); padding-left: 24px; transition: color .4s, border-color .4s; }
+.why-lead em { color: var(--gold); font-style: normal; transition: color .4s; }
+.why-body { font-size: .95rem; color: var(--text2); line-height: 2.8; font-weight: 300; margin-bottom: 32px; transition: color .4s; }
+.why-body strong { color: var(--text); font-weight: 500; }
+.why-divider { width: 40px; height: 1px; background: var(--gold-line); margin: 40px 0; transition: background .4s; }
+.why-quote { position: relative; background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 32px 36px; margin: 40px 0; transition: background .4s, border-color .4s; }
+.why-quote::before { content: '"'; position: absolute; top: -18px; left: 28px; font-family: 'Cormorant Garamond', serif; font-size: 5rem; line-height: 1; color: var(--gold); opacity: .4; transition: color .4s; }
+.why-quote p { font-family: 'Noto Serif JP', serif; font-size: .95rem; line-height: 2.4; color: var(--text2); font-style: italic; transition: color .4s; }
+.why-quote cite { display: block; margin-top: 16px; font-size: .72rem; letter-spacing: 3px; color: var(--gold); font-style: normal; transition: color .4s; }
+.why-conclusion { font-family: 'Noto Serif JP', serif; font-size: clamp(1rem,2vw,1.25rem); line-height: 2.4; color: var(--text); border-top: 1px solid var(--border); padding-top: 36px; margin-top: 36px; transition: color .4s, border-color .4s; }
+.why-conclusion strong { color: var(--gold); font-weight: 600; transition: color .4s; }
+
+/* REVEAL */
+.reveal{opacity:0;transform:translateY(20px);transition:opacity .7s cubic-bezier(.22,1,.36,1),transform .7s cubic-bezier(.22,1,.36,1);}
+.reveal.visible{opacity:1;transform:translateY(0);}
+
+@media(max-width:640px){
+    .intro-cards{grid-template-columns:1fr;}
+    .message-box{padding:28px 18px;}
+    .cta-btn{min-width:unset;width:100%;max-width:300px;}
+    .hero-catch-wrap{min-height:120px;}
+    .mode-bar{top:10px;right:10px;}
+}
+</style>
+</head>
+<body data-theme="dark">
+
+<div class="mode-bar">
+    <button class="mode-btn active" data-mode="dark"  title="ダーク">🌙</button>
+    <button class="mode-btn"        data-mode="light" title="ライト">☀️</button>
+    <button class="mode-btn"        data-mode="ink"   title="インク">🖋️</button>
+</div>
+
+<!-- HERO（透かしあり） -->
+<section class="hero">
+    <div class="wm"><img src="images/logo.png" alt=""></div>
+    <div class="hero-badge">KIMARU — New Way to Propose</div>
+    <div class="hero-catch-wrap">
+        <div class="catch-item active">あなたの技術は、もっと<span>伝わる</span>。</div>
+        <div class="catch-item">職人の仕事が、画面の中で<span>動き出す</span>。</div>
+        <div class="catch-item">提案が変われば、<span>契約</span>が変わる。</div>
+        <div class="catch-item">スマホ一つで、<span>プロ</span>の提案書。</div>
+        <div class="catch-item">見せ方を変えるだけで、<span>結果</span>が変わる。</div>
+    </div>
+    <div class="hero-dots">
+        <div class="hero-dot active" data-dot="0"></div>
+        <div class="hero-dot" data-dot="1"></div>
+        <div class="hero-dot" data-dot="2"></div>
+        <div class="hero-dot" data-dot="3"></div>
+        <div class="hero-dot" data-dot="4"></div>
+    </div>
+    <p class="hero-sub">施工の現場が、そのまま最高の提案書になる。<br>KIMARUが、あなたの営業を変えます。</p>
+    <div class="hero-scroll"><span>Scroll</span><div class="scroll-bar"></div></div>
+</section>
+
+<!-- INTRO（透かしなし） -->
+<section class="section intro">
+    <div class="section-inner">
+        <div class="reveal">
+            <div class="section-tag">What is KIMARU</div>
+            <h2 class="section-title">こんなことが、できるようになりました。</h2>
+            <p class="section-body">お客様の現場写真に仕上がりイメージを重ねたビフォーアフター提案書を、URLひとつで届ける。スマホで触れる、インタラクティブな提案の形です。</p>
+        </div>
+        <div class="intro-cards reveal">
+            <div class="intro-card"><div class="intro-card-num">01</div><div class="intro-card-title">写真を当て込む</div><div class="intro-card-body">施工前の現場写真に仕上がりイメージを重ねる</div></div>
+            <div class="intro-card"><div class="intro-card-num">02</div><div class="intro-card-title">URLで届ける</div><div class="intro-card-body">LINEで送るだけ。特別なアプリは不要</div></div>
+            <div class="intro-card"><div class="intro-card-num">03</div><div class="intro-card-title">翌朝、連絡が来る</div><div class="intro-card-body">お客様が家で見て、自分で決める</div></div>
+        </div>
+    </div>
+</section>
+
+<!-- BA（透かしなし） -->
+<section class="section">
+    <div class="section-inner">
+        <div class="reveal">
+            <div class="section-tag">Before / After</div>
+            <h2 class="section-title">実際に触ってみてください。</h2>
+            <p class="section-body">スライダーを動かすと、施工前と施工後が切り替わります。</p>
+        </div>
+        <div class="ba-wrap" style="margin-top:36px;">
+            <div class="ba-label-row reveal"><span class="ba-num">01</span><span class="ba-title">施工事例 — ここにタイトルを入れる</span></div>
+            <div class="ba-container reveal" id="ba-0">
+                <img src="https://via.placeholder.com/1200x675/111/1e1e1e?text=BEFORE" class="ba-img" alt="Before">
+                <img src="https://via.placeholder.com/1200x675/1a1208/2a2010?text=AFTER" class="ba-img ba-after" alt="After">
+                <div class="ba-handle"><div class="ba-handle-line"></div><div class="ba-handle-pill">SLIDE</div></div>
+                <div class="ba-tags"><span class="ba-tag">BEFORE</span><span class="ba-tag after">AFTER</span></div>
+            </div>
+            <p class="ba-caption reveal">← スライドして変化を確認してください</p>
+        </div>
+        <div class="ba-wrap">
+            <div class="ba-label-row reveal"><span class="ba-num">02</span><span class="ba-title">施工事例 — ここにタイトルを入れる</span></div>
+            <div class="ba-container reveal" id="ba-1">
+                <img src="https://via.placeholder.com/1200x675/111/1e1e1e?text=BEFORE" class="ba-img" alt="Before">
+                <img src="https://via.placeholder.com/1200x675/0f1a0a/1a2a10?text=AFTER" class="ba-img ba-after" alt="After">
+                <div class="ba-handle"><div class="ba-handle-line"></div><div class="ba-handle-pill">SLIDE</div></div>
+                <div class="ba-tags"><span class="ba-tag">BEFORE</span><span class="ba-tag after">AFTER</span></div>
+            </div>
+            <p class="ba-caption reveal">← スライドして変化を確認してください</p>
+        </div>
+    </div>
+</section>
+
+<!-- VIDEO（透かしなし） -->
+<section class="section video-section">
+    <div class="section-inner">
+        <div class="reveal">
+            <div class="section-tag">Cinematic View</div>
+            <h2 class="section-title">素材の世界を、映像で。</h2>
+            <p class="section-body">鳥観図から素材へ近寄る映像や、スケッチからリアルへの変化など、魅せる動画を差し込めます。使わない場合はこのブロックごと削除してください。</p>
+        </div>
+        <div class="video-wrap reveal">
+            <video id="promo-video" src="" poster="" autoplay muted loop playsinline></video>
+            <div class="video-placeholder" id="video-placeholder">
+                <div class="video-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style="color:var(--gold)"><path d="M8 5v14l11-7z"/></svg></div>
+                <span>src に動画 URL を入れてください</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- MESSAGE（透かしなし） -->
+<section class="section">
+    <div class="section-inner">
+        <div class="message-box reveal">
+            <p class="message-main">サンプルを持って行っても契約が取れない、<br>そんな時代は<span>もう終わり</span>にしませんか。</p>
+            <p class="message-body">技術は本物なのに、伝え方が追いついていないだけ。<br>KIMARUを使えば、お客様が自分で「決める」ようになります。</p>
+        </div>
+    </div>
+</section>
+
+
+<!-- NUMAN SECTION -->
+<section class="section numan-section">
+    <div class="numan-inner">
+        <div class="numan-photos reveal">
+            <img class="numan-photo-main" src="images/numan_color.jpg" alt="セメントアーティスト ぬーまん">
+            <img class="numan-photo-sub"  src="images/numan_portrait.jpg" alt="ぬーまん">
+        </div>
+        <div class="numan-text">
+            <div class="reveal">
+                <div class="section-tag">About</div>
+                <h2 class="numan-name">セメントアーティスト<br>ぬーまん</h2>
+                <div class="numan-title">Cement Artist Nu☆Man</div>
+            </div>
+            <div class="numan-meta reveal">
+                <span class="numan-tag">📍 三重県 松阪市</span>
+                <span class="numan-tag">🗓 ローラーストーン歴 2019年〜</span>
+            </div>
+            <p class="numan-body reveal">
+                <strong>16歳から建設業界</strong>に飛び込み、長年にわたって仮設事業・下請けの世界で働いてきた。<br><br>
+                いつしか、「<strong>カタチに残る仕事がしたい</strong>」と思うようになった。<br>
+                そんなとき出会ったのが、ローラーストーン。<br><br>
+                お客さんの喜ぶ声、笑顔に直接ふれられる仕事。<br>
+                そして、この仕事に真剣に向き合う<strong>熱い思いを持った仲間たちと定期的に会える環境</strong>。<br>
+                出会うたびに気づきがあり、学びがある。<br><br>
+                この素晴らしい仕事を、もっと多くの人に知ってもらいたい。<br>
+                高い技術を持つ仲間たちに、もっと自信を持って輝ける機会を届けたい。<br>
+                そして、<strong>私自身を育ててくれたROLLER STONEという業界に</strong>、このプロジェクトで恩返しがしたい。<br><br>
+                それが、KIMARUの原点です。
+            </p>
+            <a href="https://www.instagram.com/cementart_numan/" class="numan-ig reveal" target="_blank" rel="noopener"
+               onclick="gtag('event','click',{event_category:'social',event_label:'instagram_numan'})">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+                @cementart_numan
+            </a>
+        </div>
+    </div>
+</section>
+
+
+<!-- WHY KIMARU STORY -->
+<section class="section why-section" id="why-kimaru">
+    <div class="why-inner">
+        <div class="section-tag reveal">Why KIMARU</div>
+
+        <p class="why-lead reveal">
+            ローラーストーンは、製品ではない。<br>
+            <em>すべてがフリーハンドで、現場でみんなが仕上げていく技術</em>だ。
+        </p>
+
+        <p class="why-body reveal">
+            唯一無二のオリジナルデザイン。それはローラーストーンの最大の強みであり、同時に<strong>大きな課題</strong>でもあった。<br><br>
+            お客さんは完成形を見たい。既製品ならサンプルを見せられる。でもローラーストーンは、<strong>仕上がりイメージは職人の頭の中にしかない。</strong><br><br>
+            だから私たちにできることは、過去の施工事例を並べたパンフレットを見せて「想像してもらう」ことだけだった。
+        </p>
+
+        <div class="why-quote reveal">
+            <p>「私に任せてください。きっと似合うと思います。絶対にかっこいいはずです。」</p>
+            <cite>— 多くの職人が、現場で繰り返してきた言葉</cite>
+        </div>
+
+        <p class="why-body reveal">
+            洋服だって、試着室で自分に似合うか確かめてから買う。<br>
+            高額なリフォームなら、なおさらそうであるべきだ。<br><br>
+            <strong>「信じてください」という言葉だけで、誰が高額商品を買うだろうか。</strong><br><br>
+            私はずっとそこに疑問と歯がゆさを感じていた。<br>
+            熱い思いも、高い技術も、<strong>「伝える力」がなければ届かない。</strong>
+        </p>
+
+        <div class="why-divider reveal"></div>
+
+        <p class="why-conclusion reveal">
+            KIMARUは、そのすべてを解決するためのプロジェクトだ。<br><br>
+            完成イメージを伝えられる提案書。お客さんが「これにしたい」と言える体験。<br>
+            職人が自信を持って、正当な対価を得られる仕組み。<br><br>
+            これは私一人のためじゃない。<br>
+            <strong>同じ思いを持つ、すべてのローラーストーン職人へ。</strong>
+        </p>
+    </div>
+</section>
+
+<!-- CTA（透かしあり） -->
+<div class="cta-section">
+    <div class="wm"><img src="images/logo.png" alt=""></div>
+    <div class="cta-inner">
+        <h2 class="cta-title reveal">気になった方は、<br>まずLINEで話しましょう。</h2>
+        <p class="cta-sub reveal">詳しい説明・デモもお気軽にどうぞ</p>
+        <a href="https://lin.ee/xxxxxxx" class="cta-btn reveal" target="_blank" rel="noopener" onclick="gtag('event','click',{event_category:'cta',event_label:'line_pr'})">
+            <svg width="20" height="20" viewBox="0 0 40 38" fill="currentColor"><path d="M20 0C9 0 0 7.2 0 16c0 5.5 3.4 10.3 8.7 13.3-.4 1.4-1.4 5.1-1.6 5.9-.2 1 .4 1 .8.7.3-.2 4.8-3.3 6.7-4.6.9.1 1.9.2 2.9.2 11 0 20-7.2 20-16S31 0 20 0z"/></svg>
+            LINE でお問い合わせ
+        </a>
+        <p class="cta-note reveal">無料でご相談いただけます</p>
+    </div>
+</div>
+
+<!-- FOOTER（透かし＋ロゴあり） -->
+<footer>
+    <img class="footer-logo-dark"  src="images/footer_logo_dark.jpg"  alt="KIMARU">
+    <img class="footer-logo-light" src="images/footer_logo_light.jpg" alt="KIMARU">
+    <div class="footer-tagline">Proposal System for Construction Professionals</div>
+    <div class="footer-copy">&copy; 2025 KIMARU. All rights reserved.</div>
+</footer>
+
+<script>
+var modeBtns=document.querySelectorAll('.mode-btn');
+modeBtns.forEach(function(btn){
+    btn.addEventListener('click',function(){
+        document.body.setAttribute('data-theme',btn.dataset.mode);
+        modeBtns.forEach(function(b){b.classList.remove('active');});
+        btn.classList.add('active');
+        try{localStorage.setItem('kimaru-theme',btn.dataset.mode);}catch(e){}
+    });
+});
+(function(){
+    try{
+        var saved=localStorage.getItem('kimaru-theme');
+        if(saved){
+            document.body.setAttribute('data-theme',saved);
+            modeBtns.forEach(function(b){b.classList.toggle('active',b.dataset.mode===saved);});
+        }
+    }catch(e){}
+})();
+
+var catches=document.querySelectorAll('.catch-item');
+var dots=document.querySelectorAll('.hero-dot');
+var current=0,timer;
+function showCatch(idx){catches[current].classList.remove('active');dots[current].classList.remove('active');current=idx;catches[current].classList.add('active');dots[current].classList.add('active');}
+timer=setInterval(function(){showCatch((current+1)%catches.length);},4000);
+dots.forEach(function(dot){dot.addEventListener('click',function(){clearInterval(timer);showCatch(parseInt(dot.dataset.dot));timer=setInterval(function(){showCatch((current+1)%catches.length);},4000);});});
+
+document.querySelectorAll('.ba-container').forEach(function(container){
+    var handle=container.querySelector('.ba-handle');
+    var afterImg=container.querySelector('.ba-after');
+    var dragging=false;
+    function update(clientX){var rect=container.getBoundingClientRect();var pos=Math.max(0,Math.min(100,((clientX-rect.left)/rect.width)*100));afterImg.style.clipPath='inset(0 0 0 '+pos+'%)';handle.style.left=pos+'%';handle.style.transform='translateX(-50%)';}
+    container.addEventListener('mousedown',function(e){dragging=true;update(e.clientX);});
+    window.addEventListener('mousemove',function(e){if(dragging)update(e.clientX);});
+    window.addEventListener('mouseup',function(){dragging=false;});
+    container.addEventListener('touchstart',function(e){update(e.touches[0].clientX);},{passive:true});
+    container.addEventListener('touchmove',function(e){update(e.touches[0].clientX);},{passive:true});
+});
+
+var video=document.getElementById('promo-video');
+var placeholder=document.getElementById('video-placeholder');
+if(video&&video.src&&video.src!==window.location.href){if(placeholder)placeholder.style.display='none';}else{if(video)video.style.display='none';}
+
+var observer=new IntersectionObserver(function(entries){entries.forEach(function(e){if(e.isIntersecting)e.target.classList.add('visible');});},{threshold:.12});
+document.querySelectorAll('.reveal').forEach(function(el){observer.observe(el);});
+
+// [GA4] BAスライダー操作 - 1PVにつき1回のみ
+var sliderTracked=false;
+document.querySelectorAll('.ba-container').forEach(function(container){
+  function trackSlider(){
+    if(sliderTracked)return;
+    sliderTracked=true;
+    gtag('event','slider_interact',{event_category:'engagement',event_label:'ba_slider'});
+  }
+  container.addEventListener('mousedown',trackSlider);
+  container.addEventListener('touchstart',trackSlider,{passive:true});
+});
+
+// [GA4] ストーリー読了 - Why KIMARUセクションが5秒以上表示されたら発火
+var storyTracked=false;
+var storyTimer=null;
+var storyObserver=new IntersectionObserver(function(entries){
+  entries.forEach(function(e){
+    if(e.isIntersecting && !storyTracked){
+      storyTimer=setTimeout(function(){
+        storyTracked=true;
+        gtag('event','read_story',{event_category:'engagement',event_label:'why_kimaru'});
+      },5000);
+    } else {
+      clearTimeout(storyTimer);
+    }
+  });
+},{threshold:0.3});
+var whySection=document.getElementById('why-kimaru');
+if(whySection)storyObserver.observe(whySection);
+</script>
+</body>
+</html>
