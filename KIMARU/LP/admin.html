@@ -8,372 +8,249 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 :root{
-  --gold:#c9a84c;
-  --bg:#0e0e0e;
-  --bg2:#161616;
-  --bg3:#1e1e1e;
-  --border:rgba(201,168,76,0.18);
-  --text:#eeebe4;
-  --text2:#888;
-  --radius:10px;
-  --green:#4caf7d;
-  --red:#e05555;
+  --gold:#c9a84c;--bg:#0e0e0e;--bg2:#161616;--bg3:#1e1e1e;
+  --border:rgba(201,168,76,0.18);--text:#eeebe4;--text2:#888;
+  --radius:10px;--green:#4caf7d;--red:#e05555;
 }
 body{background:var(--bg);color:var(--text);font-family:'Noto Sans JP',sans-serif;font-weight:300;min-height:100vh;}
-
-/* ===== HEADER ===== */
-.header{background:var(--bg2);border-bottom:1px solid var(--border);padding:20px 32px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
-.header-logo{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:300;color:var(--gold);letter-spacing:4px;}
-.header-logo span{color:var(--text2);font-size:.75rem;letter-spacing:2px;margin-left:12px;font-family:'Noto Sans JP',sans-serif;}
-.btn-primary{background:var(--gold);color:#111;font-size:.8rem;font-weight:500;letter-spacing:2px;padding:12px 28px;border:none;border-radius:6px;cursor:pointer;transition:opacity .2s,transform .2s;display:flex;align-items:center;gap:8px;}
-.btn-primary:hover{opacity:.88;transform:translateY(-1px);}
-.btn-secondary{background:transparent;color:var(--text2);font-size:.8rem;letter-spacing:1px;padding:10px 20px;border:1px solid var(--border);border-radius:6px;cursor:pointer;transition:all .2s;}
+.header{background:var(--bg2);border-bottom:1px solid var(--border);padding:18px 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.header-logo{font-family:'Cormorant Garamond',serif;font-size:1.4rem;color:var(--gold);letter-spacing:4px;}
+.header-logo span{color:var(--text2);font-size:.72rem;letter-spacing:2px;margin-left:10px;font-family:'Noto Sans JP',sans-serif;}
+.hbtns{display:flex;gap:10px;}
+.btn{font-family:'Noto Sans JP',sans-serif;font-size:.78rem;font-weight:400;letter-spacing:1px;padding:10px 22px;border-radius:6px;cursor:pointer;border:none;transition:all .2s;display:flex;align-items:center;gap:7px;}
+.btn-primary{background:var(--gold);color:#111;}
+.btn-primary:hover{opacity:.85;transform:translateY(-1px);}
+.btn-secondary{background:transparent;color:var(--text2);border:1px solid var(--border);}
 .btn-secondary:hover{border-color:var(--gold);color:var(--gold);}
+.btn-danger{background:transparent;color:var(--red);border:1px solid rgba(224,85,85,.3);font-size:.72rem;padding:7px 14px;}
+.btn-danger:hover{background:rgba(224,85,85,.1);}
+.btn-add{background:rgba(201,168,76,.08);color:var(--gold);border:1px dashed rgba(201,168,76,.4);width:100%;padding:14px;border-radius:8px;font-size:.82rem;letter-spacing:1px;margin-top:16px;}
+.btn-add:hover{background:rgba(201,168,76,.14);}
 
-/* ===== LAYOUT ===== */
-.layout{display:grid;grid-template-columns:220px 1fr;min-height:calc(100vh - 65px);}
-
-/* ===== SIDEBAR ===== */
-.sidebar{background:var(--bg2);border-right:1px solid var(--border);padding:24px 0;}
-.sidebar-section{padding:0 16px;margin-bottom:8px;}
-.sidebar-label{font-size:.62rem;letter-spacing:3px;color:var(--text2);padding:16px 12px 8px;text-transform:uppercase;}
-.nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:6px;cursor:pointer;font-size:.82rem;color:var(--text2);transition:all .2s;border:none;background:none;width:100%;text-align:left;}
+/* LAYOUT */
+.layout{display:grid;grid-template-columns:210px 1fr;min-height:calc(100vh - 61px);}
+.sidebar{background:var(--bg2);border-right:1px solid var(--border);padding:20px 0;}
+.sidebar-label{font-size:.6rem;letter-spacing:3px;color:var(--text2);padding:14px 14px 6px;text-transform:uppercase;}
+.nav-item{display:flex;align-items:center;gap:9px;padding:9px 14px;border-radius:6px;cursor:pointer;font-size:.8rem;color:var(--text2);transition:all .2s;border:none;background:none;width:100%;text-align:left;}
 .nav-item:hover{background:var(--bg3);color:var(--text);}
-.nav-item.active{background:rgba(201,168,76,0.1);color:var(--gold);border-left:2px solid var(--gold);}
-.nav-icon{font-size:1rem;width:20px;text-align:center;}
-.nav-badge{margin-left:auto;background:var(--red);color:#fff;font-size:.6rem;padding:2px 6px;border-radius:10px;}
+.nav-item.active{background:rgba(201,168,76,.1);color:var(--gold);border-left:2px solid var(--gold);}
+.main{padding:36px 40px 120px;}
+.page{display:none;}.page.active{display:block;}
+.page-title{font-family:'Cormorant Garamond',serif;font-size:1.7rem;font-weight:300;color:var(--text);margin-bottom:4px;letter-spacing:2px;}
+.page-sub{font-size:.78rem;color:var(--text2);margin-bottom:32px;}
 
-/* ===== MAIN ===== */
-.main{padding:40px;}
-.page{display:none;}
-.page.active{display:block;}
+/* CARDS */
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:20px;overflow:hidden;}
+.card-head{padding:16px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;}
+.card-icon{font-size:1rem;}
+.card-name{font-size:.88rem;font-weight:500;letter-spacing:.5px;}
+.card-desc{font-size:.72rem;color:var(--text2);margin-left:auto;}
+.card-body{padding:22px;}
 
-.page-title{font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:300;color:var(--text);margin-bottom:6px;letter-spacing:2px;}
-.page-sub{font-size:.8rem;color:var(--text2);margin-bottom:36px;}
-
-/* ===== SECTIONS ===== */
-.section-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:24px;overflow:hidden;}
-.section-head{padding:18px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;}
-.section-icon{font-size:1.1rem;}
-.section-name{font-size:.9rem;font-weight:500;letter-spacing:1px;}
-.section-desc{font-size:.75rem;color:var(--text2);margin-left:auto;}
-.section-body{padding:24px;}
-
-/* ===== FORM ===== */
-.form-row{margin-bottom:20px;}
-.form-row:last-child{margin-bottom:0;}
-.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
-label{display:block;font-size:.72rem;letter-spacing:2px;color:var(--text2);margin-bottom:8px;text-transform:uppercase;}
-input[type=text],input[type=url],textarea{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:12px 14px;color:var(--text);font-family:'Noto Sans JP',sans-serif;font-size:.88rem;font-weight:300;outline:none;transition:border-color .2s;}
-input[type=text]:focus,input[type=url]:focus,textarea:focus{border-color:var(--gold);}
-textarea{resize:vertical;line-height:1.8;}
-.input-hint{font-size:.7rem;color:var(--text2);margin-top:6px;}
-.input-hint a{color:var(--gold);text-decoration:none;}
-
-/* ===== IMAGE UPLOAD ===== */
-.img-upload-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;}
-.img-upload-item{position:relative;}
-.img-upload-item label{font-size:.7rem;color:var(--text2);margin-bottom:8px;display:block;letter-spacing:2px;text-transform:uppercase;}
-.img-drop{border:2px dashed var(--border);border-radius:8px;overflow:hidden;aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;position:relative;background:var(--bg3);}
+/* BA SLIDER CARD */
+.ba-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:16px;overflow:hidden;}
+.ba-card-head{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;}
+.ba-card-num{font-family:'Cormorant Garamond',serif;font-size:1.4rem;color:var(--gold);opacity:.5;line-height:1;}
+.ba-card-title-input{flex:1;background:transparent;border:none;color:var(--text);font-family:'Noto Sans JP',sans-serif;font-size:.88rem;outline:none;border-bottom:1px solid transparent;transition:border-color .2s;padding:2px 4px;}
+.ba-card-title-input:focus{border-bottom-color:var(--gold);}
+.ba-card-body{padding:18px;}
+.ba-img-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px;}
+.img-drop-label{font-size:.65rem;letter-spacing:2px;color:var(--text2);margin-bottom:7px;text-transform:uppercase;}
+.img-drop{border:2px dashed var(--border);border-radius:8px;overflow:hidden;aspect-ratio:16/9;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;position:relative;background:var(--bg3);}
 .img-drop:hover{border-color:var(--gold);}
-.img-drop.has-image{border-style:solid;border-color:rgba(201,168,76,0.4);}
-.img-drop img{width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0;}
-.img-drop-overlay{position:absolute;inset:0;background:rgba(0,0,0,0.6);display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;transition:opacity .2s;z-index:1;}
-.img-drop:hover .img-drop-overlay{opacity:1;}
-.img-drop-icon{font-size:2rem;margin-bottom:8px;color:var(--gold);}
-.img-drop-text{font-size:.7rem;color:var(--text2);text-align:center;}
+.img-drop.has-img{border-style:solid;border-color:rgba(201,168,76,.4);}
+.img-drop img.preview{width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0;}
+.img-drop-overlay{position:absolute;inset:0;background:rgba(0,0,0,.55);display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;transition:opacity .2s;z-index:1;}
+.img-drop:hover .img-drop-overlay,.img-drop:not(.has-img) .img-drop-overlay{opacity:1;}
+.img-drop-icon{font-size:1.6rem;margin-bottom:5px;color:var(--gold);}
+.img-drop-text{font-size:.68rem;color:var(--text2);text-align:center;}
 .img-drop input[type=file]{display:none;}
-.img-filename{font-size:.7rem;color:var(--text2);margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.img-fname{font-size:.68rem;color:var(--text2);margin-top:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 
-/* BA画像は横長 */
-.img-drop.wide{aspect-ratio:16/9;}
+/* INFO FIELDS */
+.info-fields{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px;}
+.sample-row{display:flex;align-items:center;gap:14px;}
+.sample-preview-wrap{position:relative;width:64px;height:64px;flex-shrink:0;}
+.sample-preview{width:64px;height:64px;border-radius:7px;object-fit:cover;border:1px solid var(--border);display:none;}
+.sample-preview.visible{display:block;}
 
-/* ===== TOGGLE ===== */
-.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid rgba(255,255,255,0.04);}
+/* FORM */
+label.field-label{display:block;font-size:.65rem;letter-spacing:2px;color:var(--text2);margin-bottom:7px;text-transform:uppercase;}
+input[type=text],input[type=url],textarea{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:11px 13px;color:var(--text);font-family:'Noto Sans JP',sans-serif;font-size:.85rem;font-weight:300;outline:none;transition:border-color .2s;}
+input[type=text]:focus,input[type=url]:focus,textarea:focus{border-color:var(--gold);}
+textarea{resize:vertical;line-height:1.9;}
+.hint{font-size:.68rem;color:var(--text2);margin-top:5px;line-height:1.7;}
+.hint a{color:var(--gold);text-decoration:none;}
+.form-row{margin-bottom:18px;}.form-row:last-child{margin-bottom:0;}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.form-grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
+
+/* TOGGLE */
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.04);}
 .toggle-row:last-child{border-bottom:none;}
-.toggle-info{flex:1;}
-.toggle-info .toggle-label{font-size:.85rem;font-weight:400;}
-.toggle-info .toggle-desc{font-size:.73rem;color:var(--text2);margin-top:3px;}
-.toggle{position:relative;width:44px;height:24px;flex-shrink:0;margin-left:16px;}
+.toggle-info .t-label{font-size:.83rem;font-weight:400;}
+.toggle-info .t-desc{font-size:.7rem;color:var(--text2);margin-top:2px;}
+.toggle{position:relative;width:42px;height:22px;flex-shrink:0;margin-left:14px;}
 .toggle input{display:none;}
-.toggle-track{display:block;width:100%;height:100%;background:var(--bg3);border:1px solid var(--border);border-radius:12px;transition:all .2s;cursor:pointer;}
-.toggle input:checked + .toggle-track{background:rgba(201,168,76,0.3);border-color:var(--gold);}
-.toggle-thumb{position:absolute;top:3px;left:3px;width:16px;height:16px;background:var(--text2);border-radius:50%;transition:all .2s;pointer-events:none;}
-.toggle input:checked ~ .toggle-thumb{left:23px;background:var(--gold);}
+.toggle-track{display:block;width:100%;height:100%;background:var(--bg3);border:1px solid var(--border);border-radius:11px;transition:all .2s;cursor:pointer;}
+.toggle input:checked+.toggle-track{background:rgba(201,168,76,.3);border-color:var(--gold);}
+.toggle-thumb{position:absolute;top:3px;left:3px;width:14px;height:14px;background:var(--text2);border-radius:50%;transition:all .2s;pointer-events:none;}
+.toggle input:checked~.toggle-thumb{left:23px;background:var(--gold);}
 
-/* ===== SAVE BAR ===== */
-.save-bar{position:fixed;bottom:0;left:0;right:0;background:var(--bg2);border-top:1px solid var(--border);padding:16px 40px;display:flex;align-items:center;justify-content:space-between;transform:translateY(100%);transition:transform .3s;z-index:200;}
-.save-bar.visible{transform:translateY(0);}
-.save-bar-msg{font-size:.8rem;color:var(--text2);}
-.save-bar-msg strong{color:var(--gold);}
-.save-bar-btns{display:flex;gap:12px;}
+/* LOGO GRID */
+.logo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+.logo-drop{border:2px dashed var(--border);border-radius:8px;aspect-ratio:1;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;position:relative;background:var(--bg3);}
+.logo-drop:hover{border-color:var(--gold);}
+.logo-drop.has-img{border-style:solid;border-color:rgba(201,168,76,.4);}
+.logo-drop img.preview{width:100%;height:100%;object-fit:cover;position:absolute;}
+.logo-drop input[type=file]{display:none;}
 
-/* ===== STATUS ===== */
-.status-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:6px;}
-.status-dot.ok{background:var(--green);}
-.status-dot.ng{background:var(--red);}
-.status-dot.warn{background:#f0a500;}
+/* SAVE BAR */
+.save-bar{position:fixed;bottom:0;left:0;right:0;background:var(--bg2);border-top:1px solid var(--border);padding:14px 28px;display:flex;align-items:center;justify-content:space-between;transform:translateY(100%);transition:transform .3s;z-index:200;}
+.save-bar.show{transform:translateY(0);}
+.save-msg{font-size:.78rem;color:var(--text2);}
+.save-msg strong{color:var(--gold);}
+.save-btns{display:flex;gap:10px;}
 
-/* ===== TOAST ===== */
-.toast{position:fixed;top:80px;right:24px;background:var(--bg2);border:1px solid var(--green);border-radius:8px;padding:14px 20px;font-size:.82rem;color:var(--text);display:flex;align-items:center;gap:10px;transform:translateX(120%);transition:transform .3s;z-index:300;}
+/* TOAST */
+.toast{position:fixed;top:72px;right:20px;background:var(--bg2);border:1px solid var(--green);border-radius:8px;padding:12px 18px;font-size:.8rem;color:var(--text);display:flex;align-items:center;gap:9px;transform:translateX(120%);transition:transform .3s;z-index:300;}
 .toast.show{transform:translateX(0);}
-.toast-icon{color:var(--green);font-size:1rem;}
 
-/* ===== PREVIEW HINT ===== */
-.preview-hint{background:rgba(201,168,76,0.06);border:1px solid var(--border);border-radius:8px;padding:16px 20px;font-size:.78rem;color:var(--text2);margin-top:24px;line-height:2;}
-.preview-hint strong{color:var(--gold);}
+/* BA PREVIEW */
+.ba-preview-panel{background:var(--bg3);border-radius:8px;overflow:hidden;margin-bottom:8px;}
+.ba-preview-slider{position:relative;width:100%;aspect-ratio:16/9;cursor:ew-resize;user-select:none;}
+.ba-preview-img{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;}
+.ba-preview-after{clip-path:inset(0 0 0 50%);z-index:2;}
+.ba-preview-handle{position:absolute;top:0;bottom:0;left:50%;transform:translateX(-50%);width:30px;z-index:10;display:flex;flex-direction:column;align-items:center;pointer-events:none;}
+.ba-preview-line{width:2px;flex:1;background:var(--gold);}
+.ba-preview-pill{background:var(--gold);color:#111;font-size:.5rem;font-weight:700;letter-spacing:2px;padding:4px 6px;}
+.ba-preview-empty{display:flex;align-items:center;justify-content:center;height:120px;color:var(--text2);font-size:.78rem;}
 
 @media(max-width:768px){
   .layout{grid-template-columns:1fr;}
   .sidebar{display:none;}
-  .form-grid{grid-template-columns:1fr;}
-  .main{padding:24px 16px;}
+  .main{padding:20px 14px 120px;}
+  .form-grid,.form-grid3,.info-fields,.ba-img-grid,.logo-grid{grid-template-columns:1fr;}
 }
 </style>
 </head>
 <body>
 
-<!-- HEADER -->
 <header class="header">
   <div class="header-logo">KIMARU <span>管理画面</span></div>
-  <div style="display:flex;gap:12px;">
-    <button class="btn-secondary" onclick="previewLP()">👁 プレビュー</button>
-    <button class="btn-primary" onclick="generateAndDownload()">⬇ HTMLをダウンロード</button>
+  <div class="hbtns">
+    <button class="btn btn-secondary" onclick="previewLP()">👁 プレビュー</button>
+    <button class="btn btn-primary" onclick="generateAndDownload()">⬇ ダウンロード</button>
   </div>
 </header>
 
-<!-- LAYOUT -->
 <div class="layout">
-
-  <!-- SIDEBAR -->
   <nav class="sidebar">
-    <div class="sidebar-label">ページ設定</div>
-    <div class="sidebar-section">
-      <button class="nav-item active" onclick="showPage('urls',this)"><span class="nav-icon">🔗</span>URL設定</button>
-      <button class="nav-item" onclick="showPage('text',this)"><span class="nav-icon">✏️</span>テキスト</button>
-      <button class="nav-item" onclick="showPage('images',this)"><span class="nav-icon">🖼</span>画像</button>
-      <button class="nav-item" onclick="showPage('profile',this)"><span class="nav-icon">👤</span>プロフィール</button>
-      <button class="nav-item" onclick="showPage('sections',this)"><span class="nav-icon">⚙️</span>セクション設定</button>
-    </div>
+    <div class="sidebar-label">コンテンツ</div>
+    <button class="nav-item active" onclick="showPage('ba',this)"><span>↔️</span>BAスライダー</button>
+    <button class="nav-item" onclick="showPage('urls',this)"><span>🔗</span>URL設定</button>
+    <button class="nav-item" onclick="showPage('text',this)"><span>✏️</span>テキスト</button>
+    <button class="nav-item" onclick="showPage('logos',this)"><span>🏷</span>ロゴ</button>
+    <button class="nav-item" onclick="showPage('profile',this)"><span>👤</span>プロフィール</button>
+    <button class="nav-item" onclick="showPage('sections',this)"><span>⚙️</span>セクション設定</button>
   </nav>
 
-  <!-- MAIN -->
   <main class="main">
 
-    <!-- ===== URL設定 ===== -->
-    <div class="page active" id="page-urls">
+    <!-- ===== BA SLIDER ===== -->
+    <div class="page active" id="page-ba">
+      <div class="page-title">BAスライダー</div>
+      <div class="page-sub">施工事例のBefore/Afterスライダーを管理します。追加・削除・並び替えが可能です。</div>
+      <div id="ba-cards"></div>
+      <button class="btn btn-add" onclick="addBaCard()">＋ スライダーを追加する</button>
+    </div>
+
+    <!-- ===== URL ===== -->
+    <div class="page" id="page-urls">
       <div class="page-title">URL 設定</div>
       <div class="page-sub">LINE・Instagram・動画のURLを設定します。</div>
-
-      <div class="section-card">
-        <div class="section-head">
-          <span class="section-icon">💬</span>
-          <span class="section-name">LINE</span>
-          <span class="section-desc">メインCTA</span>
-        </div>
-        <div class="section-body">
-          <div class="form-row">
-            <label>LINE URL</label>
-            <input type="url" id="line-url" placeholder="https://lin.ee/xxxxxxx" oninput="markDirty()">
-            <div class="input-hint">LINE公式アカウントの友だち追加URLを入力してください。<br><a href="https://manager.line.biz/" target="_blank">LINE Official Account Manager</a> → アカウント → 友だち追加ガイド</div>
-          </div>
-          <div class="form-row">
-            <label>CTAボタンのテキスト</label>
-            <input type="text" id="line-btn-text" placeholder="LINE でお問い合わせ" oninput="markDirty()">
-          </div>
+      <div class="card">
+        <div class="card-head"><span class="card-icon">💬</span><span class="card-name">LINE</span><span class="card-desc">メインCTA</span></div>
+        <div class="card-body">
+          <div class="form-row"><label class="field-label">LINE URL</label><input type="url" id="line-url" placeholder="https://lin.ee/xxxxxxx" oninput="markDirty()"><div class="hint"><a href="https://manager.line.biz/" target="_blank">LINE Official Account Manager</a> → 友だち追加ガイド</div></div>
+          <div class="form-row"><label class="field-label">CTAボタンのテキスト</label><input type="text" id="line-btn-text" placeholder="LINE でお問い合わせ" oninput="markDirty()"></div>
         </div>
       </div>
-
-      <div class="section-card">
-        <div class="section-head">
-          <span class="section-icon">📷</span>
-          <span class="section-name">Instagram</span>
-          <span class="section-desc">プロフィールセクション</span>
-        </div>
-        <div class="section-body">
-          <div class="form-row">
-            <label>Instagram URL</label>
-            <input type="url" id="ig-url" placeholder="https://www.instagram.com/cementart_numan/" oninput="markDirty()">
-          </div>
+      <div class="card">
+        <div class="card-head"><span class="card-icon">📷</span><span class="card-name">Instagram</span></div>
+        <div class="card-body">
+          <div class="form-row"><label class="field-label">Instagram URL</label><input type="url" id="ig-url" placeholder="https://www.instagram.com/cementart_numan/" oninput="markDirty()"></div>
         </div>
       </div>
-
-      <div class="section-card">
-        <div class="section-head">
-          <span class="section-icon">🎬</span>
-          <span class="section-name">動画</span>
-          <span class="section-desc">Cinematic Viewセクション</span>
-        </div>
-        <div class="section-body">
-          <div class="form-row">
-            <label>動画ファイルURL</label>
-            <input type="url" id="video-url" placeholder="https://... （MP4ファイルのURL）" oninput="markDirty()">
-            <div class="input-hint">YouTube等ではなくMP4ファイルの直リンクが必要です。GitHubに動画をアップして、Raw URLを使うのがおすすめです。</div>
-          </div>
-          <div class="form-row">
-            <label>サムネイル画像URL（任意）</label>
-            <input type="url" id="video-poster" placeholder="https://... （動画が読み込まれる前に表示される画像）" oninput="markDirty()">
-          </div>
+      <div class="card">
+        <div class="card-head"><span class="card-icon">🎬</span><span class="card-name">動画</span><span class="card-desc">Cinematic View</span></div>
+        <div class="card-body">
+          <div class="form-row"><label class="field-label">動画ファイルURL（MP4）</label><input type="url" id="video-url" placeholder="https://... （GitHubのRaw URLなど）" oninput="markDirty()"><div class="hint">GitHubに動画をアップしてRaw URLを使うのがおすすめです。</div></div>
+          <div class="form-row"><label class="field-label">サムネイル画像URL（任意）</label><input type="url" id="video-poster" placeholder="https://..." oninput="markDirty()"></div>
           <div class="toggle-row">
-            <div class="toggle-info">
-              <div class="toggle-label">動画セクションを表示する</div>
-              <div class="toggle-desc">OFFにするとセクションごと非表示になります</div>
-            </div>
-            <label class="toggle">
-              <input type="checkbox" id="video-visible" onchange="markDirty()">
-              <span class="toggle-track"></span>
-              <span class="toggle-thumb"></span>
-            </label>
+            <div class="toggle-info"><div class="t-label">動画セクションを表示する</div><div class="t-desc">OFFにするとセクションごと非表示</div></div>
+            <label class="toggle"><input type="checkbox" id="video-visible" onchange="markDirty()"><span class="toggle-track"></span><span class="toggle-thumb"></span></label>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- ===== テキスト ===== -->
+    <!-- ===== TEXT ===== -->
     <div class="page" id="page-text">
       <div class="page-title">テキスト 編集</div>
       <div class="page-sub">キャッチコピー・メッセージ・CTAのテキストを編集します。</div>
-
-      <div class="section-card">
-        <div class="section-head">
-          <span class="section-icon">🏆</span>
-          <span class="section-name">Hero（トップ）</span>
-        </div>
-        <div class="section-body">
-          <div class="form-row">
-            <label>メインキャッチコピー</label>
-            <textarea id="hero-catch" rows="3" placeholder="施工の現場が、最高の提案書になる。" oninput="markDirty()"></textarea>
-            <div class="input-hint">改行は &lt;br&gt; を使います。例：施工の現場が、&lt;br&gt;最高の提案書になる。</div>
-          </div>
-          <div class="form-row">
-            <label>サブコピー</label>
-            <textarea id="hero-sub" rows="2" placeholder="施工の現場が、そのまま最高の提案書になる。" oninput="markDirty()"></textarea>
-          </div>
+      <div class="card">
+        <div class="card-head"><span class="card-icon">🏆</span><span class="card-name">Hero（トップ）</span></div>
+        <div class="card-body">
+          <div class="form-row"><label class="field-label">メインキャッチコピー</label><textarea id="hero-catch" rows="3" oninput="markDirty()"></textarea><div class="hint">改行は &lt;br&gt; を使います。例：施工の現場が、&lt;br&gt;最高の提案書になる。</div></div>
+          <div class="form-row"><label class="field-label">サブコピー</label><textarea id="hero-sub" rows="2" oninput="markDirty()"></textarea></div>
         </div>
       </div>
-
-      <div class="section-card">
-        <div class="section-head">
-          <span class="section-icon">💌</span>
-          <span class="section-name">メッセージボックス</span>
-        </div>
-        <div class="section-body">
-          <div class="form-row">
-            <label>メインメッセージ</label>
-            <textarea id="msg-main" rows="3" placeholder="サンプルを持って行っても契約が取れない、&#10;そんな時代はもう終わりにしませんか。" oninput="markDirty()"></textarea>
-            <div class="input-hint">金色にしたい部分を &lt;span&gt; 〜 &lt;/span&gt; で囲んでください。</div>
-          </div>
-          <div class="form-row">
-            <label>サブテキスト</label>
-            <textarea id="msg-body" rows="3" placeholder="技術は本物なのに、伝え方が追いついていないだけ。" oninput="markDirty()"></textarea>
-          </div>
+      <div class="card">
+        <div class="card-head"><span class="card-icon">💌</span><span class="card-name">メッセージボックス</span></div>
+        <div class="card-body">
+          <div class="form-row"><label class="field-label">メインメッセージ</label><textarea id="msg-main" rows="3" oninput="markDirty()"></textarea><div class="hint">金色にしたい部分を &lt;span&gt;〜&lt;/span&gt; で囲んでください。</div></div>
+          <div class="form-row"><label class="field-label">サブテキスト</label><textarea id="msg-body" rows="3" oninput="markDirty()"></textarea></div>
         </div>
       </div>
-
-      <div class="section-card">
-        <div class="section-head">
-          <span class="section-icon">📣</span>
-          <span class="section-name">CTA（お問い合わせ）</span>
-        </div>
-        <div class="section-body">
-          <div class="form-row">
-            <label>CTAタイトル</label>
-            <textarea id="cta-title" rows="2" placeholder="気になった方は、&#10;まずLINEで話しましょう。" oninput="markDirty()"></textarea>
-          </div>
+      <div class="card">
+        <div class="card-head"><span class="card-icon">📣</span><span class="card-name">CTA</span></div>
+        <div class="card-body">
+          <div class="form-row"><label class="field-label">CTAタイトル</label><textarea id="cta-title" rows="2" oninput="markDirty()"></textarea></div>
         </div>
       </div>
     </div>
 
-    <!-- ===== 画像 ===== -->
-    <div class="page" id="page-images">
-      <div class="page-title">画像 管理</div>
-      <div class="page-sub">各セクションの画像を設定します。画像をクリックまたはドラッグ＆ドロップで変更できます。</div>
-
-      <div class="section-card">
-        <div class="section-head">
-          <span class="section-icon">🏷</span>
-          <span class="section-name">ロゴ</span>
-          <span class="section-desc">透かし・フッターに使用</span>
-        </div>
-        <div class="section-body">
-          <div class="img-upload-grid" style="grid-template-columns:repeat(3,1fr);">
-            <div class="img-upload-item">
-              <label>ダーク用ロゴ</label>
-              <div class="img-drop" id="drop-footer-dark" onclick="triggerUpload('file-footer-dark')">
-                <img id="prev-footer-dark" src="images/footer_logo_dark.jpg" alt="">
+    <!-- ===== LOGOS ===== -->
+    <div class="page" id="page-logos">
+      <div class="page-title">ロゴ</div>
+      <div class="page-sub">フッター・透かしに使用するロゴ画像を設定します。</div>
+      <div class="card">
+        <div class="card-head"><span class="card-icon">🏷</span><span class="card-name">ロゴ画像</span></div>
+        <div class="card-body">
+          <div class="logo-grid">
+            <div>
+              <div class="img-drop-label">ダーク用ロゴ</div>
+              <div class="logo-drop" id="drop-fdark" onclick="triggerUpload('file-fdark')">
+                <img class="preview" id="prev-fdark" src="images/footer_logo_dark.jpg" alt="">
                 <div class="img-drop-overlay"><span class="img-drop-icon">📷</span><span class="img-drop-text">クリックして変更</span></div>
-                <input type="file" id="file-footer-dark" accept="image/*" onchange="handleImageUpload(this,'footer-logo-dark','prev-footer-dark')">
+                <input type="file" id="file-fdark" accept="image/*" onchange="handleLogo(this,'footer-logo-dark','prev-fdark','drop-fdark')">
               </div>
-              <div class="img-filename" id="fn-footer-dark">footer_logo_dark.jpg（現在）</div>
             </div>
-            <div class="img-upload-item">
-              <label>ライト用ロゴ</label>
-              <div class="img-drop" id="drop-footer-light" onclick="triggerUpload('file-footer-light')">
-                <img id="prev-footer-light" src="images/footer_logo_light.jpg" alt="">
+            <div>
+              <div class="img-drop-label">ライト用ロゴ</div>
+              <div class="logo-drop" id="drop-flight" onclick="triggerUpload('file-flight')">
+                <img class="preview" id="prev-flight" src="images/footer_logo_light.jpg" alt="">
                 <div class="img-drop-overlay"><span class="img-drop-icon">📷</span><span class="img-drop-text">クリックして変更</span></div>
-                <input type="file" id="file-footer-light" accept="image/*" onchange="handleImageUpload(this,'footer-logo-light','prev-footer-light')">
+                <input type="file" id="file-flight" accept="image/*" onchange="handleLogo(this,'footer-logo-light','prev-flight','drop-flight')">
               </div>
-              <div class="img-filename" id="fn-footer-light">footer_logo_light.jpg（現在）</div>
             </div>
-            <div class="img-upload-item">
-              <label>透かし用ロゴ（PNG推奨）</label>
-              <div class="img-drop" id="drop-logo" onclick="triggerUpload('file-logo')">
-                <img id="prev-logo" src="images/logo.png" alt="">
+            <div>
+              <div class="img-drop-label">透かし用（PNG推奨）</div>
+              <div class="logo-drop" id="drop-logo" onclick="triggerUpload('file-logo')">
+                <img class="preview" id="prev-logo" src="images/logo.png" alt="">
                 <div class="img-drop-overlay"><span class="img-drop-icon">📷</span><span class="img-drop-text">クリックして変更</span></div>
-                <input type="file" id="file-logo" accept="image/*" onchange="handleImageUpload(this,'logo','prev-logo')">
-              </div>
-              <div class="img-filename" id="fn-logo">logo.png（現在）</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="section-card">
-        <div class="section-head">
-          <span class="section-icon">↔️</span>
-          <span class="section-name">BAスライダー</span>
-          <span class="section-desc">Before / Afterの施工事例写真</span>
-        </div>
-        <div class="section-body">
-          <div style="margin-bottom:20px;">
-            <div style="font-size:.78rem;color:var(--text2);margin-bottom:12px;">スライダー 1</div>
-            <div class="img-upload-grid">
-              <div class="img-upload-item">
-                <label>Before</label>
-                <div class="img-drop wide" onclick="triggerUpload('file-ba1-before')">
-                  <div class="img-drop-overlay" style="opacity:1;"><span class="img-drop-icon">📷</span><span class="img-drop-text">施工前の写真</span></div>
-                  <input type="file" id="file-ba1-before" accept="image/*" onchange="handleImageUpload(this,'ba1-before',null)">
-                </div>
-                <div class="img-filename" id="fn-ba1-before">未設定（プレースホルダー使用中）</div>
-              </div>
-              <div class="img-upload-item">
-                <label>After</label>
-                <div class="img-drop wide" onclick="triggerUpload('file-ba1-after')">
-                  <div class="img-drop-overlay" style="opacity:1;"><span class="img-drop-icon">📷</span><span class="img-drop-text">施工後の写真</span></div>
-                  <input type="file" id="file-ba1-after" accept="image/*" onchange="handleImageUpload(this,'ba1-after',null)">
-                </div>
-                <div class="img-filename" id="fn-ba1-after">未設定（プレースホルダー使用中）</div>
-              </div>
-            </div>
-          </div>
-          <div>
-            <div style="font-size:.78rem;color:var(--text2);margin-bottom:12px;">スライダー 2</div>
-            <div class="img-upload-grid">
-              <div class="img-upload-item">
-                <label>Before</label>
-                <div class="img-drop wide" onclick="triggerUpload('file-ba2-before')">
-                  <div class="img-drop-overlay" style="opacity:1;"><span class="img-drop-icon">📷</span><span class="img-drop-text">施工前の写真</span></div>
-                  <input type="file" id="file-ba2-before" accept="image/*" onchange="handleImageUpload(this,'ba2-before',null)">
-                </div>
-                <div class="img-filename" id="fn-ba2-before">未設定（プレースホルダー使用中）</div>
-              </div>
-              <div class="img-upload-item">
-                <label>After</label>
-                <div class="img-drop wide" onclick="triggerUpload('file-ba2-after')">
-                  <div class="img-drop-overlay" style="opacity:1;"><span class="img-drop-icon">📷</span><span class="img-drop-text">施工後の写真</span></div>
-                  <input type="file" id="file-ba2-after" accept="image/*" onchange="handleImageUpload(this,'ba2-after',null)">
-                </div>
-                <div class="img-filename" id="fn-ba2-after">未設定（プレースホルダー使用中）</div>
+                <input type="file" id="file-logo" accept="image/*" onchange="handleLogo(this,'logo','prev-logo','drop-logo')">
               </div>
             </div>
           </div>
@@ -381,127 +258,65 @@ textarea{resize:vertical;line-height:1.8;}
       </div>
     </div>
 
-    <!-- ===== プロフィール ===== -->
+    <!-- ===== PROFILE ===== -->
     <div class="page" id="page-profile">
-      <div class="page-title">プロフィール 編集</div>
+      <div class="page-title">プロフィール</div>
       <div class="page-sub">ぬーまんのプロフィールセクションを編集します。</div>
-
-      <div class="section-card">
-        <div class="section-head">
-          <span class="section-icon">👤</span>
-          <span class="section-name">基本情報</span>
-        </div>
-        <div class="section-body">
-          <div class="form-grid">
-            <div class="form-row">
-              <label>名前（日本語）</label>
-              <input type="text" id="numan-name-ja" placeholder="セメントアーティスト ぬーまん" oninput="markDirty()">
-            </div>
-            <div class="form-row">
-              <label>名前（英語）</label>
-              <input type="text" id="numan-name-en" placeholder="Cement Artist Nu☆Man" oninput="markDirty()">
-            </div>
+      <div class="card">
+        <div class="card-head"><span class="card-icon">👤</span><span class="card-name">基本情報</span></div>
+        <div class="card-body">
+          <div class="form-grid form-row">
+            <div><label class="field-label">名前（日本語）</label><input type="text" id="numan-name-ja" placeholder="セメントアーティスト ぬーまん" oninput="markDirty()"></div>
+            <div><label class="field-label">名前（英語）</label><input type="text" id="numan-name-en" placeholder="Cement Artist Nu☆Man" oninput="markDirty()"></div>
           </div>
-          <div class="form-grid">
-            <div class="form-row">
-              <label>📍 場所</label>
-              <input type="text" id="numan-location" placeholder="三重県 松阪市" oninput="markDirty()">
-            </div>
-            <div class="form-row">
-              <label>🗓 経歴</label>
-              <input type="text" id="numan-career" placeholder="ローラーストーン歴 2019年〜" oninput="markDirty()">
-            </div>
+          <div class="form-grid form-row">
+            <div><label class="field-label">📍 場所</label><input type="text" id="numan-location" placeholder="三重県 松阪市" oninput="markDirty()"></div>
+            <div><label class="field-label">🗓 経歴</label><input type="text" id="numan-career" placeholder="ローラーストーン歴 2019年〜" oninput="markDirty()"></div>
           </div>
         </div>
       </div>
-
-      <div class="section-card">
-        <div class="section-head">
-          <span class="section-icon">📖</span>
-          <span class="section-name">プロフィール文</span>
-        </div>
-        <div class="section-body">
-          <div class="form-row">
-            <textarea id="numan-body" rows="10" placeholder="16歳から建設業界に飛び込み..." oninput="markDirty()"></textarea>
-            <div class="input-hint">改行はそのまま改行で入力してください。</div>
-          </div>
+      <div class="card">
+        <div class="card-head"><span class="card-icon">📖</span><span class="card-name">プロフィール文</span></div>
+        <div class="card-body">
+          <div class="form-row"><textarea id="numan-body" rows="10" oninput="markDirty()"></textarea></div>
         </div>
       </div>
-
-      <div class="section-card">
-        <div class="section-head">
-          <span class="section-icon">🖼</span>
-          <span class="section-name">プロフィール写真</span>
-        </div>
-        <div class="section-body">
-          <div class="img-upload-grid" style="grid-template-columns:200px 160px;">
-            <div class="img-upload-item">
-              <label>メイン写真（カラー）</label>
-              <div class="img-drop" onclick="triggerUpload('file-numan-main')">
-                <img id="prev-numan-main" src="images/numan_color.jpg" alt="">
-                <div class="img-drop-overlay"><span class="img-drop-icon">📷</span><span class="img-drop-text">クリックして変更</span></div>
-                <input type="file" id="file-numan-main" accept="image/*" onchange="handleImageUpload(this,'numan-color','prev-numan-main')">
+      <div class="card">
+        <div class="card-head"><span class="card-icon">🖼</span><span class="card-name">プロフィール写真</span></div>
+        <div class="card-body">
+          <div style="display:grid;grid-template-columns:200px 160px;gap:16px;">
+            <div>
+              <div class="img-drop-label">メイン写真（カラー）</div>
+              <div class="logo-drop" style="aspect-ratio:1;" id="drop-nm" onclick="triggerUpload('file-nm')">
+                <img class="preview" id="prev-nm" src="images/numan_color.jpg" alt="">
+                <div class="img-drop-overlay"><span class="img-drop-icon">📷</span><span class="img-drop-text">変更</span></div>
+                <input type="file" id="file-nm" accept="image/*" onchange="handleLogo(this,'numan-color','prev-nm','drop-nm')">
               </div>
-              <div class="img-filename" id="fn-numan-main">numan_color.jpg（現在）</div>
             </div>
-            <div class="img-upload-item">
-              <label>サブ写真</label>
-              <div class="img-drop" onclick="triggerUpload('file-numan-sub')">
-                <img id="prev-numan-sub" src="images/numan_portrait.jpg" alt="">
-                <div class="img-drop-overlay"><span class="img-drop-icon">📷</span><span class="img-drop-text">クリックして変更</span></div>
-                <input type="file" id="file-numan-sub" accept="image/*" onchange="handleImageUpload(this,'numan-portrait','prev-numan-sub')">
+            <div>
+              <div class="img-drop-label">サブ写真</div>
+              <div class="logo-drop" style="aspect-ratio:1;" id="drop-ns" onclick="triggerUpload('file-ns')">
+                <img class="preview" id="prev-ns" src="images/numan_portrait.jpg" alt="">
+                <div class="img-drop-overlay"><span class="img-drop-icon">📷</span><span class="img-drop-text">変更</span></div>
+                <input type="file" id="file-ns" accept="image/*" onchange="handleLogo(this,'numan-portrait','prev-ns','drop-ns')">
               </div>
-              <div class="img-filename" id="fn-numan-sub">numan_portrait.jpg（現在）</div>
             </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- ===== セクション設定 ===== -->
+    <!-- ===== SECTIONS ===== -->
     <div class="page" id="page-sections">
-      <div class="page-title">セクション 設定</div>
+      <div class="page-title">セクション設定</div>
       <div class="page-sub">各セクションの表示・非表示を切り替えます。</div>
-
-      <div class="section-card">
-        <div class="section-head">
-          <span class="section-icon">⚙️</span>
-          <span class="section-name">表示設定</span>
+      <div class="card">
+        <div class="card-body">
+          <div class="toggle-row"><div class="toggle-info"><div class="t-label">BAスライダーセクション</div></div><label class="toggle"><input type="checkbox" id="sec-ba" checked onchange="markDirty()"><span class="toggle-track"></span><span class="toggle-thumb"></span></label></div>
+          <div class="toggle-row"><div class="toggle-info"><div class="t-label">動画セクション</div></div><label class="toggle"><input type="checkbox" id="sec-video" onchange="markDirty()"><span class="toggle-track"></span><span class="toggle-thumb"></span></label></div>
+          <div class="toggle-row"><div class="toggle-info"><div class="t-label">プロフィールセクション</div></div><label class="toggle"><input type="checkbox" id="sec-profile" checked onchange="markDirty()"><span class="toggle-track"></span><span class="toggle-thumb"></span></label></div>
+          <div class="toggle-row"><div class="toggle-info"><div class="t-label">Why KIMARUセクション</div></div><label class="toggle"><input type="checkbox" id="sec-why" checked onchange="markDirty()"><span class="toggle-track"></span><span class="toggle-thumb"></span></label></div>
         </div>
-        <div class="section-body">
-          <div class="toggle-row">
-            <div class="toggle-info">
-              <div class="toggle-label">BAスライダーセクション</div>
-              <div class="toggle-desc">Before / After の施工事例スライダー</div>
-            </div>
-            <label class="toggle"><input type="checkbox" id="sec-ba" checked onchange="markDirty()"><span class="toggle-track"></span><span class="toggle-thumb"></span></label>
-          </div>
-          <div class="toggle-row">
-            <div class="toggle-info">
-              <div class="toggle-label">動画セクション（Cinematic View）</div>
-              <div class="toggle-desc">動画URLが設定されている場合に表示</div>
-            </div>
-            <label class="toggle"><input type="checkbox" id="sec-video" onchange="markDirty();document.getElementById('video-visible').checked=this.checked;"><span class="toggle-track"></span><span class="toggle-thumb"></span></label>
-          </div>
-          <div class="toggle-row">
-            <div class="toggle-info">
-              <div class="toggle-label">プロフィールセクション（ぬーまん）</div>
-              <div class="toggle-desc">サービス提供者のプロフィール</div>
-            </div>
-            <label class="toggle"><input type="checkbox" id="sec-profile" checked onchange="markDirty()"><span class="toggle-track"></span><span class="toggle-thumb"></span></label>
-          </div>
-          <div class="toggle-row">
-            <div class="toggle-info">
-              <div class="toggle-label">Why KIMARUセクション</div>
-              <div class="toggle-desc">サービス誕生ストーリー</div>
-            </div>
-            <label class="toggle"><input type="checkbox" id="sec-why" checked onchange="markDirty()"><span class="toggle-track"></span><span class="toggle-thumb"></span></label>
-          </div>
-        </div>
-      </div>
-
-      <div class="preview-hint">
-        💡 <strong>設定を変更したら</strong>、右上の「HTMLをダウンロード」ボタンを押して新しいHTMLを取得し、GitHubの <code>KIMARU/LP/kimaru_pr.html</code> を上書きアップロードしてください。
       </div>
     </div>
 
@@ -510,313 +325,362 @@ textarea{resize:vertical;line-height:1.8;}
 
 <!-- SAVE BAR -->
 <div class="save-bar" id="save-bar">
-  <div class="save-bar-msg">⚠ <strong>未保存の変更があります。</strong>　ダウンロードしてGitHubにアップしてください。</div>
-  <div class="save-bar-btns">
-    <button class="btn-secondary" onclick="resetChanges()">リセット</button>
-    <button class="btn-primary" onclick="generateAndDownload()">⬇ ダウンロード</button>
+  <div class="save-msg">⚠ <strong>未保存の変更があります。</strong></div>
+  <div class="save-btns">
+    <button class="btn btn-secondary" onclick="resetAll()">リセット</button>
+    <button class="btn btn-primary" onclick="generateAndDownload()">⬇ ダウンロード</button>
   </div>
 </div>
-
-<!-- TOAST -->
-<div class="toast" id="toast">
-  <span class="toast-icon">✅</span>
-  <span id="toast-msg">HTMLをダウンロードしました。</span>
-</div>
+<div class="toast" id="toast"><span style="color:var(--green)">✅</span><span id="toast-msg"></span></div>
 
 <script>
 // ===== STATE =====
-var dirty = false;
-var imageData = {}; // key: 'numan-color', value: {base64, filename, ext}
+var dirty=false;
+var imageData={};// key→{base64,filename}
+var baCards=[];// array of {id,title,before,after,finish,color,grout,sample}
 
-// ===== NAVIGATION =====
-function showPage(id, el) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  document.getElementById('page-' + id).classList.add('active');
+// ===== NAV =====
+function showPage(id,el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
   el.classList.add('active');
 }
 
 // ===== DIRTY =====
-function markDirty() {
-  dirty = true;
-  document.getElementById('save-bar').classList.add('visible');
+function markDirty(){dirty=true;document.getElementById('save-bar').classList.add('show');}
+function resetAll(){if(!confirm('変更をリセットしますか？'))return;dirty=false;document.getElementById('save-bar').classList.remove('show');loadDefaults();}
+
+// ===== BA CARDS =====
+var baIdCounter=0;
+
+function addBaCard(data){
+  if(!data)data={id:'ba_'+(baIdCounter++),title:'',before:'',after:'',finish:'',color:'',grout:'',sample:''};
+  else if(!data.id)data.id='ba_'+(baIdCounter++);
+  baCards.push(data);
+  renderBaCards();
+  markDirty();
 }
 
-function resetChanges() {
-  if (!confirm('変更をリセットしますか？')) return;
-  dirty = false;
-  document.getElementById('save-bar').classList.remove('visible');
-  loadDefaults();
+function removeBaCard(id){
+  baCards=baCards.filter(c=>c.id!==id);
+  renderBaCards();
+  markDirty();
 }
 
-// ===== IMAGE UPLOAD =====
-function triggerUpload(inputId) {
-  document.getElementById(inputId).click();
+function renderBaCards(){
+  var container=document.getElementById('ba-cards');
+  container.innerHTML='';
+  baCards.forEach(function(item,i){
+    var div=document.createElement('div');
+    div.className='ba-card';
+    div.id='card-'+item.id;
+    div.innerHTML=buildBaCardHTML(item,i);
+    container.appendChild(div);
+    initBaPreview(item.id);
+  });
 }
 
-function handleImageUpload(input, key, previewId) {
-  var file = input.files[0];
-  if (!file) return;
-  var ext = file.name.split('.').pop().toLowerCase();
-  var reader = new FileReader();
-  reader.onload = function(e) {
-    imageData[key] = { base64: e.target.result, filename: file.name, ext: ext };
-    if (previewId) {
-      var prev = document.getElementById(previewId);
-      if (prev) { prev.src = e.target.result; prev.closest('.img-drop').classList.add('has-image'); }
+function buildBaCardHTML(item,i){
+  var num=(i+1<10?'0'+(i+1):''+(i+1));
+  return '<div class="ba-card-head">'
+    +'<span class="ba-card-num">'+num+'</span>'
+    +'<input class="ba-card-title-input" type="text" placeholder="タイトル（例：RSタイル調 玄関アプローチ）" value="'+escHtml(item.title)+'" oninput="updateBaField(\''+item.id+'\',\'title\',this.value)">'
+    +'<button class="btn btn-danger" onclick="removeBaCard(\''+item.id+'\')">削除</button>'
+    +'</div>'
+    +'<div class="ba-card-body">'
+    // Preview
+    +'<div class="ba-preview-panel">'
+    +'<div class="ba-preview-slider" id="preview-slider-'+item.id+'">'
+    +(item.before?'<img class="ba-preview-img" src="'+item.before+'" alt="">':'')
+    +(item.after?'<img class="ba-preview-img ba-preview-after" id="prev-after-'+item.id+'" src="'+item.after+'" alt="">':'')
+    +(item.before||item.after?'<div class="ba-preview-handle"><div class="ba-preview-line"></div><div class="ba-preview-pill">SLIDE</div></div>':'<div class="ba-preview-empty">画像をアップするとここにプレビューが表示されます</div>')
+    +'</div>'
+    +'</div>'
+    // Upload areas
+    +'<div class="ba-img-grid">'
+    +'<div>'
+    +'<div class="img-drop-label">Before（施工前）</div>'
+    +'<div class="img-drop'+(item.before?' has-img':'')+'" id="drop-b-'+item.id+'" onclick="triggerUpload(\'file-b-'+item.id+'\')">'
+    +(item.before?'<img class="preview" src="'+item.before+'" alt="">':'')
+    +'<div class="img-drop-overlay"><span class="img-drop-icon">📷</span><span class="img-drop-text">施工前の写真</span></div>'
+    +'<input type="file" id="file-b-'+item.id+'" accept="image/*" onchange="handleBaImage(this,\''+item.id+'\',\'before\')">'
+    +'</div>'
+    +'<div class="img-fname" id="fn-b-'+item.id+'">'+(item.before&&item.before.startsWith('data:')?'画像設定済み':item.before?item.before:'未設定')+'</div>'
+    +'</div>'
+    +'<div>'
+    +'<div class="img-drop-label">After（施工後）</div>'
+    +'<div class="img-drop'+(item.after?' has-img':'')+'" id="drop-a-'+item.id+'" onclick="triggerUpload(\'file-a-'+item.id+'\')">'
+    +(item.after?'<img class="preview" src="'+item.after+'" alt="">':'')
+    +'<div class="img-drop-overlay"><span class="img-drop-icon">📷</span><span class="img-drop-text">施工後の写真</span></div>'
+    +'<input type="file" id="file-a-'+item.id+'" accept="image/*" onchange="handleBaImage(this,\''+item.id+'\',\'after\')">'
+    +'</div>'
+    +'<div class="img-fname" id="fn-a-'+item.id+'">'+(item.after&&item.after.startsWith('data:')?'画像設定済み':item.after?item.after:'未設定')+'</div>'
+    +'</div>'
+    +'</div>'
+    // Info fields
+    +'<div class="info-fields">'
+    +'<div><label class="field-label">仕上げ名</label><input type="text" placeholder="RSタイル調" value="'+escHtml(item.finish)+'" oninput="updateBaField(\''+item.id+'\',\'finish\',this.value)"></div>'
+    +'<div><label class="field-label">カラー</label><input type="text" placeholder="グレー" value="'+escHtml(item.color)+'" oninput="updateBaField(\''+item.id+'\',\'color\',this.value)"></div>'
+    +'<div><label class="field-label">目地</label><input type="text" placeholder="ブラック" value="'+escHtml(item.grout)+'" oninput="updateBaField(\''+item.id+'\',\'grout\',this.value)"></div>'
+    +'</div>'
+    // Sample image
+    +'<div class="sample-row">'
+    +'<div>'
+    +'<div class="img-drop-label" style="margin-bottom:6px;">素材サンプル画像（任意）</div>'
+    +'<div class="img-drop has-img" style="width:80px;height:80px;aspect-ratio:1;" id="drop-s-'+item.id+'" onclick="triggerUpload(\'file-s-'+item.id+'\')">'
+    +(item.sample?'<img class="preview" src="'+item.sample+'" alt="">':'')
+    +'<div class="img-drop-overlay"><span class="img-drop-icon" style="font-size:1.2rem;">📷</span></div>'
+    +'<input type="file" id="file-s-'+item.id+'" accept="image/*" onchange="handleBaImage(this,\''+item.id+'\',\'sample\')">'
+    +'</div>'
+    +'</div>'
+    +'<div style="font-size:.72rem;color:var(--text2);line-height:2;">クリックで拡大できる小さなサムネイルとして、<br>仕上げ説明の横に表示されます。</div>'
+    +'</div>'
+    +'</div>';
+}
+
+function escHtml(s){return (s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+function updateBaField(id,field,val){
+  var item=baCards.find(c=>c.id===id);
+  if(item){item[field]=val;markDirty();}
+}
+
+function handleBaImage(input,id,field){
+  var file=input.files[0];if(!file)return;
+  var reader=new FileReader();
+  reader.onload=function(e){
+    var b64=e.target.result;
+    var item=baCards.find(c=>c.id===id);
+    if(!item)return;
+    item[field]=b64;
+    markDirty();
+    // Update preview in card
+    var drop=document.getElementById('drop-'+field[0]+'-'+id);
+    if(drop){
+      drop.classList.add('has-img');
+      var prev=drop.querySelector('img.preview');
+      if(prev)prev.src=b64;
+      else{var img=document.createElement('img');img.className='preview';img.src=b64;drop.insertBefore(img,drop.firstChild);}
     }
-    // Update filename display
-    var fnEl = document.getElementById('fn-' + input.id.replace('file-',''));
-    if (fnEl) fnEl.textContent = file.name + '（変更あり）';
-    // Update overlay
-    var overlay = input.closest('.img-drop').querySelector('.img-drop-overlay');
-    if (overlay) overlay.style.opacity = '';
+    var fn=document.getElementById('fn-'+field[0]+'-'+id);
+    if(fn)fn.textContent='画像設定済み（'+file.name+')';
+    // Update slider preview
+    if(field==='before'||field==='after'){
+      var slider=document.getElementById('preview-slider-'+id);
+      if(slider){
+        // Rebuild preview
+        var beforeSrc=item.before||'';
+        var afterSrc=item.after||'';
+        slider.innerHTML=(beforeSrc?'<img class="ba-preview-img" src="'+beforeSrc+'" alt="">':'')
+          +(afterSrc?'<img class="ba-preview-img ba-preview-after" id="prev-after-'+id+'" src="'+afterSrc+'" alt="">':'')
+          +((beforeSrc||afterSrc)?'<div class="ba-preview-handle"><div class="ba-preview-line"></div><div class="ba-preview-pill">SLIDE</div></div>':'<div class="ba-preview-empty">画像をアップするとここにプレビューが表示されます</div>');
+        initBaPreview(id);
+      }
+    }
+    if(field==='sample'){
+      var sdrop=document.getElementById('drop-s-'+id);
+      if(sdrop){
+        var simg=sdrop.querySelector('img.preview');
+        if(simg)simg.src=b64;
+        else{var si=document.createElement('img');si.className='preview';si.src=b64;sdrop.insertBefore(si,sdrop.firstChild);}
+      }
+    }
+  };
+  reader.readAsDataURL(file);
+}
+
+function initBaPreview(id){
+  var slider=document.getElementById('preview-slider-'+id);
+  if(!slider)return;
+  var afterImg=slider.querySelector('.ba-preview-after');
+  if(!afterImg)return;
+  var handle=slider.querySelector('.ba-preview-handle');
+  var dragging=false;
+  function update(clientX){
+    var rect=slider.getBoundingClientRect();
+    var pos=Math.max(0,Math.min(100,((clientX-rect.left)/rect.width)*100));
+    afterImg.style.clipPath='inset(0 0 0 '+pos+'%)';
+    if(handle){handle.style.left=pos+'%';handle.style.transform='translateX(-50%)';}
+  }
+  slider.addEventListener('mousedown',function(e){dragging=true;update(e.clientX);});
+  window.addEventListener('mousemove',function(e){if(dragging)update(e.clientX);});
+  window.addEventListener('mouseup',function(){dragging=false;});
+  slider.addEventListener('touchstart',function(e){update(e.touches[0].clientX);},{passive:true});
+  slider.addEventListener('touchmove',function(e){update(e.touches[0].clientX);},{passive:true});
+}
+
+// ===== LOGO UPLOAD =====
+function triggerUpload(id){document.getElementById(id).click();}
+
+function handleLogo(input,key,previewId,dropId){
+  var file=input.files[0];if(!file)return;
+  var reader=new FileReader();
+  reader.onload=function(e){
+    imageData[key]={base64:e.target.result,filename:file.name};
+    var prev=document.getElementById(previewId);
+    if(prev){prev.src=e.target.result;prev.style.display='block';}
+    var drop=document.getElementById(dropId);
+    if(drop)drop.classList.add('has-img');
     markDirty();
   };
   reader.readAsDataURL(file);
 }
 
-// ===== LOAD DEFAULTS =====
-function loadDefaults() {
-  // Load from localStorage if available, else defaults
-  var saved = {};
-  try { saved = JSON.parse(localStorage.getItem('kimaru-settings') || '{}'); } catch(e) {}
-
-  setVal('line-url', saved['line-url'] || 'https://lin.ee/xxxxxxx');
-  setVal('line-btn-text', saved['line-btn-text'] || 'LINE でお問い合わせ');
-  setVal('ig-url', saved['ig-url'] || 'https://www.instagram.com/cementart_numan/');
-  setVal('video-url', saved['video-url'] || '');
-  setVal('video-poster', saved['video-poster'] || '');
-  setCheck('video-visible', saved['video-visible'] || false);
-  setVal('hero-catch', saved['hero-catch'] || '施工の現場が、そのまま<br>最高の提案書になる。');
-  setVal('hero-sub', saved['hero-sub'] || '施工の現場が、そのまま最高の提案書になる。\nKIMARUが、あなたの営業を変えます。');
-  setVal('msg-main', saved['msg-main'] || 'サンプルを持って行っても契約が取れない、\nそんな時代は<span>もう終わり</span>にしませんか。');
-  setVal('msg-body', saved['msg-body'] || '技術は本物なのに、伝え方が追いついていないだけ。\nKIMARUを使えば、お客様が自分で「決める」ようになります。');
-  setVal('cta-title', saved['cta-title'] || '気になった方は、\nまずLINEで話しましょう。');
-  setVal('numan-name-ja', saved['numan-name-ja'] || 'セメントアーティスト\nぬーまん');
-  setVal('numan-name-en', saved['numan-name-en'] || 'Cement Artist Nu☆Man');
-  setVal('numan-location', saved['numan-location'] || '三重県 松阪市');
-  setVal('numan-career', saved['numan-career'] || 'ローラーストーン歴 2019年〜');
-  setVal('numan-body', saved['numan-body'] || '16歳から建設業界に飛び込み、長年にわたって仮設事業・下請けの世界で働いてきた。\n\nいつしか、「カタチに残る仕事がしたい」と思うようになった。\nそんなとき出会ったのが、ローラーストーン。\n\nお客さんの喜ぶ声、笑顔に直接ふれられる仕事。\nそして、この仕事に真剣に向き合う熱い思いを持った仲間たちと定期的に会える環境。\n出会うたびに気づきがあり、学びがある。\n\nこの素晴らしい仕事を、もっと多くの人に知ってもらいたい。\n高い技術を持つ仲間たちに、もっと自信を持って輝ける機会を届けたい。\nそして、私自身を育ててくれたROLLER STONEという業界に、このプロジェクトで恩返しがしたい。\n\nそれが、KIMARUの原点です。');
-  setCheck('sec-ba', saved['sec-ba'] !== false);
-  setCheck('sec-video', saved['sec-video'] || false);
-  setCheck('sec-profile', saved['sec-profile'] !== false);
-  setCheck('sec-why', saved['sec-why'] !== false);
+// ===== DEFAULTS =====
+function loadDefaults(){
+  var s={};
+  try{s=JSON.parse(localStorage.getItem('kimaru-settings')||'{}');}catch(e){}
+  setVal('line-url',s['line-url']||'https://lin.ee/xxxxxxx');
+  setVal('line-btn-text',s['line-btn-text']||'LINE でお問い合わせ');
+  setVal('ig-url',s['ig-url']||'https://www.instagram.com/cementart_numan/');
+  setVal('video-url',s['video-url']||'');
+  setVal('video-poster',s['video-poster']||'');
+  setCheck('video-visible',s['video-visible']||false);
+  setVal('hero-catch',s['hero-catch']||'施工の現場が、そのまま<br>最高の提案書になる。');
+  setVal('hero-sub',s['hero-sub']||'施工の現場が、そのまま最高の提案書になる。\nKIMARUが、あなたの営業を変えます。');
+  setVal('msg-main',s['msg-main']||'サンプルを持って行っても契約が取れない、\nそんな時代は<span>もう終わり</span>にしませんか。');
+  setVal('msg-body',s['msg-body']||'技術は本物なのに、伝え方が追いついていないだけ。\nKIMARUを使えば、お客様が自分で「決める」ようになります。');
+  setVal('cta-title',s['cta-title']||'気になった方は、\nまずLINEで話しましょう。');
+  setVal('numan-name-ja',s['numan-name-ja']||'セメントアーティスト\nぬーまん');
+  setVal('numan-name-en',s['numan-name-en']||'Cement Artist Nu☆Man');
+  setVal('numan-location',s['numan-location']||'三重県 松阪市');
+  setVal('numan-career',s['numan-career']||'ローラーストーン歴 2019年〜');
+  setVal('numan-body',s['numan-body']||'16歳から建設業界に飛び込み、長年にわたって仮設事業・下請けの世界で働いてきた。\n\nいつしか、「カタチに残る仕事がしたい」と思うようになった。\nそんなとき出会ったのが、ローラーストーン。\n\nお客さんの喜ぶ声、笑顔に直接ふれられる仕事。\nそして、この仕事に真剣に向き合う熱い思いを持った仲間たちと定期的に会える環境。\n出会うたびに気づきがあり、学びがある。\n\nこの素晴らしい仕事を、もっと多くの人に知ってもらいたい。\n高い技術を持つ仲間たちに、もっと自信を持って輝ける機会を届けたい。\nそして、私自身を育ててくれたROLLER STONEという業界に、このプロジェクトで恩返しがしたい。\n\nそれが、KIMARUの原点です。');
+  setCheck('sec-ba',s['sec-ba']!==false);
+  setCheck('sec-video',s['sec-video']||false);
+  setCheck('sec-profile',s['sec-profile']!==false);
+  setCheck('sec-why',s['sec-why']!==false);
+  // BA cards
+  baCards=[];
+  baIdCounter=0;
+  var savedCards=s['ba-cards']||[];
+  if(savedCards.length){savedCards.forEach(function(c){c.id='ba_'+(baIdCounter++);baCards.push(c);});renderBaCards();}
+  else{renderBaCards();}// empty state
 }
 
-function setVal(id, val) { var el = document.getElementById(id); if (el) el.value = val; }
-function setCheck(id, val) { var el = document.getElementById(id); if (el) el.checked = val; }
-function getVal(id) { var el = document.getElementById(id); return el ? el.value : ''; }
-function getCheck(id) { var el = document.getElementById(id); return el ? el.checked : false; }
+function setVal(id,val){var el=document.getElementById(id);if(el)el.value=val;}
+function setCheck(id,val){var el=document.getElementById(id);if(el)el.checked=val;}
+function getVal(id){var el=document.getElementById(id);return el?el.value:'';}
+function getCheck(id){var el=document.getElementById(id);return el?el.checked:false;}
 
 // ===== SAVE SETTINGS =====
-function saveSettings() {
-  var s = {
-    'line-url': getVal('line-url'),
-    'line-btn-text': getVal('line-btn-text'),
-    'ig-url': getVal('ig-url'),
-    'video-url': getVal('video-url'),
-    'video-poster': getVal('video-poster'),
-    'video-visible': getCheck('video-visible'),
-    'hero-catch': getVal('hero-catch'),
-    'hero-sub': getVal('hero-sub'),
-    'msg-main': getVal('msg-main'),
-    'msg-body': getVal('msg-body'),
-    'cta-title': getVal('cta-title'),
-    'numan-name-ja': getVal('numan-name-ja'),
-    'numan-name-en': getVal('numan-name-en'),
-    'numan-location': getVal('numan-location'),
-    'numan-career': getVal('numan-career'),
-    'numan-body': getVal('numan-body'),
-    'sec-ba': getCheck('sec-ba'),
-    'sec-video': getCheck('sec-video'),
-    'sec-profile': getCheck('sec-profile'),
-    'sec-why': getCheck('sec-why'),
+function saveSettings(){
+  var s={
+    'line-url':getVal('line-url'),
+    'line-btn-text':getVal('line-btn-text'),
+    'ig-url':getVal('ig-url'),
+    'video-url':getVal('video-url'),
+    'video-poster':getVal('video-poster'),
+    'video-visible':getCheck('video-visible'),
+    'hero-catch':getVal('hero-catch'),
+    'hero-sub':getVal('hero-sub'),
+    'msg-main':getVal('msg-main'),
+    'msg-body':getVal('msg-body'),
+    'cta-title':getVal('cta-title'),
+    'numan-name-ja':getVal('numan-name-ja'),
+    'numan-name-en':getVal('numan-name-en'),
+    'numan-location':getVal('numan-location'),
+    'numan-career':getVal('numan-career'),
+    'numan-body':getVal('numan-body'),
+    'sec-ba':getCheck('sec-ba'),
+    'sec-video':getCheck('sec-video'),
+    'sec-profile':getCheck('sec-profile'),
+    'sec-why':getCheck('sec-why'),
+    'ba-cards':baCards,
   };
-  try { localStorage.setItem('kimaru-settings', JSON.stringify(s)); } catch(e) {}
+  try{localStorage.setItem('kimaru-settings',JSON.stringify(s));}catch(e){}
   return s;
 }
 
 // ===== GENERATE HTML =====
-function generateAndDownload() {
-  var s = saveSettings();
-
-  // Read the original HTML via fetch (works when served locally or via GitHub Pages)
+function generateAndDownload(){
+  var s=saveSettings();
   fetch('kimaru_pr.html')
-    .then(r => r.text())
-    .then(html => {
-      html = applySettings(html, s);
-      downloadHTML(html, 'kimaru_pr.html');
-      dirty = false;
-      document.getElementById('save-bar').classList.remove('visible');
+    .then(r=>{if(!r.ok)throw new Error();return r.text();})
+    .then(html=>{
+      html=applySettings(html,s);
+      downloadHTML(html,'kimaru_pr.html');
+      dirty=false;
+      document.getElementById('save-bar').classList.remove('show');
       showToast('HTMLをダウンロードしました！GitHubにアップしてください。');
     })
-    .catch(() => {
-      showToast('⚠ kimaru_pr.htmlが見つかりません。同じフォルダに置いてください。');
-    });
+    .catch(()=>showToast('⚠ kimaru_pr.htmlが見つかりません。同じフォルダに置いてください。'));
 }
 
-function applySettings(html, s) {
+function applySettings(html,s){
+  // BA data JSON
+  var baJson=JSON.stringify(baCards.map(function(item){
+    return {title:item.title,before:item.before||'',after:item.after||'',finish:item.finish||'',color:item.color||'',grout:item.grout||'',sample:item.sample||''};
+  }));
+  html=html.replace(/(<script type="application\/json" id="ba-data">)([\s\S]*?)(<\/script>)/,'$1'+baJson+'$3');
+
   // LINE URL
-  html = html.replace(/href="https:\/\/lin\.ee\/[^"]*"(\s*class="cta-btn)/g,
-    'href="' + s['line-url'] + '"$1');
-
-  // LINE button text
-  html = html.replace(/(class="cta-btn[^>]*>[\s\S]*?<span class="cta-btn-icon">📱<\/span>\s*)(LINE でお問い合わせ|[^<]+)(\s*<\/a>)/,
-    '$1' + s['line-btn-text'] + '$3');
-
+  html=html.replace(/href="[^"]*"(\s*class="cta-btn)/g,'href="'+s['line-url']+'"$1');
   // Instagram URL
-  html = html.replace(/href="https:\/\/www\.instagram\.com\/[^"]*"(\s*class="numan-ig)/g,
-    'href="' + s['ig-url'] + '"$1');
-
+  html=html.replace(/href="[^"]*"(\s*class="numan-ig)/g,'href="'+s['ig-url']+'"$1');
   // Video
-  html = html.replace(/(<video[^>]*src=")[^"]*(")/,
-    '$1' + s['video-url'] + '$2');
-  html = html.replace(/(<video[^>]*poster=")[^"]*(")/,
-    '$1' + s['video-poster'] + '$2');
+  html=html.replace(/(<video[^>]*src=")[^"]*(")/,'$1'+s['video-url']+'$2');
+  html=html.replace(/(<video[^>]*poster=")[^"]*(")/,'$1'+s['video-poster']+'$2');
 
-  // Video section visibility
-  if (!s['sec-video']) {
-    html = html.replace(/(<section[^>]*class="[^"]*video-section[^"]*"[^>]*>)([\s\S]*?)(<\/section>)/,
-      '$1<div style="display:none">$2</div>$3');
+  // Hero catch
+  var catchLines=s['hero-catch'].split('\n').filter(l=>l.trim());
+  if(catchLines.length){
+    var newCatch=catchLines.map(l=>'<span>'+l+'</span>').join('');
+    html=html.replace(/(<div class="hero-catch">)([\s\S]*?)(<\/div>[\s\n]*<\/div>[\s\n]*<p class="hero-sub">)/,function(m,p1,p2,p3){return p1+newCatch+p3.replace(/^(<\/div>[\s\n]*<\/div>[\s\n]*)/,'</div>\n    </div>\n    ');});
   }
-
-  // Hero catch - find the catchphrase spans
-  var catchLines = s['hero-catch'].split('\n').filter(l => l.trim());
-  if (catchLines.length > 0) {
-    var newCatch = catchLines.map(l => '<span>' + l + '</span>').join('');
-    html = html.replace(/(<div class="hero-catch-wrap">[\s\S]*?<div class="hero-catch">)([\s\S]*?)(<\/div>[\s\S]*?<\/div>)/,
-      function(m, p1, p2, p3) { return p1 + newCatch + p3; });
-  }
-
   // Hero sub
-  var subHtml = s['hero-sub'].replace(/\n/g, '<br>');
-  html = html.replace(/(<p class="hero-sub">)([\s\S]*?)(<\/p>)/,
-    '$1' + subHtml + '$3');
-
-  // Message main
-  var msgMainHtml = s['msg-main'].replace(/\n/g, '<br>');
-  html = html.replace(/(<p class="message-main">)([\s\S]*?)(<\/p>)/,
-    '$1' + msgMainHtml + '$3');
-
-  // Message body
-  var msgBodyHtml = s['msg-body'].replace(/\n/g, '<br>');
-  html = html.replace(/(<p class="message-body">)([\s\S]*?)(<\/p>)/,
-    '$1' + msgBodyHtml + '$3');
-
+  html=html.replace(/(<p class="hero-sub">)([\s\S]*?)(<\/p>)/,'$1'+s['hero-sub'].replace(/\n/g,'<br>')+'$3');
+  // Message
+  html=html.replace(/(<p class="message-main">)([\s\S]*?)(<\/p>)/,'$1'+s['msg-main'].replace(/\n/g,'<br>')+'$3');
+  html=html.replace(/(<p class="message-body">)([\s\S]*?)(<\/p>)/,'$1'+s['msg-body'].replace(/\n/g,'<br>')+'$3');
   // CTA title
-  var ctaHtml = s['cta-title'].replace(/\n/g, '<br>');
-  html = html.replace(/(<h2 class="cta-title reveal">)([\s\S]*?)(<\/h2>)/,
-    '$1' + ctaHtml + '$3');
-
+  html=html.replace(/(<h2 class="cta-title reveal">)([\s\S]*?)(<\/h2>)/,'$1'+s['cta-title'].replace(/\n/g,'<br>')+'$3');
   // Numan name
-  var nameLines = s['numan-name-ja'].split('\n');
-  var nameHtml = nameLines.join('<br>');
-  html = html.replace(/(<h2 class="numan-name">)([\s\S]*?)(<\/h2>)/,
-    '$1' + nameHtml + '$3');
-
-  // Numan title (EN)
-  html = html.replace(/(<p class="numan-title">)([\s\S]*?)(<\/p>)/,
-    '$1' + s['numan-name-en'] + '$3');
-
-  // Numan location & career
-  html = html.replace(/(<span class="numan-meta-text">)(三重県 松阪市|[^<]*)(<\/span>)/,
-    '$1' + s['numan-location'] + '$3');
-  html = html.replace(/(<span class="numan-meta-text">)(ローラーストーン歴[^<]*|[^<]*)(<\/span>)/,
-    '$1' + s['numan-career'] + '$3');
-
+  html=html.replace(/(<h2 class="numan-name">)([\s\S]*?)(<\/h2>)/,'$1'+s['numan-name-ja'].replace(/\n/g,'<br>')+'$3');
+  html=html.replace(/(<p class="numan-title">)([\s\S]*?)(<\/p>)/,'$1'+s['numan-name-en']+'$3');
+  html=html.replace(/(<span class="numan-meta-text">三重県[^<]*)(<\/span>)/,'<span class="numan-meta-text">'+s['numan-location']+'$2');
+  html=html.replace(/(<span class="numan-meta-text">ローラーストーン歴[^<]*)(<\/span>)/,'<span class="numan-meta-text">'+s['numan-career']+'$2');
   // Numan body
-  var numanBodyHtml = s['numan-body'].replace(/\n\n/g, '</p><p class="numan-body reveal">').replace(/\n/g, '<br>');
-  html = html.replace(/(<p class="numan-body reveal">)([\s\S]*?)(<\/p>[\s\S]*?<a href)/,
-    '$1' + numanBodyHtml + '$3');
+  var nbHtml=s['numan-body'].replace(/\n\n/g,'</p>\n<p class="numan-body reveal">').replace(/\n/g,'<br>');
+  html=html.replace(/(<p class="numan-body reveal">)([\s\S]*?)(<\/p>\s*<a)/,'$1'+nbHtml+'$3');
 
-  // BA section visibility
-  if (!s['sec-ba']) {
-    html = html.replace(/(<!-- BA（透かしなし） -->)([\s\S]*?)(<!-- VIDEO)/,
-      '$1<div style="display:none">$2</div>$3');
-  }
-
-  // Profile section visibility
-  if (!s['sec-profile']) {
-    html = html.replace(/(<!-- NUMAN SECTION -->)([\s\S]*?)(<!-- WHY)/,
-      '$1<div style="display:none">$2</div>$3');
-  }
-
-  // Why section visibility
-  if (!s['sec-why']) {
-    html = html.replace(/(<!-- WHY KIMARU STORY -->)([\s\S]*?)(<!-- CTA)/,
-      '$1<div style="display:none">$2</div>$3');
-  }
-
-  // Images (replace file paths with base64 if new images were uploaded)
-  var imgKeyMap = {
-    'numan-color':   { src: 'images/numan_color.jpg' },
-    'numan-portrait': { src: 'images/numan_portrait.jpg' },
-    'footer-logo-dark': { src: 'images/footer_logo_dark.jpg' },
-    'footer-logo-light': { src: 'images/footer_logo_light.jpg' },
-    'logo': { src: 'images/logo.png' },
-    'ba1-before': { selector: 'ba1-before' },
-    'ba1-after':  { selector: 'ba1-after' },
-    'ba2-before': { selector: 'ba2-before' },
-    'ba2-after':  { selector: 'ba2-after' },
-  };
-
-  Object.keys(imageData).forEach(function(key) {
-    var d = imageData[key];
-    var map = imgKeyMap[key];
-    if (!map) return;
-    if (map.src) {
-      html = html.replace(new RegExp('src="' + map.src.replace(/\./g, '\\.') + '"', 'g'),
-        'src="' + d.base64 + '"');
-    }
+  // Images (logo / numan photos)
+  var imgMap={'numan-color':'images/numan_color.jpg','numan-portrait':'images/numan_portrait.jpg','footer-logo-dark':'images/footer_logo_dark.jpg','footer-logo-light':'images/footer_logo_light.jpg','logo':'images/logo.png'};
+  Object.keys(imageData).forEach(function(key){
+    if(!imgMap[key])return;
+    var src=imgMap[key].replace(/\./g,'\\.').replace(/\//g,'\\/');
+    html=html.replace(new RegExp('src="'+src+'"','g'),'src="'+imageData[key].base64+'"');
   });
 
-  // BA images via placeholder replacement
-  if (imageData['ba1-before']) {
-    html = html.replace(/src="https:\/\/via\.placeholder\.com\/1200x675\/111\/[^"]*text=BEFORE"(\s*class="ba-img" alt="Before")/, 'src="' + imageData['ba1-before'].base64 + '"$1');
-  }
-  if (imageData['ba1-after']) {
-    html = html.replace(/src="https:\/\/via\.placeholder\.com\/1200x675\/1a1208\/[^"]*text=AFTER"(\s*class="ba-img ba-after" alt="After")/, 'src="' + imageData['ba1-after'].base64 + '"$1');
-  }
-  if (imageData['ba2-before']) {
-    html = html.replace(/src="https:\/\/via\.placeholder\.com\/1200x675\/111\/[^"]*text=BEFORE"(\s*class="ba-img" alt="Before" id)/, 'src="' + imageData['ba2-before'].base64 + '"$1');
-  }
-  if (imageData['ba2-after']) {
-    html = html.replace(/src="https:\/\/via\.placeholder\.com\/1200x675\/0f1a0a\/[^"]*text=AFTER"(\s*class="ba-img ba-after" alt="After" id)/, 'src="' + imageData['ba2-after'].base64 + '"$1');
-  }
+  // Section visibility
+  if(!s['sec-ba'])html=html.replace(/(id="ba-section"[^>]*>)([\s\S]*?)(<\/section>[\s\S]*?<!-- VIDEO)/,function(m,p1,p2,p3){return p1+'<div style="display:none">'+p2+'</div>'+p3;});
+  if(!s['sec-video'])html=html.replace(/(class="[^"]*video-section[^"]*"[^>]*>)([\s\S]*?)(<\/section>[\s\S]*?<!-- MESSAGE)/,function(m,p1,p2,p3){return p1+'<div style="display:none">'+p2+'</div>'+p3;});
+  if(!s['sec-profile'])html=html.replace(/(<!-- NUMAN SECTION -->)([\s\S]*?)(<!-- WHY)/, '$1<div style="display:none">$2</div>$3');
+  if(!s['sec-why'])html=html.replace(/(<!-- WHY KIMARU STORY -->)([\s\S]*?)(<!-- CTA)/,'$1<div style="display:none">$2</div>$3');
 
   return html;
 }
 
-function downloadHTML(html, filename) {
-  var blob = new Blob([html], { type: 'text/html;charset=utf-8' });
-  var a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = filename;
-  a.click();
-  URL.revokeObjectURL(a.href);
+function downloadHTML(html,filename){
+  var blob=new Blob([html],{type:'text/html;charset=utf-8'});
+  var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=filename;a.click();URL.revokeObjectURL(a.href);
 }
 
-function previewLP() {
-  var s = saveSettings();
+function previewLP(){
+  var s=saveSettings();
   fetch('kimaru_pr.html')
-    .then(r => r.text())
-    .then(html => {
-      var modified = applySettings(html, s);
-      var blob = new Blob([modified], { type: 'text/html' });
-      window.open(URL.createObjectURL(blob), '_blank');
-    })
-    .catch(() => showToast('⚠ kimaru_pr.htmlが見つかりません。'));
+    .then(r=>r.text())
+    .then(html=>{var m=applySettings(html,s);var blob=new Blob([m],{type:'text/html'});window.open(URL.createObjectURL(blob),'_blank');})
+    .catch(()=>showToast('⚠ kimaru_pr.htmlが見つかりません。'));
 }
 
-function showToast(msg) {
-  var t = document.getElementById('toast');
-  document.getElementById('toast-msg').textContent = msg;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 3500);
+function showToast(msg){
+  var t=document.getElementById('toast');document.getElementById('toast-msg').textContent=msg;
+  t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3500);
 }
 
-// ===== INIT =====
+// INIT
 loadDefaults();
 </script>
 </body>
