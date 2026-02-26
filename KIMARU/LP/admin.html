@@ -806,46 +806,6 @@ function setupAllDragDrop(){
   });
 }
 
-// ===== ドラッグ＆ドロップ =====
-function initDragDrop(dropEl, fileInput, onLoadFn){
-  dropEl.addEventListener('dragover', function(e){
-    e.preventDefault();
-    dropEl.style.borderColor='var(--gold)';
-    dropEl.style.background='rgba(201,168,76,.08)';
-  });
-  dropEl.addEventListener('dragleave', function(){
-    dropEl.style.borderColor='';
-    dropEl.style.background='';
-  });
-  dropEl.addEventListener('drop', function(e){
-    e.preventDefault();
-    dropEl.style.borderColor='';
-    dropEl.style.background='';
-    var file = e.dataTransfer.files[0];
-    if(!file || !file.type.startsWith('image/')) return;
-    // fileInputにセットしてonchangeと同じ処理を走らせる
-    var dt = new DataTransfer();
-    dt.items.add(file);
-    fileInput.files = dt.files;
-    onLoadFn(fileInput);
-  });
-}
-
-// 全画像エリアにD&D適用（DOM構築後に呼ぶ）
-function setupAllDragDrop(){
-  document.querySelectorAll('.img-drop, .logo-drop').forEach(function(drop){
-    var input = drop.querySelector('input[type=file]');
-    if(!input || drop._ddInit) return;
-    drop._ddInit = true;
-    initDragDrop(drop, input, function(inp){
-      var ev = new Event('change');
-      inp.dispatchEvent(ev);
-    });
-    // テキスト更新
-    var txt = drop.querySelector('.img-drop-text');
-    if(txt) txt.textContent = 'クリックまたはドロップ';
-  });
-}
 
 function handleLogo(input,key,previewId,dropId){
   var file=input.files[0];if(!file)return;
