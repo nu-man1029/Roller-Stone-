@@ -770,6 +770,42 @@ function initBaPreview(id){
 // ===== LOGO UPLOAD =====
 function triggerUpload(id){document.getElementById(id).click();}
 
+function setupAllDragDrop(){
+  document.querySelectorAll('.img-drop, .logo-drop').forEach(function(drop){
+    if(drop._dd) return;
+    drop._dd = true;
+    var input = drop.querySelector('input[type=file]');
+    if(!input) return;
+
+    // テキスト更新
+    var txt = drop.querySelector('.img-drop-text');
+    if(txt) txt.textContent = 'クリックまたはドロップ';
+
+    drop.addEventListener('dragover', function(e){
+      e.preventDefault(); e.stopPropagation();
+      drop.style.borderColor = 'var(--gold)';
+      drop.style.background  = 'rgba(201,168,76,.1)';
+    });
+    drop.addEventListener('dragleave', function(){
+      drop.style.borderColor = '';
+      drop.style.background  = '';
+    });
+    drop.addEventListener('drop', function(e){
+      e.preventDefault(); e.stopPropagation();
+      drop.style.borderColor = '';
+      drop.style.background  = '';
+      var file = e.dataTransfer.files[0];
+      if(!file || !file.type.startsWith('image/')) return;
+      try{
+        var dt = new DataTransfer();
+        dt.items.add(file);
+        input.files = dt.files;
+      }catch(ex){ return; }
+      input.dispatchEvent(new Event('change'));
+    });
+  });
+}
+
 // ===== ドラッグ＆ドロップ =====
 function initDragDrop(dropEl, fileInput, onLoadFn){
   dropEl.addEventListener('dragover', function(e){
