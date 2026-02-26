@@ -57,7 +57,7 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans JP',sans-seri
 .ba-img-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px;}
 .img-drop-label{font-size:.65rem;letter-spacing:2px;color:var(--text2);margin-bottom:7px;text-transform:uppercase;}
 .img-drop{border:2px dashed var(--border);border-radius:8px;overflow:hidden;aspect-ratio:16/9;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;position:relative;background:var(--bg3);}
-.img-drop:hover{border-color:var(--gold);}
+.img-drop:hover,.img-drop.drag-over{border-color:var(--gold);background:rgba(201,168,76,.08);}
 .img-drop.has-img{border-style:solid;border-color:rgba(201,168,76,.4);}
 .img-drop img.preview{width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0;}
 .img-drop-overlay{position:absolute;inset:0;background:rgba(0,0,0,.55);display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;transition:opacity .2s;z-index:1;}
@@ -131,7 +131,7 @@ textarea{resize:vertical;line-height:1.9;}
 /* LOGO GRID */
 .logo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
 .logo-drop{border:2px dashed var(--border);border-radius:8px;aspect-ratio:1;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;position:relative;background:var(--bg3);}
-.logo-drop:hover{border-color:var(--gold);}
+.logo-drop:hover,.logo-drop.drag-over{border-color:var(--gold);background:rgba(201,168,76,.08);}
 .logo-drop.has-img{border-style:solid;border-color:rgba(201,168,76,.4);}
 .logo-drop img.preview{width:100%;height:100%;object-fit:cover;position:absolute;}
 .logo-drop input[type=file]{display:none;}
@@ -529,8 +529,7 @@ function selectTheme(theme, el){
 }
 
 function markDirty(){dirty=true;document.getElementById('save-bar').classList.add('show');}
-function resetAll(){if(!confirm('変更をリセットしますか？'))return;dirty=false;document.getElementById('save-bar').classList.remove('show');loadDefaults();
-  setupAllDragDrop();}
+function resetAll(){if(!confirm('変更をリセットしますか？'))return;dirty=false;document.getElementById('save-bar').classList.remove('show');loadDefaults();}
 
 // ===== BA CARDS =====
 var baIdCounter=0;
@@ -657,7 +656,6 @@ function addAngle(cardId){
   var container=document.getElementById('angles-'+cardId);
   if(container)container.innerHTML=buildAnglesHTML(item);
   markDirty();
-  setTimeout(setupAllDragDrop, 80);
 }
 
 function removeAngle(cardId,ai){
@@ -771,42 +769,92 @@ function initBaPreview(id){
 // ===== LOGO UPLOAD =====
 function triggerUpload(id){document.getElementById(id).click();}
 
-function setupAllDragDrop(){
-  document.querySelectorAll('.img-drop, .logo-drop').forEach(function(drop){
-    if(drop._dd) return;
-    drop._dd = true;
-    drop.setAttribute('data-dd','1');
-    var input = drop.querySelector('input[type=file]');
-    if(!input) return;
+// ===== D&D: documentレベルで一括処理 =====
+document.addEventListener('dragover', function(e){ e.preventDefault(); });
+document.addEventListener('drop', function(e){
+  e.preventDefault();
+  var file = (e.dataTransfer.files||[])[0];
+  if(!file || !file.type.startsWith('image/')) return;
 
-    // テキスト更新
-    var txt = drop.querySelector('.img-drop-text');
-    if(txt) txt.textContent = 'クリックまたはドロップ';
+  // ドロップ先の .img-drop or .logo-drop を探す
+  var drop = e.target.closest('.img-drop, .logo-drop');
+  if(!drop) return;
 
-    drop.addEventListener('dragover', function(e){
-      e.preventDefault(); e.stopPropagation();
-      drop.style.borderColor = 'var(--gold)';
-      drop.style.background  = 'rgba(201,168,76,.1)';
-    });
-    drop.addEventListener('dragleave', function(){
-      drop.style.borderColor = '';
-      drop.style.background  = '';
-    });
-    drop.addEventListener('drop', function(e){
-      e.preventDefault(); e.stopPropagation();
-      drop.style.borderColor = '';
-      drop.style.background  = '';
-      var file = e.dataTransfer.files[0];
-      if(!file || !file.type.startsWith('image/')) return;
-      try{
-        var dt = new DataTransfer();
-        dt.items.add(file);
-        input.files = dt.files;
-      }catch(ex){ return; }
-      input.dispatchEvent(new Event('change'));
-    });
-  });
-}
+  var reader = new FileReader();
+  reader.onload = function(ev){
+    var b64 = ev.target.result;
+    var id = drop.id;
+
+    // プレビュー共通処理
+    function setPreview(el, src){
+      el.classList.add('has-img');
+      var prev = el.querySelector('img.preview');
+      if(prev){ prev.src = src; }
+      else{ var img=document.createElement('img'); img.className='preview'; img.src=src; el.insertBefore(img, el.firstChild); }
+    }
+
+    if(id.indexOf('drop-ang-') === 0){
+      var pts = id.replace('drop-ang-','').split('-');
+      var cardId = pts[0], ai = parseInt(pts[1]);
+      var item = baCards.find(function(c){return c.id===cardId;});
+      if(!item) return;
+      if(!item.angles) item.angles=[];
+      if(!item.angles[ai]) item.angles[ai]={src:'',label:''};
+      item.angles[ai].src = b64;
+      setPreview(drop, b64);
+      markDirty();
+
+    } else if(id.indexOf('drop-b-')===0 || id.indexOf('drop-a-')===0 || id.indexOf('drop-s-')===0){
+      var field = id.indexOf('drop-b-')===0?'before':id.indexOf('drop-a-')===0?'after':'sample';
+      var baId  = id.slice(7);
+      var item  = baCards.find(function(c){return c.id===baId;});
+      if(!item) return;
+      item[field] = b64;
+      setPreview(drop, b64);
+      var fn = document.getElementById('fn-'+field[0]+'-'+baId);
+      if(fn) fn.textContent = '画像設定済み';
+      if(field==='before'||field==='after'){
+        var slider=document.getElementById('preview-slider-'+baId);
+        if(slider){
+          var bSrc=item.before||'', aSrc=item.after||'';
+          slider.innerHTML=(bSrc?'<img class="ba-preview-img" src="'+bSrc+'" alt="">':'')+
+            (aSrc?'<img class="ba-preview-img ba-preview-after" id="prev-after-'+baId+'" src="'+aSrc+'" alt="">':'')+
+            ((bSrc||aSrc)?'<div class="ba-preview-handle"><div class="ba-preview-line"></div><div class="ba-preview-pill">SLIDE</div></div>':
+            '<div class="ba-preview-empty">画像をアップするとここにプレビューが表示されます</div>');
+          if(typeof initBaPreview==='function') initBaPreview(baId);
+        }
+      }
+      markDirty();
+
+    } else {
+      // ロゴ・プロフィール写真
+      var input = drop.querySelector('input[type=file]');
+      if(!input) return;
+      var m = (input.getAttribute('onchange')||'').match(/handleLogo\(this,'([^']+)','([^']+)'/);
+      if(!m) return;
+      imageData[m[1]] = {base64:b64, filename:file.name};
+      var prev = document.getElementById(m[2]);
+      if(prev){prev.src=b64;prev.style.display='block';}
+      setPreview(drop, b64);
+      markDirty();
+    }
+  };
+  reader.readAsDataURL(file);
+});
+
+// ドラッグ中のビジュアルフィードバック
+document.addEventListener('dragenter', function(e){
+  var drop = e.target.closest('.img-drop, .logo-drop');
+  if(drop) drop.style.borderColor='var(--gold)';
+});
+document.addEventListener('dragleave', function(e){
+  var drop = e.target.closest('.img-drop, .logo-drop');
+  if(drop) drop.style.borderColor='';
+});
+
+
+
+
 
 
 function handleLogo(input,key,previewId,dropId){
@@ -1095,7 +1143,6 @@ function loadProject(name){
   localStorage.setItem('kimaru-settings',JSON.stringify(projects[name].settings));
   closeProjModal('modal-load');
   loadDefaults();
-  setupAllDragDrop();
   showToast('「'+name+'」を読み込みました。');
 }
 
@@ -1111,7 +1158,6 @@ function deleteProject(name){
 
 // INIT
 loadDefaults();
-  setupAllDragDrop();
 </script>
 
 <!-- PROJECT SAVE MODAL -->
