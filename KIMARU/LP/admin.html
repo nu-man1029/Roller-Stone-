@@ -657,6 +657,7 @@ function addAngle(cardId){
   var container=document.getElementById('angles-'+cardId);
   if(container)container.innerHTML=buildAnglesHTML(item);
   markDirty();
+  setTimeout(setupAllDragDrop, 80);
 }
 
 function removeAngle(cardId,ai){
@@ -774,6 +775,7 @@ function setupAllDragDrop(){
   document.querySelectorAll('.img-drop, .logo-drop').forEach(function(drop){
     if(drop._dd) return;
     drop._dd = true;
+    drop.setAttribute('data-dd','1');
     var input = drop.querySelector('input[type=file]');
     if(!input) return;
 
