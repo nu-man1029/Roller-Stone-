@@ -566,11 +566,9 @@ function buildBaCardHTML(item,i){
   var angles=item.angles||[];
   var anglesUI=angles.map(function(ang,ai){
     return '<div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:10px;">'
-      +'<div><div class="img-drop'+(ang.src?' has-img':'')+'" style="width:120px;height:90px;" id="drop-ang-'+item.id+'-'+ai+'" onclick="triggerUpload(\'file-ang-'+item.id+'-'+ai+'\')">'
-      +(ang.src?'<img class="preview" src="'+ang.src+'" alt="">':'')
-      +'<div class="img-drop-overlay"><span class="img-drop-icon" style="font-size:1.2rem;">&#128247;</span></div>'
-      +'<input type="file" id="file-ang-'+item.id+'-'+ai+'" accept="image/*" onchange="handleAngleImage(this,\''+item.id+'\','+ai+')">'
-      +'</div></div>'
+      +'<div style="margin-bottom:4px;"><label class="field-label">画像URL</label>'
+      +'<input type="url" placeholder="https://..." value="'+escHtml(ang.src||'')+'" oninput="updateAngleSrc(\''+item.id+'\','+ai+',this.value)">'
+      +'</div>'
       +'<div style="flex:1;">'
       +'<label class="field-label">ラベル</label>'
       +'<input type="text" style="margin-bottom:8px;" placeholder="例：鳥観図、夜景、ライトアップ" value="'+escHtml(ang.label||'')+'" oninput="updateAngleLabel(\''+item.id+'\','+ai+',this.value)">'
@@ -596,17 +594,11 @@ function buildBaCardHTML(item,i){
     +'</div></div>'
     +'<div class="ba-img-grid">'
     +'<div><div class="img-drop-label">Before（施工前）</div>'
-    +'<div class="img-drop '+beforeHasImg+'" id="drop-b-'+item.id+'" onclick="triggerUpload(\'file-b-'+item.id+'\')">'
-    +(item.before?'<img class="preview" src="'+item.before+'" alt="">':'')
-    +'<div class="img-drop-overlay"><span class="img-drop-icon">&#128247;</span><span class="img-drop-text">施工前の写真</span></div>'
-    +'<input type="file" id="file-b-'+item.id+'" accept="image/*" onchange="handleBaImage(this,\''+item.id+'\',\'before\')">'
-    +'</div></div>'
+    +'<input type="url" placeholder="https://... 画像URL" value="'+escHtml(item.before||'')+'" oninput="updateBaField(\''+item.id+'\',\'before\',this.value);updateBaPreviewFromUrl(\''+item.id+'\')">'
+    +'</div>'
     +'<div><div class="img-drop-label">After（施工後）</div>'
-    +'<div class="img-drop '+afterHasImg+'" id="drop-a-'+item.id+'" onclick="triggerUpload(\'file-a-'+item.id+'\')">'
-    +(item.after?'<img class="preview" src="'+item.after+'" alt="">':'')
-    +'<div class="img-drop-overlay"><span class="img-drop-icon">&#128247;</span><span class="img-drop-text">施工後の写真</span></div>'
-    +'<input type="file" id="file-a-'+item.id+'" accept="image/*" onchange="handleBaImage(this,\''+item.id+'\',\'after\')">'
-    +'</div></div>'
+    +'<input type="url" placeholder="https://... 画像URL" value="'+escHtml(item.after||'')+'" oninput="updateBaField(\''+item.id+'\',\'after\',this.value);updateBaPreviewFromUrl(\''+item.id+'\')">'
+    +'</div>'
     +'</div>'
     +'<div class="info-fields">'
     +'<div><label class="field-label">仕上げ名</label><input type="text" placeholder="RSタイル調" value="'+escHtml(item.finish)+'" oninput="updateBaField(\''+item.id+'\',\'finish\',this.value)"></div>'
@@ -614,12 +606,9 @@ function buildBaCardHTML(item,i){
     +'<div><label class="field-label">目地</label><input type="text" placeholder="ブラック" value="'+escHtml(item.grout)+'" oninput="updateBaField(\''+item.id+'\',\'grout\',this.value)"></div>'
     +'</div>'
     +'<div class="sample-row" style="margin-bottom:16px;">'
-    +'<div><div class="img-drop-label" style="margin-bottom:6px;">素材サンプル画像（任意）</div>'
-    +'<div class="img-drop '+sampleHasImg+'" style="width:80px;height:80px;aspect-ratio:1;" id="drop-s-'+item.id+'" onclick="triggerUpload(\'file-s-'+item.id+'\')">'
-    +(item.sample?'<img class="preview" src="'+item.sample+'" alt="">':'')
-    +'<div class="img-drop-overlay"><span class="img-drop-icon" style="font-size:1.2rem;">&#128247;</span></div>'
-    +'<input type="file" id="file-s-'+item.id+'" accept="image/*" onchange="handleBaImage(this,\''+item.id+'\',\'sample\')">'
-    +'</div></div>'
+    +'<div><div class="img-drop-label" style="margin-bottom:6px;">素材サンプル画像URL（任意）</div>'
+    +'<input type="url" placeholder="https://... 画像URL" value="'+escHtml(item.sample||'')+'" oninput="updateBaField(\''+item.id+'\',\'sample\',this.value)">'
+    +'</div>'
     +'<div style="font-size:.72rem;color:var(--text2);line-height:2;">クリックで拡大できる小さなサムネイル<br>として仕上げ説明の横に表示されます。</div>'
     +'</div>'
     +'<div><div class="img-drop-label" style="margin-bottom:8px;">追加アングル写真（鳥観図・夜景・ライトアップなど）</div>'
@@ -635,11 +624,9 @@ function buildAnglesHTML(item){
   var angles=item.angles||[];
   return angles.map(function(ang,ai){
     return '<div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:10px;">'
-      +'<div><div class="img-drop'+(ang.src?' has-img':'')+'" style="width:120px;height:90px;" id="drop-ang-'+item.id+'-'+ai+'" onclick="triggerUpload(\'file-ang-'+item.id+'-'+ai+'\')">'
-      +(ang.src?'<img class="preview" src="'+ang.src+'" alt="">':'')
-      +'<div class="img-drop-overlay"><span class="img-drop-icon" style="font-size:1.2rem;">&#128247;</span></div>'
-      +'<input type="file" id="file-ang-'+item.id+'-'+ai+'" accept="image/*" onchange="handleAngleImage(this,\''+item.id+'\','+ai+')">'
-      +'</div></div>'
+      +'<div style="margin-bottom:4px;"><label class="field-label">画像URL</label>'
+      +'<input type="url" placeholder="https://..." value="'+escHtml(ang.src||'')+'" oninput="updateAngleSrc(\''+item.id+'\','+ai+',this.value)">'
+      +'</div>'
       +'<div style="flex:1;">'
       +'<label class="field-label">ラベル</label>'
       +'<input type="text" style="margin-bottom:8px;" placeholder="例：鳥観図、夜景、ライトアップ" value="'+escHtml(ang.label||'')+'" oninput="updateAngleLabel(\''+item.id+'\','+ai+',this.value)">'
@@ -664,6 +651,13 @@ function removeAngle(cardId,ai){
   item.angles.splice(ai,1);
   var container=document.getElementById('angles-'+cardId);
   if(container)container.innerHTML=buildAnglesHTML(item);
+  markDirty();
+}
+
+function updateAngleSrc(cardId,ai,val){
+  var item=baCards.find(function(c){return c.id===cardId;});
+  if(!item||!item.angles||!item.angles[ai])return;
+  item.angles[ai].src=val;
   markDirty();
 }
 
@@ -696,6 +690,19 @@ function handleAngleImage(input,cardId,ai){
 }
 
 function escHtml(s){return (s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+function updateBaPreviewFromUrl(id){
+  var item=baCards.find(function(c){return c.id===id;});
+  if(!item)return;
+  var slider=document.getElementById('preview-slider-'+id);
+  if(!slider)return;
+  var bSrc=item.before||'', aSrc=item.after||'';
+  slider.innerHTML=(bSrc?'<img class="ba-preview-img" src="'+bSrc+'" alt="">':'')+
+    (aSrc?'<img class="ba-preview-img ba-preview-after" id="prev-after-'+id+'" src="'+aSrc+'" alt="">':'')+
+    ((bSrc||aSrc)?'<div class="ba-preview-handle"><div class="ba-preview-line"></div><div class="ba-preview-pill">SLIDE</div></div>':
+    '<div class="ba-preview-empty">画像をアップするとここにプレビューが表示されます</div>');
+  if(typeof initBaPreview==='function') initBaPreview(id);
+}
 
 function updateBaField(id,field,val){
   var item=baCards.find(c=>c.id===id);
@@ -769,84 +776,7 @@ function initBaPreview(id){
 // ===== LOGO UPLOAD =====
 function triggerUpload(id){document.getElementById(id).click();}
 
-// ===== D&D: documentレベルで一括処理 =====
-document.addEventListener('dragover', function(e){ e.preventDefault(); });
-document.addEventListener('drop', function(e){
-  e.preventDefault();
-  var file = (e.dataTransfer.files||[])[0];
-  if(!file || !file.type.startsWith('image/')) return;
 
-  // ドロップ先の .img-drop or .logo-drop を探す
-  var drop = e.target.closest('.img-drop, .logo-drop');
-  if(!drop) return;
-
-  var reader = new FileReader();
-  reader.onload = function(ev){
-    var b64 = ev.target.result;
-    var id = drop.id;
-
-    // プレビュー共通処理
-    function setPreview(el, src){
-      el.classList.add('has-img');
-      var prev = el.querySelector('img.preview');
-      if(prev){ prev.src = src; }
-      else{ var img=document.createElement('img'); img.className='preview'; img.src=src; el.insertBefore(img, el.firstChild); }
-    }
-
-    if(id.indexOf('drop-ang-') === 0){
-      var pts = id.replace('drop-ang-','').split('-');
-      var cardId = pts[0], ai = parseInt(pts[1]);
-      var item = baCards.find(function(c){return c.id===cardId;});
-      if(!item) return;
-      if(!item.angles) item.angles=[];
-      if(!item.angles[ai]) item.angles[ai]={src:'',label:''};
-      item.angles[ai].src = b64;
-      setPreview(drop, b64);
-      markDirty();
-
-    } else if(id.indexOf('drop-b-')===0 || id.indexOf('drop-a-')===0 || id.indexOf('drop-s-')===0){
-      var field = id.indexOf('drop-b-')===0?'before':id.indexOf('drop-a-')===0?'after':'sample';
-      var baId  = id.slice(7);
-      var item  = baCards.find(function(c){return c.id===baId;});
-      if(!item) return;
-      item[field] = b64;
-      setPreview(drop, b64);
-      var fn = document.getElementById('fn-'+field[0]+'-'+baId);
-      if(fn) fn.textContent = '画像設定済み';
-      if(field==='before'||field==='after'){
-        var slider=document.getElementById('preview-slider-'+baId);
-        if(slider){
-          var bSrc=item.before||'', aSrc=item.after||'';
-          slider.innerHTML=(bSrc?'<img class="ba-preview-img" src="'+bSrc+'" alt="">':'')+
-            (aSrc?'<img class="ba-preview-img ba-preview-after" id="prev-after-'+baId+'" src="'+aSrc+'" alt="">':'')+
-            ((bSrc||aSrc)?'<div class="ba-preview-handle"><div class="ba-preview-line"></div><div class="ba-preview-pill">SLIDE</div></div>':
-            '<div class="ba-preview-empty">画像をアップするとここにプレビューが表示されます</div>');
-          if(typeof initBaPreview==='function') initBaPreview(baId);
-        }
-      }
-      markDirty();
-
-    } else {
-      // ロゴ・プロフィール写真
-      var input = drop.querySelector('input[type=file]');
-      if(!input) return;
-      var m = (input.getAttribute('onchange')||'').match(/handleLogo\(this,'([^']+)','([^']+)'/);
-      if(!m) return;
-      imageData[m[1]] = {base64:b64, filename:file.name};
-      var prev = document.getElementById(m[2]);
-      if(prev){prev.src=b64;prev.style.display='block';}
-      setPreview(drop, b64);
-      markDirty();
-    }
-  };
-  reader.readAsDataURL(file);
-});
-
-// ドラッグ中のビジュアルフィードバック
-document.addEventListener('dragenter', function(e){
-  var drop = e.target.closest('.img-drop, .logo-drop');
-  if(drop) drop.style.borderColor='var(--gold)';
-});
 document.addEventListener('dragleave', function(e){
   var drop = e.target.closest('.img-drop, .logo-drop');
   if(drop) drop.style.borderColor='';
