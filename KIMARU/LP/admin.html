@@ -575,9 +575,11 @@ function buildBaCardHTML(item,i){
   var angles=item.angles||[];
   var anglesUI=angles.map(function(ang,ai){
     return '<div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:10px;">'
-      +'<div style="margin-bottom:4px;"><label class="field-label">画像URL</label>'
-      +'<input type="url" placeholder="https://..." value="'+escHtml(ang.src||'')+'" oninput="updateAngleSrc(\''+item.id+'\','+ai+',this.value)">'
-      +'</div>'
+      +'<div><div class="img-drop'+(ang.src?' has-img':'')+'" style="width:120px;height:90px;" id="drop-ang-'+item.id+'-'+ai+'" onclick="triggerUpload(\'file-ang-'+item.id+'-'+ai+'\')">'
+      +(ang.src?'<img class="preview" src="'+ang.src+'" alt="">':'')
+      +'<div class="img-drop-overlay"><span class="img-drop-icon" style="font-size:1.2rem;">&#128247;</span></div>'
+      +'<input type="file" id="file-ang-'+item.id+'-'+ai+'" accept="image/*" onchange="handleAngleImage(this,\''+item.id+'\','+ai+')">'
+      +'</div></div>'
       +'<div style="flex:1;">'
       +'<label class="field-label">ラベル</label>'
       +'<input type="text" style="margin-bottom:8px;" placeholder="例：鳥観図、夜景、ライトアップ" value="'+escHtml(ang.label||'')+'" oninput="updateAngleLabel(\''+item.id+'\','+ai+',this.value)">'
@@ -603,11 +605,17 @@ function buildBaCardHTML(item,i){
     +'</div></div>'
     +'<div class="ba-img-grid">'
     +'<div><div class="img-drop-label">Before（施工前）</div>'
-    +'<input type="url" placeholder="https://... 画像URL" value="'+escHtml(item.before||'')+'" oninput="updateBaField(\''+item.id+'\',\'before\',this.value);updateBaPreviewFromUrl(\''+item.id+'\')">'
-    +'</div>'
+    +'<div class="img-drop '+beforeHasImg+'" id="drop-b-'+item.id+'" onclick="triggerUpload(\'file-b-'+item.id+'\')">'
+    +(item.before?'<img class="preview" src="'+item.before+'" alt="">':'')
+    +'<div class="img-drop-overlay"><span class="img-drop-icon">&#128247;</span><span class="img-drop-text">クリックして選択</span></div>'
+    +'<input type="file" id="file-b-'+item.id+'" accept="image/*" onchange="handleBaImage(this,\''+item.id+'\',\'before\')">'
+    +'</div></div>'
     +'<div><div class="img-drop-label">After（施工後）</div>'
-    +'<input type="url" placeholder="https://... 画像URL" value="'+escHtml(item.after||'')+'" oninput="updateBaField(\''+item.id+'\',\'after\',this.value);updateBaPreviewFromUrl(\''+item.id+'\')">'
-    +'</div>'
+    +'<div class="img-drop '+afterHasImg+'" id="drop-a-'+item.id+'" onclick="triggerUpload(\'file-a-'+item.id+'\')">'
+    +(item.after?'<img class="preview" src="'+item.after+'" alt="">':'')
+    +'<div class="img-drop-overlay"><span class="img-drop-icon">&#128247;</span><span class="img-drop-text">クリックして選択</span></div>'
+    +'<input type="file" id="file-a-'+item.id+'" accept="image/*" onchange="handleBaImage(this,\''+item.id+'\',\'after\')">'
+    +'</div></div>'
     +'</div>'
     +'<div class="info-fields">'
     +'<div><label class="field-label">仕上げ名</label><input type="text" placeholder="RSタイル調" value="'+escHtml(item.finish)+'" oninput="updateBaField(\''+item.id+'\',\'finish\',this.value)"></div>'
@@ -615,9 +623,12 @@ function buildBaCardHTML(item,i){
     +'<div><label class="field-label">目地</label><input type="text" placeholder="ブラック" value="'+escHtml(item.grout)+'" oninput="updateBaField(\''+item.id+'\',\'grout\',this.value)"></div>'
     +'</div>'
     +'<div class="sample-row" style="margin-bottom:16px;">'
-    +'<div><div class="img-drop-label" style="margin-bottom:6px;">素材サンプル画像URL（任意）</div>'
-    +'<input type="url" placeholder="https://... 画像URL" value="'+escHtml(item.sample||'')+'" oninput="updateBaField(\''+item.id+'\',\'sample\',this.value)">'
-    +'</div>'
+    +'<div><div class="img-drop-label" style="margin-bottom:6px;">素材サンプル画像（任意）</div>'
+    +'<div class="img-drop '+sampleHasImg+'" style="width:80px;height:80px;aspect-ratio:1;" id="drop-s-'+item.id+'" onclick="triggerUpload(\'file-s-'+item.id+'\')">'
+    +(item.sample?'<img class="preview" src="'+item.sample+'" alt="">':'')
+    +'<div class="img-drop-overlay"><span class="img-drop-icon" style="font-size:1.2rem;">&#128247;</span></div>'
+    +'<input type="file" id="file-s-'+item.id+'" accept="image/*" onchange="handleBaImage(this,\''+item.id+'\',\'sample\')">'
+    +'</div></div>'
     +'<div style="font-size:.72rem;color:var(--text2);line-height:2;">クリックで拡大できる小さなサムネイル<br>として仕上げ説明の横に表示されます。</div>'
     +'</div>'
     +'<div><div class="img-drop-label" style="margin-bottom:8px;">追加アングル写真（鳥観図・夜景・ライトアップなど）</div>'
@@ -633,9 +644,11 @@ function buildAnglesHTML(item){
   var angles=item.angles||[];
   return angles.map(function(ang,ai){
     return '<div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:10px;">'
-      +'<div style="margin-bottom:4px;"><label class="field-label">画像URL</label>'
-      +'<input type="url" placeholder="https://..." value="'+escHtml(ang.src||'')+'" oninput="updateAngleSrc(\''+item.id+'\','+ai+',this.value)">'
-      +'</div>'
+      +'<div><div class="img-drop'+(ang.src?' has-img':'')+'" style="width:120px;height:90px;" id="drop-ang-'+item.id+'-'+ai+'" onclick="triggerUpload(\'file-ang-'+item.id+'-'+ai+'\')">'
+      +(ang.src?'<img class="preview" src="'+ang.src+'" alt="">':'')
+      +'<div class="img-drop-overlay"><span class="img-drop-icon" style="font-size:1.2rem;">&#128247;</span></div>'
+      +'<input type="file" id="file-ang-'+item.id+'-'+ai+'" accept="image/*" onchange="handleAngleImage(this,\''+item.id+'\','+ai+')">'
+      +'</div></div>'
       +'<div style="flex:1;">'
       +'<label class="field-label">ラベル</label>'
       +'<input type="text" style="margin-bottom:8px;" placeholder="例：鳥観図、夜景、ライトアップ" value="'+escHtml(ang.label||'')+'" oninput="updateAngleLabel(\''+item.id+'\','+ai+',this.value)">'
@@ -699,6 +712,50 @@ function handleAngleImage(input,cardId,ai){
 }
 
 function escHtml(s){return (s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+function handleBaImage(input,id,field){
+  var file=input.files[0];if(!file)return;
+  var reader=new FileReader();
+  reader.onload=function(e){
+    var b64=e.target.result;
+    var item=baCards.find(c=>c.id===id);
+    if(!item)return;
+    item[field]=b64;
+    markDirty();
+    var drop=document.getElementById('drop-'+field[0]+'-'+id);
+    if(drop){
+      drop.classList.add('has-img');
+      var prev=drop.querySelector('img.preview');
+      if(prev)prev.src=b64;
+      else{var img=document.createElement('img');img.className='preview';img.src=b64;drop.insertBefore(img,drop.firstChild);}
+    }
+    var fn=document.getElementById('fn-'+field[0]+'-'+id);
+    if(fn)fn.textContent='画像設定済み（'+file.name+')';
+    updateBaPreviewFromUrl(id);
+  };
+  reader.readAsDataURL(file);
+}
+
+function handleAngleImage(input,cardId,ai){
+  var file=input.files[0];if(!file)return;
+  var reader=new FileReader();
+  reader.onload=function(e){
+    var item=baCards.find(function(c){return c.id===cardId;});
+    if(!item)return;
+    if(!item.angles)item.angles=[];
+    if(!item.angles[ai])item.angles[ai]={src:'',label:''};
+    item.angles[ai].src=e.target.result;
+    var drop=document.getElementById('drop-ang-'+cardId+'-'+ai);
+    if(drop){
+      drop.classList.add('has-img');
+      var prev=drop.querySelector('img.preview');
+      if(prev)prev.src=e.target.result;
+      else{var img=document.createElement('img');img.className='preview';img.src=e.target.result;drop.insertBefore(img,drop.firstChild);}
+    }
+    markDirty();
+  };
+  reader.readAsDataURL(file);
+}
 
 function updateBaPreviewFromUrl(id){
   var item=baCards.find(function(c){return c.id===id;});
