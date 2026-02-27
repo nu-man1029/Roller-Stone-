@@ -359,7 +359,7 @@
         const slBf = document.getElementById('rs-sl-bf');
         const slLn = document.getElementById('rs-sl-ln');
         const slHd = document.getElementById('rs-sl-hdl');
-        let pos = 50, drag = false, dir = -1, timer = null;
+        let pos = 50, drag = false;
 
         function setPos(p) {
             pos = Math.max(2, Math.min(98, p));
@@ -368,26 +368,14 @@
         }
         function pct(x) { const r = sl.getBoundingClientRect(); return ((x - r.left) / r.width) * 100; }
 
-        sl.addEventListener('mousedown', e => { drag = true; stopA(); setPos(pct(e.clientX)); });
+        sl.addEventListener('mousedown', e => { drag = true; setPos(pct(e.clientX)); });
         window.addEventListener('mousemove', e => { if (drag) setPos(pct(e.clientX)); });
-        window.addEventListener('mouseup', () => { if (drag) { drag = false; startA(); } });
-        sl.addEventListener('touchstart', e => { drag = true; stopA(); setPos(pct(e.touches[0].clientX)); }, { passive: true });
+        window.addEventListener('mouseup', () => { drag = false; });
+        sl.addEventListener('touchstart', e => { drag = true; setPos(pct(e.touches[0].clientX)); }, { passive: true });
         window.addEventListener('touchmove', e => { if (drag) setPos(pct(e.touches[0].clientX)); }, { passive: true });
-        window.addEventListener('touchend', () => { if (drag) { drag = false; startA(); } });
-
-        function startA() {
-            stopA();
-            timer = setInterval(() => {
-                pos += dir * 0.5;
-                if (pos <= 15) dir = 1;
-                if (pos >= 85) dir = -1;
-                setPos(pos);
-            }, 16);
-        }
-        function stopA() { clearInterval(timer); timer = null; }
+        window.addEventListener('touchend', () => { drag = false; });
 
         setPos(50);
-        setTimeout(startA, 2500);
     }
 
 })();
