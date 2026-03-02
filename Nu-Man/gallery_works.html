@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>制作・施工事例ギャラリー | RollerStone</title>
+    <meta name="description" content="ローラーストーンの制作事例（AIパース図）と施工事例をご覧いただけます。あなたのお家がどう変わるか、無料でイメージを作成します。">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700;900&display=swap"
+        rel="stylesheet">
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --bg: #0a0a0a;
+            --surface: #111;
+            --surface2: #1a1a1a;
+            --gold: #D4AF37;
+            --gold2: #B8860B;
+            --border: rgba(255, 255, 255, 0.08);
+            --text: #fff;
+            --sub: rgba(255, 255, 255, 0.35);
+            --body: rgba(255, 255, 255, 0.65);
+            --line: #06C755;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Noto Sans JP', sans-serif;
+            min-height: 100vh;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* ヘッダー */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            background: rgba(0, 0, 0, 0.92);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .hd-in {
+            max-width: 640px;
+            margin: 0 auto;
+            padding: 14px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            font-size: 11px;
+            font-weight: 900;
+            letter-spacing: .2em;
+            color: var(--gold);
+        }
+
+        .logo span {
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        .sim-link {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--sub);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .sim-link:hover {
+            color: var(--gold);
+        }
+
+        /* ヒーロー */
+        .hero {
+            padding: 40px 16px 32px;
+            text-align: center;
+            max-width: 640px;
+            margin: 0 auto;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(212, 175, 55, 0.12);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 999px;
+            padding: 6px 14px;
+            margin-bottom: 16px;
+        }
+
+        .hero-badge-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--gold);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1
+            }
+
+            50% {
+                opacity: .4
+            }
+        }
+
+        .hero h1 {
+            font-size: 26px;
+            font-weight: 900;
+            line-height: 1.3;
+            margin-bottom: 10px;
+        }
+
+        .hero-g {
+            background: linear-gradient(135deg, #D4AF37, #B8860B);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-size: 13px;
+            color: var(--sub);
+            line-height: 1.8;
+        }
+
+        /* タブ */
+        .tabs {
+            max-width: 640px;
+            margin: 0 auto;
+            padding: 0 16px 16px;
+            display: flex;
+            gap: 8px;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 10px;
+            font-size: 12px;
+            font-weight: 900;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            background: var(--surface);
+            color: var(--sub);
+            cursor: pointer;
+            transition: all .2s;
+            text-align: center;
+        }
+
+        .tab.active {
+            background: var(--gold);
+            color: #000;
+            border-color: var(--gold);
+        }
+
+        .tab:not(.active):hover {
+            border-color: rgba(212, 175, 55, 0.3);
+            color: var(--gold);
+        }
+
+        /* カウント */
+        .count-bar {
+            max-width: 640px;
+            margin: 0 auto;
+            padding: 0 16px 12px;
+            font-size: 10px;
+            font-weight: 900;
+            color: var(--sub);
+            letter-spacing: .1em;
+        }
+
+        /* グリッド */
+        .grid-wrap {
+            max-width: 640px;
+            margin: 0 auto;
+            padding: 0 16px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        @media (min-width: 480px) {
+            .grid {
+                grid-template-columns: 1fr 1fr 1fr;
+            }
+        }
+
+        /* カード */
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform .2s, border-color .2s;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .card:hover {
+            transform: translateY(-3px);
+            border-color: rgba(212, 175, 55, 0.3);
+        }
+
+        .card:active {
+            transform: scale(0.98);
+        }
+
+        /* サムネイル */
+        .card-thumb {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 4/3;
+            background: var(--surface2);
+            overflow: hidden;
+        }
+
+        .card-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform .4s;
+        }
+
+        .card:hover .card-thumb img {
+            transform: scale(1.06);
+        }
+
+        .card-thumb-empty {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            opacity: .2;
+        }
+
+        /* カードバッジ */
+        .card-badge {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            font-size: 8px;
+            font-weight: 900;
+            letter-spacing: .05em;
+            padding: 3px 8px;
+            border-radius: 999px;
+        }
+
+        .card-badge.paas {
+            background: rgba(212, 175, 55, 0.9);
+            color: #000;
+        }
+
+        .card-badge.construction {
+            background: rgba(6, 199, 85, 0.9);
+            color: #000;
+        }
+
+        /* カード本文 */
+        .card-body {
+            padding: 10px 12px 12px;
+        }
+
+        .card-cat {
+            font-size: 8px;
+            font-weight: 900;
+            padding: 2px 8px;
+            border-radius: 999px;
+            display: inline-block;
+            margin-bottom: 6px;
+        }
+
+        .card-cat.random {
+            background: rgba(255, 255, 255, 0.9);
+            color: #111;
+        }
+
+        .card-cat.tile {
+            background: var(--gold);
+            color: #000;
+        }
+
+        .card-cat.original {
+            background: transparent;
+            color: var(--sub);
+            border: 1px solid var(--border);
+        }
+
+        .card-no {
+            font-size: 12px;
+            font-weight: 900;
+        }
+
+        .card-no-g {
+            background: linear-gradient(135deg, #D4AF37, #B8860B);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .card-sub {
+            font-size: 10px;
+            color: var(--sub);
+            margin-top: 2px;
+            line-height: 1.4;
+        }
+
+        /* CTAバナー */
+        .cta-banner {
+            max-width: 640px;
+            margin: 32px auto 0;
+            padding: 0 16px 16px;
+        }
+
+        .cta-inner {
+            background: linear-gradient(135deg, #1a1a1a, #222);
+            border: 1px solid rgba(212, 175, 55, 0.25);
+            border-radius: 20px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .cta-inner p {
+            font-size: 12px;
+            color: var(--sub);
+            line-height: 1.7;
+            margin: 8px 0 14px;
+        }
+
+        .cta-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            background: var(--line);
+            color: #fff;
+            font-weight: 900;
+            font-size: 14px;
+            padding: 14px;
+            border-radius: 12px;
+            text-decoration: none;
+            transition: opacity .2s;
+        }
+
+        .cta-btn:active {
+            opacity: .85;
+        }
+
+        /* シミュレーターリンク */
+        .sim-banner {
+            max-width: 640px;
+            margin: 16px auto;
+            padding: 0 16px 40px;
+        }
+
+        .sim-inner {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 14px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--sub);
+            text-decoration: none;
+            transition: all .2s;
+        }
+
+        .sim-inner:hover {
+            border-color: rgba(212, 175, 55, 0.3);
+            color: var(--gold);
+        }
+
+        /* 空状態 */
+        .empty {
+            grid-column: 1/-1;
+            text-align: center;
+            padding: 48px 16px;
+            color: var(--sub);
+            font-size: 13px;
+        }
+
+        .empty-icon {
+            font-size: 40px;
+            opacity: .3;
+            margin-bottom: 12px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <div class="hd-in">
+            <div class="logo">ROLLER<span>STONE</span> / Gallery</div>
+            <a href="simulator_v5.2.html" class="sim-link">← シミュレーターへ</a>
+        </div>
+    </header>
+
+    <!-- ヒーロー -->
+    <div class="hero">
+        <div class="hero-badge">
+            <div class="hero-badge-dot"></div>
+            <span style="font-size:10px;font-weight:900;letter-spacing:.15em;color:var(--gold)">制作事例・施工事例</span>
+        </div>
+        <h1>
+            RollerStone<br>
+            <span class="hero-g">事例ギャラリー</span>
+        </h1>
+        <p>AIパース図と実際の施工写真をご覧ください。<br>あなたのお家でのイメージ作成も無料で承ります。</p>
+    </div>
+
+    <!-- タブ -->
+    <div class="tabs">
+        <div class="tab active" onclick="filterCards('all')" id="tab-all">すべて</div>
+        <div class="tab" onclick="filterCards('paas')" id="tab-paas">⚠ 制作事例（AIパース）</div>
+        <div class="tab" onclick="filterCards('construction')" id="tab-construction">✓ 施工事例</div>
+    </div>
+
+    <!-- カード数 -->
+    <div class="count-bar" id="count-bar">読み込み中…</div>
+
+    <!-- グリッド -->
+    <div class="grid-wrap">
+        <div class="grid" id="gallery-grid">
+            <!-- JS で生成 -->
+        </div>
+    </div>
+
+    <!-- CTA -->
+    <div class="cta-banner">
+        <div class="cta-inner">
+            <p style="font-size:13px;font-weight:900;color:var(--text)">📸 あなたのお家の完成イメージを<br>無料で作成します</p>
+            <p>駐車場や玄関アプローチの写真を送るだけ。<br>AIが施工後の姿を無料でお届けします。</p>
+            <a href="https://lin.ee/EAASJvg" target="_blank" class="cta-btn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+                    <path
+                        d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm4.5 14.25c-.188.375-.563.563-.938.563-1.313 0-3.188-.875-5.625-2.625C7.5 12.438 6 10.125 5.813 9c-.063-.438.125-.875.5-1.125s.813-.25 1.188.063l1.5 1.125c.375.25.5.75.313 1.125l-.438.813c.563.875 2.063 2.25 3 2.813l.813-.438c.375-.188.875-.063 1.125.313l1.125 1.5c.25.375.25.875.063 1.063l-.5.5-.5-.5h-.001z" />
+                </svg>
+                LINEで写真を送って無料依頼
+            </a>
+        </div>
+    </div>
+
+    <!-- シミュレーターリンク -->
+    <div class="sim-banner">
+        <a href="simulator_v5.2.html" class="sim-inner">
+            🧮 施工費用シミュレーターに戻る
+        </a>
+    </div>
+
+    <script>
+        /**
+         * =====================================================
+         * ここに事例データを追加していきます
+         * galleryType: 'paas'（制作事例）or 'construction'（施工事例）
+         * =====================================================
+         */
+        const CASES = [
+            {
+                id: '001',
+                galleryType: 'paas',
+                category: '乱形石調',
+                subtitle: '駐車場 — 一戸建て',
+                thumb: 'https://res.cloudinary.com/dwwxtujke/image/upload/w_400,q_auto,f_auto/RS/works/case001_after.jpg',
+                url: 'works/case_001.html',
+            },
+            // ↓ ここに新しい事例を追加してください
+            // {
+            //     id: '002',
+            //     galleryType: 'construction',
+            //     category: 'タイル調',
+            //     subtitle: '玄関アプローチ — マンション',
+            //     thumb: 'https://res.cloudinary.com/dwwxtujke/image/upload/w_400,q_auto,f_auto/RS/works/case002_after.jpg',
+            //     url: 'works/case_002.html',
+            // },
+        ];
+
+        // =====================================================
+
+        let currentFilter = 'all';
+
+        const catMap = { '乱形石調': 'random', 'タイル調': 'tile', '特殊・ロゴ': 'original' };
+
+        function renderCards(filter) {
+            const grid = document.getElementById('gallery-grid');
+            const countBar = document.getElementById('count-bar');
+
+            const filtered = filter === 'all'
+                ? CASES
+                : CASES.filter(c => c.galleryType === filter);
+
+            countBar.textContent = `${filtered.length}件の事例`;
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `<div class="empty"><div class="empty-icon">🔍</div>該当する事例がありません</div>`;
+                return;
+            }
+
+            grid.innerHTML = filtered.map(c => {
+                const isPaas = c.galleryType === 'paas';
+                const catCls = catMap[c.category] || 'random';
+                const badgeText = isPaas ? '⚠ AIパース' : '✓ 施工事例';
+                const badgeCls = isPaas ? 'paas' : 'construction';
+
+                return `
+        <a class="card" href="${c.url}">
+            <div class="card-thumb">
+                ${c.thumb
+                        ? `<img src="${c.thumb}" alt="${c.category} ${c.subtitle}" loading="lazy" onerror="this.parentElement.innerHTML='<div class=\\'card-thumb-empty\\'>🏠</div>'">`
+                        : `<div class="card-thumb-empty">🏠</div>`
+                    }
+                <div class="card-badge ${badgeCls}">${badgeText}</div>
+            </div>
+            <div class="card-body">
+                <div class="card-cat ${catCls}">${c.category}</div>
+                <div class="card-no">${isPaas ? '制作' : '施工'}事例 <span class="card-no-g">No.${c.id}</span></div>
+                <div class="card-sub">${c.subtitle}</div>
+            </div>
+        </a>`;
+            }).join('');
+        }
+
+        function filterCards(type) {
+            currentFilter = type;
+            // タブ切り替え
+            ['all', 'paas', 'construction'].forEach(t => {
+                document.getElementById(`tab-${t}`).classList.toggle('active', t === type);
+            });
+            renderCards(type);
+        }
+
+        // 初期表示
+        renderCards('all');
+    </script>
+</body>
+
+</html>
