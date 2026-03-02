@@ -89,8 +89,8 @@
     const cta = ctaConfig[galleryType];
 
     const disclaimerConfig = {
-        paas:         { text: '⚠ AIパース・施工前イメージです', color: '#D4AF37', border: '#D4AF3755' },
-        construction: { text: '✓ 実際の施工写真です',           color: '#06C755', border: '#06C75555' },
+        paas: { text: '⚠ AIパース・施工前イメージです', color: '#D4AF37', border: '#D4AF3755' },
+        construction: { text: '✓ 実際の施工写真です', color: '#06C755', border: '#06C75555' },
     };
     const disc = disclaimerConfig[galleryType];
 
@@ -203,6 +203,15 @@
     /* コメント */
     .rs-cm{padding:0 16px;margin-top:24px}
     .rs-cm-tx{font-size:13px;color:${T.textBody};line-height:1.9;margin-bottom:12px}
+
+    /* こだわりポイント・お客様の声 */
+    .rs-kd{padding:0 16px;margin-top:28px}
+    .rs-kd-item{display:flex;gap:10px;margin-bottom:12px;align-items:flex-start}
+    .rs-kd-icon{width:24px;height:24px;border-radius:50%;background:${T.gold};color:#000;font-size:11px;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+    .rs-kd-tx{font-size:13px;color:${T.textBody};line-height:1.8}
+    .rs-vc{margin:28px 16px 0;background:${T.surface};border:1px solid ${T.border};border-radius:16px;padding:16px}
+    .rs-vc-lbl{font-size:9px;font-weight:900;letter-spacing:.2em;color:${T.gold}bb;text-transform:uppercase;margin-bottom:10px}
+    .rs-vc-item{font-size:13px;color:${T.textBody};line-height:1.9;padding-left:14px;border-left:2px solid ${T.gold}44;margin-bottom:10px}
 
     /* CTA */
     .rs-cta{margin:32px 16px 0}
@@ -324,6 +333,24 @@
     if (CASE.comments && CASE.comments.length > 0) {
         h += `<div class="rs-cm"><p class="rs-lbl" style="margin-bottom:12px">Comment</p>`;
         CASE.comments.forEach(c => { h += `<p class="rs-cm-tx">${c}</p>`; });
+        h += `</div>`;
+    }
+
+    // こだわりポイント（施工事例のみ）
+    if (!isPaas && CASE.kodawari && CASE.kodawari.length > 0) {
+        h += `<div class="rs-kd"><p class="rs-lbl" style="margin-bottom:12px">Commitment Points</p>`;
+        CASE.kodawari.forEach(k => {
+            h += `<div class="rs-kd-item"><div class="rs-kd-icon">✦</div><p class="rs-kd-tx">${k}</p></div>`;
+        });
+        h += `</div>`;
+    }
+
+    // お客様の声（施工事例のみ）
+    if (!isPaas && CASE.voice && CASE.voice.length > 0) {
+        h += `<div class="rs-vc"><p class="rs-vc-lbl">Customer Voice</p>`;
+        CASE.voice.forEach(v => {
+            h += `<p class="rs-vc-item">「${v}」</p>`;
+        });
         h += `</div>`;
     }
 
