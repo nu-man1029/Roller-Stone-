@@ -1,0 +1,1659 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>インナーガレージ専門｜ローラーストーン施工 - セメントアーティスト ぬーまん</title>
+  <meta name="description" content="インナーガレージをショールームに変える。AIシミュレーションで完成形を確認してから施工。2〜3日で完成・引き渡し後OK。セメントアーティスト ぬーまんへ無料相談。" />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700&family=Noto+Sans+JP:wght@300;400;500&family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ============================================================
+       CSS Variables & Reset
+    ============================================================ */
+    :root {
+      --brand-orange: #f18200;
+      --brand-orange-dim: rgba(241, 130, 0, 0.15);
+      --brand-orange-border: rgba(241, 130, 0, 0.3);
+      --brand-dark: #1a1a1a;
+      --brand-mid: #202020;
+      --brand-gray: #2a2a2a;
+      --border: rgba(241, 130, 0, 0.2);
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --text: #d8d7d2;
+      --text-muted: #888882;
+      --text-dim: #555550;
+      --line-green: #06C755;
+      --white: #f5f4f0;
+      --section-pad: clamp(72px, 10vw, 120px) clamp(20px, 6vw, 80px);
+      --radius: 12px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Noto Sans JP', sans-serif;
+      font-weight: 300;
+      background: var(--brand-dark);
+      color: var(--text);
+      line-height: 1.75;
+      -webkit-tap-highlight-color: transparent;
+      overflow-x: hidden;
+    }
+
+    img { display: block; max-width: 100%; }
+    a { color: inherit; text-decoration: none; }
+    button { cursor: pointer; border: none; background: none; font-family: inherit; }
+
+    /* ============================================================
+       Typography
+    ============================================================ */
+    .font-serif { font-family: 'Noto Serif JP', serif; }
+    .font-inter { font-family: 'Inter', sans-serif; }
+
+    .label {
+      font-family: 'Inter', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--brand-orange);
+    }
+
+    /* ============================================================
+       Animations
+    ============================================================ */
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes orbFloat {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50%       { transform: translateY(-30px) scale(1.04); }
+    }
+    @keyframes ticker {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+    @keyframes pulseBorder {
+      0%, 100% { border-color: var(--brand-orange-border); }
+      50%       { border-color: var(--brand-orange); }
+    }
+    @keyframes bounceY {
+      0%, 100% { transform: translateY(0); }
+      50%       { transform: translateY(6px); }
+    }
+
+    .anim-fadeInDown { animation: fadeInDown 0.7s ease both; }
+    .anim-fadeInUp   { animation: fadeInUp  0.7s ease both; }
+    .delay-1 { animation-delay: 0.1s; }
+    .delay-2 { animation-delay: 0.2s; }
+    .delay-3 { animation-delay: 0.35s; }
+    .delay-4 { animation-delay: 0.5s; }
+
+    /* Scroll reveal */
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.65s ease, transform 0.65s ease;
+    }
+    .reveal.revealed {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .reveal-delay-1.revealed { transition-delay: 0.1s; }
+    .reveal-delay-2.revealed { transition-delay: 0.2s; }
+    .reveal-delay-3.revealed { transition-delay: 0.35s; }
+    .reveal-delay-4.revealed { transition-delay: 0.5s; }
+
+    /* ============================================================
+       Header / Nav
+    ============================================================ */
+    #site-header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      padding: 0 clamp(16px, 4vw, 40px);
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: background 0.4s, border-color 0.4s;
+      border-bottom: 1px solid transparent;
+    }
+    #site-header.scrolled {
+      background: rgba(26, 26, 26, 0.92);
+      backdrop-filter: blur(12px);
+      border-bottom-color: var(--border-subtle);
+    }
+
+    .header-logo {
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: var(--white);
+    }
+    .header-logo span { color: var(--brand-orange); }
+
+    .header-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 18px;
+      background: var(--line-green);
+      color: #fff;
+      border-radius: 100px;
+      font-size: 13px;
+      font-weight: 500;
+      transition: opacity 0.2s, transform 0.2s;
+    }
+    .header-cta:hover { opacity: 0.9; transform: scale(1.02); }
+    .header-cta svg { width: 15px; height: 15px; flex-shrink: 0; }
+
+    /* ============================================================
+       Hero
+    ============================================================ */
+    #hero {
+      position: relative;
+      min-height: 100svh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 80px clamp(20px, 6vw, 80px) 60px;
+      text-align: center;
+      overflow: hidden;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(160deg, #0f0f0e 0%, #1a1a1a 50%, #0d0c0b 100%);
+    }
+    .hero-orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.35;
+      pointer-events: none;
+    }
+    .hero-orb-1 {
+      width: 380px; height: 380px;
+      background: radial-gradient(circle, #f18200 0%, transparent 70%);
+      top: -100px; left: -120px;
+      animation: orbFloat 9s ease-in-out infinite;
+    }
+    .hero-orb-2 {
+      width: 300px; height: 300px;
+      background: radial-gradient(circle, #ff6b00 0%, transparent 70%);
+      bottom: -80px; right: -80px;
+      animation: orbFloat 12s ease-in-out infinite reverse;
+    }
+
+    .hero-content { position: relative; z-index: 10; max-width: 640px; }
+
+    .hero-eyebrow {
+      display: inline-block;
+      font-family: 'Inter', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--brand-orange);
+      border: 1px solid var(--brand-orange-border);
+      padding: 5px 16px;
+      border-radius: 100px;
+      margin-bottom: 28px;
+    }
+
+    .hero-headline {
+      font-family: 'Noto Serif JP', serif;
+      font-size: clamp(2rem, 7vw, 3.6rem);
+      font-weight: 700;
+      line-height: 1.3;
+      color: var(--white);
+      margin-bottom: 20px;
+    }
+    .hero-headline .accent { color: var(--brand-orange); }
+
+    .hero-sub {
+      font-size: clamp(0.88rem, 2.2vw, 1.05rem);
+      color: var(--text-muted);
+      margin-bottom: 40px;
+      line-height: 1.9;
+    }
+
+    .hero-cta-group {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      align-items: center;
+    }
+
+    .btn-line {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      max-width: 360px;
+      padding: 18px 32px;
+      background: var(--line-green);
+      color: #fff;
+      border-radius: 100px;
+      font-size: 1rem;
+      font-weight: 500;
+      transition: opacity 0.2s, transform 0.15s;
+      box-shadow: 0 8px 30px rgba(6, 199, 85, 0.3);
+    }
+    .btn-line:hover { opacity: 0.92; transform: translateY(-2px); }
+    .btn-line:active { transform: scale(0.97); }
+    .btn-line svg { width: 22px; height: 22px; flex-shrink: 0; }
+
+    .btn-ghost {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      letter-spacing: 0.04em;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border-subtle);
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .btn-ghost:hover { color: var(--white); border-color: var(--text-muted); }
+
+    .hero-scroll-hint {
+      position: absolute;
+      bottom: 28px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+    .hero-scroll-hint span {
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      font-family: 'Inter', sans-serif;
+    }
+    .scroll-arrow {
+      width: 20px;
+      height: 20px;
+      color: var(--brand-orange);
+      animation: bounceY 1.6s ease-in-out infinite;
+    }
+
+    /* ============================================================
+       Ticker
+    ============================================================ */
+    .ticker-wrap {
+      overflow: hidden;
+      background: var(--brand-orange);
+      padding: 10px 0;
+    }
+    .ticker-track {
+      display: flex;
+      white-space: nowrap;
+      animation: ticker 22s linear infinite;
+    }
+    .ticker-track span {
+      padding: 0 40px;
+      font-family: 'Inter', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: #fff;
+    }
+
+    /* ============================================================
+       Section common
+    ============================================================ */
+    section {
+      padding: var(--section-pad);
+    }
+
+    .section-inner {
+      max-width: 880px;
+      margin: 0 auto;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: clamp(36px, 6vw, 64px);
+    }
+
+    .section-title {
+      font-family: 'Noto Serif JP', serif;
+      font-size: clamp(1.4rem, 4vw, 2.2rem);
+      font-weight: 700;
+      color: var(--white);
+      line-height: 1.4;
+      margin-top: 14px;
+    }
+
+    .section-sub {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      margin-top: 14px;
+      line-height: 1.9;
+    }
+
+    /* Divider */
+    .divider {
+      width: 40px;
+      height: 2px;
+      background: var(--brand-orange);
+      margin: 16px auto;
+      border-radius: 2px;
+    }
+
+    /* ============================================================
+       Problem Section
+    ============================================================ */
+    #problem {
+      background: var(--brand-mid);
+      border-top: 1px solid var(--border-subtle);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .problem-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-bottom: 40px;
+    }
+
+    .problem-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 18px 22px;
+      background: var(--brand-gray);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius);
+    }
+
+    .problem-x {
+      flex-shrink: 0;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: rgba(200, 60, 60, 0.15);
+      border: 1px solid rgba(200, 60, 60, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      color: #e05555;
+      font-weight: 700;
+    }
+
+    .problem-text {
+      font-size: 0.9rem;
+      color: var(--text);
+      line-height: 1.7;
+    }
+
+    .problem-solution {
+      text-align: center;
+      padding: 28px 24px;
+      background: var(--brand-orange-dim);
+      border: 1px solid var(--brand-orange-border);
+      border-radius: var(--radius);
+    }
+    .problem-solution p {
+      font-family: 'Noto Serif JP', serif;
+      font-size: clamp(1rem, 3vw, 1.25rem);
+      color: var(--white);
+      line-height: 1.7;
+    }
+    .problem-solution strong { color: var(--brand-orange); }
+
+    /* ============================================================
+       Before/After Slider
+    ============================================================ */
+    #before-after {
+      background: #111110;
+    }
+
+    .comparison-slider {
+      position: relative;
+      width: 100%;
+      padding-top: 62%;
+      overflow: hidden;
+      border-radius: var(--radius);
+      cursor: ew-resize;
+      user-select: none;
+      background: #222;
+      border: 1px solid var(--border-subtle);
+    }
+
+    .comparison-slider img {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+      pointer-events: none;
+    }
+
+    .img-before {
+      z-index: 10;
+      clip-path: inset(0 50% 0 0);
+      will-change: clip-path;
+      filter: grayscale(30%) brightness(0.85);
+    }
+
+    .img-after {
+      filter: saturate(1.15) brightness(1.02);
+    }
+
+    .slider-handle {
+      position: absolute;
+      top: 0; left: 50%; bottom: 0;
+      width: 2px;
+      background: #fff;
+      z-index: 20;
+      transform: translateX(-50%);
+      box-shadow: 0 0 12px rgba(0, 0, 0, 0.6);
+    }
+
+    .slider-button {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 48px; height: 48px;
+      background: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+      z-index: 21;
+    }
+
+    .slider-button svg { width: 22px; height: 22px; color: #1a1a1a; }
+
+    .slider-label {
+      position: absolute;
+      bottom: 14px;
+      z-index: 30;
+      padding: 4px 12px;
+      border-radius: 4px;
+      font-family: 'Inter', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+    }
+    .label-before {
+      left: 14px;
+      background: rgba(0, 0, 0, 0.65);
+      color: #fff;
+    }
+    .label-after {
+      right: 14px;
+      background: var(--brand-orange);
+      color: #fff;
+    }
+
+    /* ============================================================
+       Benefits
+    ============================================================ */
+    #benefits {
+      background: var(--brand-dark);
+    }
+
+    .benefits-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+
+    @media (min-width: 560px) {
+      .benefits-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (min-width: 840px) {
+      .benefits-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    .benefit-card {
+      padding: 28px 24px;
+      background: var(--brand-gray);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius);
+      transition: border-color 0.3s, transform 0.3s;
+    }
+    .benefit-card:hover {
+      border-color: var(--brand-orange-border);
+      transform: translateY(-4px);
+    }
+
+    .benefit-number {
+      font-family: 'Inter', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      color: var(--brand-orange);
+      margin-bottom: 14px;
+    }
+
+    .benefit-icon {
+      width: 44px; height: 44px;
+      margin-bottom: 16px;
+      color: var(--brand-orange);
+    }
+
+    .benefit-title {
+      font-family: 'Noto Serif JP', serif;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 10px;
+      line-height: 1.4;
+    }
+
+    .benefit-desc {
+      font-size: 0.84rem;
+      color: var(--text-muted);
+      line-height: 1.8;
+    }
+
+    /* ============================================================
+       AI Simulation
+    ============================================================ */
+    #simulation {
+      background: var(--brand-mid);
+      border-top: 1px solid var(--border-subtle);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .sim-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 16px;
+      background: var(--brand-orange-dim);
+      border: 1px solid var(--brand-orange-border);
+      border-radius: 100px;
+      font-family: 'Inter', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--brand-orange);
+      margin-bottom: 24px;
+    }
+
+    .sim-content {
+      display: grid;
+      gap: 40px;
+      align-items: center;
+    }
+    @media (min-width: 700px) {
+      .sim-content { grid-template-columns: 1fr 1fr; }
+    }
+
+    .sim-image {
+      border-radius: var(--radius);
+      overflow: hidden;
+      border: 1px solid var(--border-subtle);
+      aspect-ratio: 4/3;
+    }
+    .sim-image img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+    }
+
+    .sim-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .sim-step {
+      display: flex;
+      gap: 16px;
+    }
+
+    .sim-step-num {
+      flex-shrink: 0;
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      background: var(--brand-orange);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .sim-step-text h4 {
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--white);
+      margin-bottom: 4px;
+    }
+    .sim-step-text p {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      line-height: 1.7;
+    }
+
+    /* ============================================================
+       Flow
+    ============================================================ */
+    #flow {
+      background: var(--brand-dark);
+    }
+
+    .flow-list {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .flow-line {
+      position: absolute;
+      left: 22px;
+      top: 0; bottom: 0;
+      width: 1px;
+      background: linear-gradient(to bottom, var(--brand-orange), transparent);
+    }
+
+    .flow-item {
+      display: flex;
+      gap: 20px;
+      padding: 24px 24px 24px 0;
+      position: relative;
+    }
+    .flow-item:not(:last-child) {
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .flow-num {
+      flex-shrink: 0;
+      width: 44px; height: 44px;
+      border-radius: 50%;
+      background: var(--brand-orange);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      position: relative;
+      z-index: 1;
+      box-shadow: 0 0 0 6px var(--brand-dark);
+    }
+
+    .flow-body h4 {
+      font-family: 'Noto Serif JP', serif;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 6px;
+    }
+    .flow-body p {
+      font-size: 0.84rem;
+      color: var(--text-muted);
+      line-height: 1.8;
+    }
+
+    /* ============================================================
+       Gallery
+    ============================================================ */
+    #gallery {
+      background: var(--brand-mid);
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    @media (min-width: 600px) {
+      .gallery-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    .gallery-item {
+      border-radius: 8px;
+      overflow: hidden;
+      aspect-ratio: 1;
+      background: var(--brand-gray);
+      border: 1px solid var(--border-subtle);
+    }
+    .gallery-item img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s ease, filter 0.5s ease;
+    }
+    .gallery-item:hover img {
+      transform: scale(1.06);
+      filter: brightness(1.08);
+    }
+
+    /* ============================================================
+       Profile
+    ============================================================ */
+    #profile {
+      background: var(--brand-dark);
+    }
+
+    .profile-inner {
+      display: grid;
+      gap: 40px;
+      align-items: center;
+    }
+    @media (min-width: 700px) {
+      .profile-inner { grid-template-columns: 260px 1fr; }
+    }
+
+    .profile-photo {
+      aspect-ratio: 1;
+      max-width: 260px;
+      margin: 0 auto;
+      width: 100%;
+      border-radius: var(--radius);
+      overflow: hidden;
+      border: 1px solid var(--border-subtle);
+    }
+    .profile-photo img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+    }
+
+    .profile-role {
+      font-family: 'Inter', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--brand-orange);
+      margin-bottom: 12px;
+    }
+
+    .profile-name {
+      font-family: 'Noto Serif JP', serif;
+      font-size: clamp(1.4rem, 4vw, 1.9rem);
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 20px;
+    }
+
+    .profile-desc {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      line-height: 1.9;
+      margin-bottom: 28px;
+    }
+
+    .profile-social {
+      display: flex;
+      gap: 12px;
+    }
+
+    .btn-insta {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 11px 22px;
+      background: linear-gradient(135deg, #833ab4, #fd1d1d, #fcb045);
+      color: #fff;
+      border-radius: 100px;
+      font-size: 0.84rem;
+      font-weight: 500;
+      transition: opacity 0.2s;
+    }
+    .btn-insta:hover { opacity: 0.88; }
+    .btn-insta svg { width: 18px; height: 18px; }
+
+    /* ============================================================
+       FAQ
+    ============================================================ */
+    #faq {
+      background: var(--brand-mid);
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    .faq-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .faq-item {
+      background: var(--brand-gray);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius);
+      overflow: hidden;
+      transition: border-color 0.3s;
+    }
+    .faq-item.open { border-color: var(--brand-orange-border); }
+
+    .faq-q {
+      width: 100%;
+      padding: 20px 22px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      text-align: left;
+      color: var(--text);
+      transition: color 0.2s;
+    }
+    .faq-q:hover { color: var(--white); }
+
+    .faq-q-text {
+      font-size: 0.9rem;
+      font-weight: 500;
+      line-height: 1.5;
+    }
+
+    .faq-q-icon {
+      flex-shrink: 0;
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      border: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.3s, background 0.3s, border-color 0.3s;
+    }
+    .faq-item.open .faq-q-icon {
+      transform: rotate(180deg);
+      background: var(--brand-orange);
+      border-color: var(--brand-orange);
+    }
+    .faq-q-icon svg { width: 14px; height: 14px; }
+
+    .faq-a {
+      max-height: 0;
+      overflow: hidden;
+      opacity: 0;
+      transition: max-height 0.35s ease, opacity 0.3s ease;
+    }
+    .faq-item.open .faq-a {
+      max-height: 400px;
+      opacity: 1;
+    }
+
+    .faq-a-inner {
+      padding: 0 22px 22px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.9;
+      border-top: 1px solid var(--border-subtle);
+      padding-top: 16px;
+    }
+
+    /* ============================================================
+       Final CTA
+    ============================================================ */
+    #cta-final {
+      background: var(--brand-dark);
+      text-align: center;
+    }
+
+    .cta-box {
+      max-width: 520px;
+      margin: 0 auto;
+    }
+
+    .cta-title {
+      font-family: 'Noto Serif JP', serif;
+      font-size: clamp(1.4rem, 4vw, 2rem);
+      font-weight: 700;
+      color: var(--white);
+      line-height: 1.4;
+      margin-bottom: 16px;
+    }
+
+    .cta-sub {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      line-height: 1.9;
+      margin-bottom: 36px;
+    }
+
+    .cta-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      align-items: center;
+    }
+
+    .btn-line-lg {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      width: 100%;
+      max-width: 420px;
+      padding: 20px 36px;
+      background: var(--line-green);
+      color: #fff;
+      border-radius: 100px;
+      font-family: 'Noto Sans JP', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 500;
+      transition: opacity 0.2s, transform 0.15s;
+      box-shadow: 0 10px 40px rgba(6, 199, 85, 0.3);
+      animation: pulseBorder 3s infinite;
+    }
+    .btn-line-lg:hover { opacity: 0.92; transform: translateY(-2px); }
+    .btn-line-lg:active { transform: scale(0.97); }
+    .btn-line-lg svg { width: 24px; height: 24px; flex-shrink: 0; }
+
+    .btn-tel {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      max-width: 420px;
+      padding: 18px 36px;
+      background: var(--brand-gray);
+      color: var(--white);
+      border: 1px solid var(--border-subtle);
+      border-radius: 100px;
+      font-size: 1rem;
+      font-weight: 500;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .btn-tel:hover {
+      background: rgba(255, 255, 255, 0.06);
+      border-color: var(--brand-orange-border);
+    }
+    .btn-tel svg { width: 20px; height: 20px; color: var(--brand-orange); }
+
+    .cta-note {
+      font-size: 11px;
+      color: var(--text-dim);
+      margin-top: 20px;
+      letter-spacing: 0.04em;
+    }
+
+    /* ============================================================
+       Footer
+    ============================================================ */
+    footer {
+      background: #111110;
+      border-top: 1px solid var(--border-subtle);
+      padding: 40px clamp(20px, 6vw, 80px);
+      text-align: center;
+    }
+
+    .footer-logo {
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: var(--white);
+      margin-bottom: 8px;
+    }
+    .footer-logo span { color: var(--brand-orange); }
+
+    .footer-tagline {
+      font-size: 12px;
+      color: var(--text-dim);
+      letter-spacing: 0.06em;
+      margin-bottom: 24px;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+
+    .footer-links a {
+      font-size: 12px;
+      color: var(--text-muted);
+      transition: color 0.2s;
+    }
+    .footer-links a:hover { color: var(--white); }
+
+    .footer-copy {
+      font-size: 11px;
+      color: var(--text-dim);
+      letter-spacing: 0.06em;
+    }
+
+    /* ============================================================
+       Responsive tweaks
+    ============================================================ */
+    @media (max-width: 400px) {
+      .hero-cta-group .btn-line { padding: 16px 24px; font-size: 0.92rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ============================================================
+       Header
+  ============================================================ -->
+  <header id="site-header">
+    <div class="header-logo">NU-MAN <span>ROLLER STONE</span></div>
+    <a href="https://lin.ee/XXXXXXX" target="_blank" class="header-cta">
+      <!-- LINE icon -->
+      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.48 2 2 6.02 2 11c0 3.16 1.7 5.97 4.29 7.68L5.5 22l3.3-1.64C9.76 20.78 10.86 21 12 21c5.52 0 10-4.02 10-9S17.52 2 12 2zm1 13H8v-1.5h5V15zm2-3H8v-1.5h7V12zm0-3H8V7.5h7V9z"/></svg>
+      無料相談
+    </a>
+  </header>
+
+  <!-- ============================================================
+       Hero
+  ============================================================ -->
+  <section id="hero">
+    <div class="hero-bg">
+      <div class="hero-orb hero-orb-1"></div>
+      <div class="hero-orb hero-orb-2"></div>
+    </div>
+
+    <div class="hero-content">
+      <div class="hero-eyebrow anim-fadeInDown">Inner Garage Specialist</div>
+      <h1 class="hero-headline anim-fadeInUp delay-1">
+        あなたのガレージを、<br>
+        <span class="accent">ショールーム</span>に変える。
+      </h1>
+      <p class="hero-sub anim-fadeInUp delay-2">
+        床一枚で、空間の格が変わる。<br>
+        ローラーストーン施工で、憧れのガレージライフへ。
+      </p>
+
+      <div class="hero-cta-group anim-fadeInUp delay-3">
+        <a href="https://lin.ee/XXXXXXX" target="_blank" class="btn-line">
+          <!-- LINE icon -->
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.48 2 2 6.02 2 11c0 3.16 1.7 5.97 4.29 7.68L5.5 22l3.3-1.64C9.76 20.78 10.86 21 12 21c5.52 0 10-4.02 10-9S17.52 2 12 2zm1 13H8v-1.5h5V15zm2-3H8v-1.5h7V12zm0-3H8V7.5h7V9z"/></svg>
+          まずは写真を送って相談する（無料）
+        </a>
+        <a href="#before-after" class="btn-ghost">
+          施工例を見る
+          <!-- chevron down -->
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </a>
+      </div>
+    </div>
+
+    <div class="hero-scroll-hint">
+      <span>Scroll</span>
+      <svg class="scroll-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       Ticker
+  ============================================================ -->
+  <div class="ticker-wrap" aria-hidden="true">
+    <div class="ticker-track">
+      <span>ROLLER STONE</span><span>INNER GARAGE</span><span>AI SIMULATION</span><span>2-3 DAYS</span><span>DUST FREE</span><span>SHOWROOM QUALITY</span><span>Nu-Man</span><span>CEMENT ARTIST</span>
+      <span>ROLLER STONE</span><span>INNER GARAGE</span><span>AI SIMULATION</span><span>2-3 DAYS</span><span>DUST FREE</span><span>SHOWROOM QUALITY</span><span>Nu-Man</span><span>CEMENT ARTIST</span>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       Problem
+  ============================================================ -->
+  <section id="problem">
+    <div class="section-inner">
+      <div class="section-header reveal">
+        <p class="label">こんなお悩みありませんか？</p>
+        <h2 class="section-title">コンクリートのまま、<br>満足していませんか？</h2>
+        <div class="divider"></div>
+      </div>
+
+      <div class="problem-list">
+        <div class="problem-item reveal">
+          <div class="problem-x">✕</div>
+          <p class="problem-text">白い粉塵が車や荷物を汚す。掃除してもキリがない…</p>
+        </div>
+        <div class="problem-item reveal reveal-delay-1">
+          <div class="problem-x">✕</div>
+          <p class="problem-text">素のコンクリートは安っぽく見えて、ガレージに入るたびにがっかりする</p>
+        </div>
+        <div class="problem-item reveal reveal-delay-2">
+          <div class="problem-x">✕</div>
+          <p class="problem-text">タイルや石材は高額すぎて予算オーバー。かといって妥協もしたくない</p>
+        </div>
+      </div>
+
+      <div class="problem-solution reveal">
+        <p>
+          そのすべてを解決するのが、<br>
+          <strong>ローラーストーン施工</strong>です。
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       Before / After
+  ============================================================ -->
+  <section id="before-after">
+    <div class="section-inner">
+      <div class="section-header reveal">
+        <p class="label">Visual Comparison</p>
+        <h2 class="section-title">この差、ご覧ください。</h2>
+        <div class="divider"></div>
+        <p class="section-sub">スライダーを左右に動かして、施工前後を比較してください。</p>
+      </div>
+
+      <div class="comparison-slider reveal" id="comparison-slider">
+        <img src="Nu-Man/after1.jpg" alt="施工後" class="img-after" onerror="this.src='Nu-Man/after1.jpg.JPG'" />
+        <img src="Nu-Man/before.jpg" alt="施工前" class="img-before" id="slider-img-before" onerror="this.src='Nu-Man/before.jpg.JPG'" />
+
+        <div class="slider-handle" id="slider-handle">
+          <div class="slider-button">
+            <!-- chevrons-left-right -->
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+              <polyline points="7 8 3 12 7 16"></polyline>
+              <polyline points="17 8 21 12 17 16"></polyline>
+              <line x1="3" y1="12" x2="21" y2="12"></line>
+            </svg>
+          </div>
+        </div>
+
+        <div class="slider-label label-before">BEFORE</div>
+        <div class="slider-label label-after">AFTER</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       Benefits
+  ============================================================ -->
+  <section id="benefits">
+    <div class="section-inner">
+      <div class="section-header reveal">
+        <p class="label">Why Roller Stone?</p>
+        <h2 class="section-title">なぜ、インナーガレージに<br>ローラーストーンなのか</h2>
+        <div class="divider"></div>
+      </div>
+
+      <div class="benefits-grid">
+        <!-- Card 1 -->
+        <div class="benefit-card reveal">
+          <p class="benefit-number">01</p>
+          <svg class="benefit-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+          <h3 class="benefit-title">ショールーム級の高級感</h3>
+          <p class="benefit-desc">まるでプロのカーショップのような、重厚で洗練された空間へ。訪れるたびにテンションが上がる床に。</p>
+        </div>
+        <!-- Card 2 -->
+        <div class="benefit-card reveal reveal-delay-1">
+          <p class="benefit-number">02</p>
+          <svg class="benefit-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-5"/></svg>
+          <h3 class="benefit-title">コンクリート粉塵を根本解決</h3>
+          <p class="benefit-desc">塗膜がコンクリートを完全に封じ込め、白い粉の悩みとサヨナラ。車も荷物も清潔に保てます。</p>
+        </div>
+        <!-- Card 3 -->
+        <div class="benefit-card reveal reveal-delay-2">
+          <p class="benefit-number">03</p>
+          <svg class="benefit-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          <h3 class="benefit-title">タイル・石材より断然お得</h3>
+          <p class="benefit-desc">金ゴテ仕上げ費が不要＋材料費が低い。費用対効果は最高クラス。クオリティを妥協せずに節約できます。</p>
+        </div>
+        <!-- Card 4 -->
+        <div class="benefit-card reveal reveal-delay-1">
+          <p class="benefit-number">04</p>
+          <svg class="benefit-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          <h3 class="benefit-title">引き渡し後でも施工OK</h3>
+          <p class="benefit-desc">リフォームとして後付け可能。新築から数年経っていても大丈夫。今すぐガレージを一新できます。</p>
+        </div>
+        <!-- Card 5 -->
+        <div class="benefit-card reveal reveal-delay-2">
+          <p class="benefit-number">05</p>
+          <svg class="benefit-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <h3 class="benefit-title">わずか2〜3日で完成</h3>
+          <p class="benefit-desc">生活への影響を最小限に。あっという間に生まれ変わります。長期工事の心配なし。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       AI Simulation
+  ============================================================ -->
+  <section id="simulation">
+    <div class="section-inner">
+      <div class="section-header reveal">
+        <div class="sim-badge">
+          <!-- sparkles icon -->
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17 5.8 21.3l2.4-7.4L2 9.4h7.6L12 2z"/></svg>
+          ぬーまん独自 / AI シミュレーション提案
+        </div>
+        <h2 class="section-title">あなたのガレージで、<br>完成形を見てから決める。</h2>
+        <div class="divider"></div>
+        <p class="section-sub">「イメージと違った」は、ゼロにします。</p>
+      </div>
+
+      <div class="sim-content">
+        <div class="sim-image reveal">
+          <img src="Nu-Man/material.jpg" alt="AIシミュレーション素材" onerror="this.src='Nu-Man/material.jpg.JPG'" />
+        </div>
+
+        <div class="sim-steps">
+          <div class="sim-step reveal">
+            <div class="sim-step-num">1</div>
+            <div class="sim-step-text">
+              <h4>ガレージの写真を送る</h4>
+              <p>LINEで現状の写真を送るだけ。スマホ撮影で十分です。</p>
+            </div>
+          </div>
+          <div class="sim-step reveal reveal-delay-1">
+            <div class="sim-step-num">2</div>
+            <div class="sim-step-text">
+              <h4>AIが完成形を生成</h4>
+              <p>あなたのガレージに実際に施工したリアルなビジュアルを作成します。</p>
+            </div>
+          </div>
+          <div class="sim-step reveal reveal-delay-2">
+            <div class="sim-step-num">3</div>
+            <div class="sim-step-text">
+              <h4>見てから判断できる</h4>
+              <p>仕上がりを確認してから施工を決められるので、安心してお任せいただけます。</p>
+            </div>
+          </div>
+          <div class="sim-step reveal reveal-delay-3">
+            <div class="sim-step-num">4</div>
+            <div class="sim-step-text">
+              <h4>無料で提供中</h4>
+              <p>シミュレーションは無料。契約前でも気軽にご相談ください。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       Flow
+  ============================================================ -->
+  <section id="flow">
+    <div class="section-inner">
+      <div class="section-header reveal">
+        <p class="label">Process</p>
+        <h2 class="section-title">問い合わせから完成まで、<br>たったの4ステップ</h2>
+        <div class="divider"></div>
+      </div>
+
+      <div class="flow-list">
+        <div class="flow-line"></div>
+
+        <div class="flow-item reveal">
+          <div class="flow-num">01</div>
+          <div class="flow-body">
+            <h4>LINEで無料相談</h4>
+            <p>ガレージの写真を送るだけでOK。まずはお気軽にご連絡ください。費用の概算もすぐにお伝えします。</p>
+          </div>
+        </div>
+
+        <div class="flow-item reveal reveal-delay-1">
+          <div class="flow-num">02</div>
+          <div class="flow-body">
+            <h4>AIシミュレーション提案</h4>
+            <p>あなたのガレージで仕上がりをリアルに確認。イメージを固めてから次のステップへ。</p>
+          </div>
+        </div>
+
+        <div class="flow-item reveal reveal-delay-2">
+          <div class="flow-num">03</div>
+          <div class="flow-body">
+            <h4>施工（2〜3日）</h4>
+            <p>丁寧かつスピーディーに仕上げます。騒音や廃材も少なく、ご近所への配慮も万全。</p>
+          </div>
+        </div>
+
+        <div class="flow-item reveal reveal-delay-3">
+          <div class="flow-num">04</div>
+          <div class="flow-body">
+            <h4>完成・アフターフォロー</h4>
+            <p>施工後もLINEで気軽にご相談いただけます。長くお付き合いできる職人を目指しています。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       Gallery
+  ============================================================ -->
+  <section id="gallery">
+    <div class="section-inner">
+      <div class="section-header reveal">
+        <p class="label">Works</p>
+        <h2 class="section-title">施工事例</h2>
+        <div class="divider"></div>
+        <p class="section-sub">実際の施工写真をご覧ください。</p>
+      </div>
+
+      <div class="gallery-grid">
+        <div class="gallery-item reveal">
+          <img src="Nu-Man/after1.jpg" alt="施工事例1" onerror="this.src='Nu-Man/after1.jpg.JPG'" />
+        </div>
+        <div class="gallery-item reveal reveal-delay-1">
+          <img src="Nu-Man/after2.jpg" alt="施工事例2" onerror="this.src='Nu-Man/after2.jpg.JPG'" />
+        </div>
+        <div class="gallery-item reveal reveal-delay-2">
+          <img src="Nu-Man/material.jpg" alt="使用素材" onerror="this.src='Nu-Man/material.jpg.JPG'" />
+        </div>
+        <div class="gallery-item reveal reveal-delay-1">
+          <img src="Nu-Man/after2.jpg" alt="施工事例3" onerror="this.src='Nu-Man/after2.jpg.JPG'" />
+        </div>
+        <div class="gallery-item reveal reveal-delay-2">
+          <img src="Nu-Man/after1.jpg" alt="施工事例4" onerror="this.src='Nu-Man/after1.jpg.JPG'" />
+        </div>
+        <div class="gallery-item reveal reveal-delay-3">
+          <img src="Nu-Man/before.jpg" alt="施工前" onerror="this.src='Nu-Man/before.jpg.JPG'" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       Profile
+  ============================================================ -->
+  <section id="profile">
+    <div class="section-inner">
+      <div class="section-header reveal">
+        <p class="label">About</p>
+        <h2 class="section-title">施工者について</h2>
+        <div class="divider"></div>
+      </div>
+
+      <div class="profile-inner">
+        <div class="profile-photo reveal">
+          <img src="KIMARU/LP/images/numan_portrait.jpg" alt="ぬーまん" onerror="this.style.background='#2a2a2a'" />
+        </div>
+
+        <div class="reveal reveal-delay-1">
+          <p class="profile-role">Cement Artist</p>
+          <h3 class="profile-name">ぬーまん</h3>
+          <p class="profile-desc">
+            コンクリートを「素材」から「アート」へ昇華させる職人。ローラーストーンを中心に、空間に命を吹き込む施工を行っています。<br><br>
+            AIシミュレーションを活用した提案力で、施主の理想を「見える化」してから施工。「イメージと違った」という後悔をゼロにすることにこだわっています。
+          </p>
+          <div class="profile-social">
+            <a href="https://www.instagram.com/cementart_numan/" target="_blank" class="btn-insta">
+              <!-- instagram icon -->
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+              Instagram で施工例を見る
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       FAQ
+  ============================================================ -->
+  <section id="faq">
+    <div class="section-inner">
+      <div class="section-header reveal">
+        <p class="label">Frequently Asked Questions</p>
+        <h2 class="section-title">よくあるご質問</h2>
+        <div class="divider"></div>
+      </div>
+
+      <div class="faq-list">
+
+        <div class="faq-item reveal" data-faq="1">
+          <button class="faq-q" onclick="toggleFaq(1)" aria-expanded="false">
+            <span class="faq-q-text">費用はどのくらいかかりますか？</span>
+            <span class="faq-q-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </span>
+          </button>
+          <div class="faq-a" id="faq-a-1">
+            <div class="faq-a-inner">
+              ガレージの広さや仕様によって異なります。まずはLINEでご相談いただければ、写真を送っていただくだけで概算をお伝えできます。無料でお見積もりいたします。
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item reveal reveal-delay-1" data-faq="2">
+          <button class="faq-q" onclick="toggleFaq(2)" aria-expanded="false">
+            <span class="faq-q-text">既存のコンクリートにも施工できますか？</span>
+            <span class="faq-q-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </span>
+          </button>
+          <div class="faq-a" id="faq-a-2">
+            <div class="faq-a-inner">
+              はい、引き渡し後の既存ガレージにも対応しています。既存のコンクリートを壊す必要がなく、上から施工できるため、工事費用・騒音・廃材を大幅に削減できます。
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item reveal reveal-delay-2" data-faq="3">
+          <button class="faq-q" onclick="toggleFaq(3)" aria-expanded="false">
+            <span class="faq-q-text">施工中は車を使えませんか？</span>
+            <span class="faq-q-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </span>
+          </button>
+          <div class="faq-a" id="faq-a-3">
+            <div class="faq-a-inner">
+              基本的に2〜3日の施工期間中はガレージ内の使用を控えていただきます。施工前に日程調整をしっかり行いますので、スケジュールに合わせてご対応いたします。
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item reveal" data-faq="4">
+          <button class="faq-q" onclick="toggleFaq(4)" aria-expanded="false">
+            <span class="faq-q-text">耐久性はどのくらいですか？</span>
+            <span class="faq-q-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </span>
+          </button>
+          <div class="faq-a" id="faq-a-4">
+            <div class="faq-a-inner">
+              高強度な特殊材料を使用しており、大型車両が乗っても問題ない強度を持っています。適切にメンテナンスすれば長期間美しい状態を保てます。
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item reveal reveal-delay-1" data-faq="5">
+          <button class="faq-q" onclick="toggleFaq(5)" aria-expanded="false">
+            <span class="faq-q-text">遠方でも施工できますか？</span>
+            <span class="faq-q-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </span>
+          </button>
+          <div class="faq-a" id="faq-a-5">
+            <div class="faq-a-inner">
+              まずはご相談ください。エリアによって対応いたします。遠方の場合は交通費・宿泊費が別途必要になる場合があります。
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item reveal reveal-delay-2" data-faq="6">
+          <button class="faq-q" onclick="toggleFaq(6)" aria-expanded="false">
+            <span class="faq-q-text">AIシミュレーションは本当に無料ですか？</span>
+            <span class="faq-q-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </span>
+          </button>
+          <div class="faq-a" id="faq-a-6">
+            <div class="faq-a-inner">
+              はい、完全無料です。契約前の段階でもお気軽にご依頼ください。「まず見てから考えたい」という方にこそ使っていただきたいサービスです。
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       Final CTA
+  ============================================================ -->
+  <section id="cta-final">
+    <div class="section-inner">
+      <div class="cta-box reveal">
+        <p class="label" style="text-align:center; margin-bottom: 16px;">Free Consultation</p>
+        <h2 class="cta-title">まずは、無料で<br>シミュレーションを体験してください。</h2>
+        <p class="cta-sub">
+          AIがあなたのガレージの完成形をお見せします。<br>
+          費用のご相談だけでも大歓迎です。
+        </p>
+
+        <div class="cta-buttons">
+          <a href="https://lin.ee/XXXXXXX" target="_blank" class="btn-line-lg">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.48 2 2 6.02 2 11c0 3.16 1.7 5.97 4.29 7.68L5.5 22l3.3-1.64C9.76 20.78 10.86 21 12 21c5.52 0 10-4.02 10-9S17.52 2 12 2zm1 13H8v-1.5h5V15zm2-3H8v-1.5h7V12zm0-3H8V7.5h7V9z"/></svg>
+            LINEで無料相談する
+          </a>
+          <a href="tel:09000000000" class="btn-tel">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.6 3.38 2 2 0 0 1 3.57 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.54a16 16 0 0 0 6 6l.92-.92a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            電話で相談する
+          </a>
+        </div>
+
+        <p class="cta-note">※ LINEは24時間受付。電話対応は平日9:00〜18:00（目安）</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       Footer
+  ============================================================ -->
+  <footer>
+    <div class="footer-logo">NU-MAN <span>ROLLER STONE</span></div>
+    <p class="footer-tagline">Cement Artist × Inner Garage Specialist</p>
+    <div class="footer-links">
+      <a href="#hero">トップ</a>
+      <a href="#benefits">メリット</a>
+      <a href="#simulation">AI提案</a>
+      <a href="#flow">施工の流れ</a>
+      <a href="#profile">プロフィール</a>
+      <a href="#faq">FAQ</a>
+    </div>
+    <p class="footer-copy">&copy; 2025 Nu-Man Cement Artist. All rights reserved.</p>
+  </footer>
+
+  <!-- ============================================================
+       JavaScript
+  ============================================================ -->
+  <script>
+    // ---- Scroll Nav ----
+    const header = document.getElementById('site-header');
+    window.addEventListener('scroll', () => {
+      header.classList.toggle('scrolled', window.scrollY > 40);
+    }, { passive: true });
+
+    // ---- IntersectionObserver (Scroll Reveal) ----
+    const revealEls = document.querySelectorAll('.reveal');
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('revealed');
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+    revealEls.forEach(el => revealObserver.observe(el));
+
+    // ---- Before/After Slider ----
+    (function () {
+      const slider   = document.getElementById('comparison-slider');
+      const beforeImg = document.getElementById('slider-img-before');
+      const handle   = document.getElementById('slider-handle');
+      if (!slider || !beforeImg || !handle) return;
+
+      let isDragging = false;
+
+      function updateSlider(clientX) {
+        const rect = slider.getBoundingClientRect();
+        let pos = ((clientX - rect.left) / rect.width) * 100;
+        pos = Math.max(2, Math.min(98, pos));
+        beforeImg.style.clipPath = `inset(0 ${100 - pos}% 0 0)`;
+        handle.style.left = `${pos}%`;
+      }
+
+      // Mouse
+      slider.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        updateSlider(e.clientX);
+        e.preventDefault();
+      });
+      window.addEventListener('mouseup',   () => { isDragging = false; });
+      window.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+        updateSlider(e.clientX);
+      });
+
+      // Touch
+      slider.addEventListener('touchstart', (e) => {
+        isDragging = true;
+        updateSlider(e.touches[0].clientX);
+        e.preventDefault();
+      }, { passive: false });
+      window.addEventListener('touchend',   () => { isDragging = false; });
+      window.addEventListener('touchmove',  (e) => {
+        if (!isDragging) return;
+        updateSlider(e.touches[0].clientX);
+      }, { passive: true });
+
+      // Click
+      slider.addEventListener('click', (e) => { updateSlider(e.clientX); });
+    })();
+
+    // ---- FAQ Accordion ----
+    function toggleFaq(id) {
+      const item   = document.querySelector(`[data-faq="${id}"]`);
+      const answer = document.getElementById(`faq-a-${id}`);
+      const btn    = item.querySelector('.faq-q');
+
+      const isOpen = item.classList.contains('open');
+
+      // Close all
+      document.querySelectorAll('.faq-item.open').forEach(el => {
+        el.classList.remove('open');
+        el.querySelector('.faq-q').setAttribute('aria-expanded', 'false');
+      });
+
+      // Open clicked if it was closed
+      if (!isOpen) {
+        item.classList.add('open');
+        btn.setAttribute('aria-expanded', 'true');
+      }
+    }
+
+    // ---- Smooth scroll for anchor links ----
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', (e) => {
+        const target = document.querySelector(a.getAttribute('href'));
+        if (!target) return;
+        e.preventDefault();
+        const top = target.getBoundingClientRect().top + window.scrollY - 64;
+        window.scrollTo({ top, behavior: 'smooth' });
+      });
+    });
+  </script>
+
+</body>
+</html>
