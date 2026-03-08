@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LP管理画面 | Nu-Man Roller Stone</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Inter:wght@400;500;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --brand-orange: #f18200;
+      --brand-dark:   #1a1a18;
+      --brand-mid:    #202020;
+      --brand-gray:   #2a2a28;
+      --brand-gray2:  #333331;
+      --line-green:   #06C755;
+      --white:        #f5f4f0;
+      --text:         #d8d7d2;
+      --text-muted:   #888882;
+      --border:       rgba(255,255,255,0.10);
+      --radius:       10px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--brand-dark); color: var(--text); font-family: 'Noto Sans JP', sans-serif; font-size: 14px; min-height: 100vh; }
+    a { color: inherit; text-decoration: none; }
+    button { cursor: pointer; font: inherit; }
+    input, textarea, select { font: inherit; }
+
+    /* ---- Top Bar ---- */
+    .topbar {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(26,26,24,0.95); backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 24px; gap: 16px;
+    }
+    .topbar-logo { font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 0.06em; color: var(--white); }
+    .topbar-logo span { color: var(--brand-orange); }
+    .topbar-actions { display: flex; gap: 10px; align-items: center; }
+    .btn-save {
+      padding: 9px 22px; background: var(--brand-orange); color: #fff;
+      border: none; border-radius: 8px; font-size: 13px; font-weight: 700;
+      transition: opacity 0.2s;
+    }
+    .btn-save:hover { opacity: 0.88; }
+    .btn-preview {
+      padding: 9px 22px; background: var(--brand-gray2); color: var(--white);
+      border: 1px solid var(--border); border-radius: 8px; font-size: 13px;
+      transition: background 0.2s;
+    }
+    .btn-preview:hover { background: rgba(255,255,255,0.08); }
+    .btn-reset {
+      padding: 9px 16px; background: transparent; color: var(--text-muted);
+      border: 1px solid var(--border); border-radius: 8px; font-size: 12px;
+      transition: color 0.2s;
+    }
+    .btn-reset:hover { color: var(--white); }
+    .save-status { font-size: 12px; color: var(--line-green); display: none; }
+    .save-status.show { display: inline; }
+
+    /* ---- Layout ---- */
+    .admin-layout { display: flex; min-height: calc(100vh - 53px); }
+
+    /* ---- Sidebar Tabs ---- */
+    .sidebar {
+      width: 200px; flex-shrink: 0;
+      background: var(--brand-mid); border-right: 1px solid var(--border);
+      padding: 16px 0;
+    }
+    .tab-btn {
+      width: 100%; display: flex; align-items: center; gap: 10px;
+      padding: 12px 20px; background: none; border: none; color: var(--text-muted);
+      font-size: 13px; text-align: left; cursor: pointer;
+      transition: background 0.2s, color 0.2s; border-left: 3px solid transparent;
+    }
+    .tab-btn:hover { background: rgba(255,255,255,0.04); color: var(--text); }
+    .tab-btn.active { background: rgba(241,130,0,0.10); color: var(--white); border-left-color: var(--brand-orange); }
+    .tab-btn .tab-icon { font-size: 16px; flex-shrink: 0; }
+
+    /* ---- Main Content ---- */
+    .main-content { flex: 1; overflow-y: auto; padding: 28px 32px; max-width: 780px; }
+
+    /* ---- Tab Panels ---- */
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    .panel-title { font-family: 'Inter', sans-serif; font-size: 16px; font-weight: 700; color: var(--white); margin-bottom: 24px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
+
+    /* ---- Form ---- */
+    .form-group { margin-bottom: 20px; }
+    .form-group label { display: block; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; }
+    .form-group input[type="text"],
+    .form-group input[type="url"],
+    .form-group input[type="tel"],
+    .form-group input[type="color"],
+    .form-group textarea,
+    .form-group select {
+      width: 100%; padding: 10px 14px;
+      background: var(--brand-gray); border: 1px solid var(--border);
+      border-radius: var(--radius); color: var(--white);
+      font-size: 13px; line-height: 1.6;
+      transition: border-color 0.2s;
+    }
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus { outline: none; border-color: var(--brand-orange); }
+    .form-group textarea { resize: vertical; min-height: 72px; }
+    .form-group input[type="color"] { height: 40px; padding: 4px 8px; cursor: pointer; }
+    .form-hint { font-size: 11px; color: var(--text-muted); margin-top: 5px; }
+
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+    /* Section card (for repeating items) */
+    .card { background: var(--brand-gray); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; }
+    .card-label { font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--brand-orange); margin-bottom: 14px; }
+
+    /* Color preview */
+    .color-preview { width: 100%; height: 48px; border-radius: var(--radius); border: 1px solid var(--border); margin-top: 12px; transition: background 0.3s; }
+
+    /* Image preview */
+    .img-preview { width: 100%; height: 160px; object-fit: cover; border-radius: var(--radius); border: 1px solid var(--border); margin-top: 10px; background: var(--brand-gray2); display: block; }
+    .img-preview-wrap { position: relative; }
+
+    /* ---- Stars display ---- */
+    .star-select { display: flex; gap: 6px; margin-top: 4px; }
+    .star-select span { font-size: 20px; cursor: pointer; color: var(--border); transition: color 0.15s; }
+    .star-select span.on { color: #f5a623; }
+  </style>
+</head>
+<body>
+
+<!-- Top Bar -->
+<div class="topbar">
+  <div class="topbar-logo">NU-MAN <span>ADMIN</span></div>
+  <div class="topbar-actions">
+    <span class="save-status" id="save-status">✓ 保存しました</span>
+    <button class="btn-reset" id="btn-reset" onclick="resetConfig()">リセット</button>
+    <button class="btn-preview" onclick="window.open('index_garage.html')">LPをプレビュー →</button>
+    <button class="btn-save" onclick="saveConfig()">保存する</button>
+  </div>
+</div>
+
+<div class="admin-layout">
+  <!-- Sidebar -->
+  <nav class="sidebar">
+    <button class="tab-btn active" onclick="switchTab('basic')"   data-tab="basic">  <span class="tab-icon">🏠</span> 基本情報</button>
+    <button class="tab-btn"        onclick="switchTab('text')"    data-tab="text">   <span class="tab-icon">📝</span> テキスト</button>
+    <button class="tab-btn"        onclick="switchTab('images')"  data-tab="images"> <span class="tab-icon">🖼</span> 画像</button>
+    <button class="tab-btn"        onclick="switchTab('color')"   data-tab="color">  <span class="tab-icon">🎨</span> カラー</button>
+    <button class="tab-btn"        onclick="switchTab('flow')"    data-tab="flow">   <span class="tab-icon">📋</span> 施工の流れ</button>
+    <button class="tab-btn"        onclick="switchTab('voice')"   data-tab="voice">  <span class="tab-icon">💬</span> お客様の声</button>
+  </nav>
+
+  <!-- Main -->
+  <main class="main-content">
+
+    <!-- ====== TAB: 基本情報 ====== -->
+    <div class="tab-panel active" id="panel-basic">
+      <p class="panel-title">基本情報</p>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>テーマ（LP題材）</label>
+          <input type="text" id="meta_theme" placeholder="例: インナーガレージ×ローラーストーン" />
+        </div>
+        <div class="form-group">
+          <label>施工箇所名</label>
+          <input type="text" id="meta_place" placeholder="例: インナーガレージ床" />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>担当者名</label>
+          <input type="text" id="message_name" placeholder="例: ぬーまん" />
+        </div>
+        <div class="form-group">
+          <label>役職・肩書き</label>
+          <input type="text" id="message_role" placeholder="例: Cement Artist" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>LINE URL</label>
+        <input type="url" id="contact_lineUrl" placeholder="https://lin.ee/XXXXXXX" />
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>電話番号（表示用）</label>
+          <input type="tel" id="contact_tel" placeholder="090-0000-0000" />
+        </div>
+        <div class="form-group">
+          <label>電話番号（tel: リンク用）</label>
+          <input type="tel" id="contact_telRaw" placeholder="09000000000" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>施工エリア</label>
+        <input type="text" id="contact_area" placeholder="例: 愛知・岐阜・三重エリア" />
+      </div>
+
+      <div class="form-group">
+        <label>Instagram URL</label>
+        <input type="url" id="message_instagramUrl" placeholder="https://www.instagram.com/xxxxx/" />
+      </div>
+    </div>
+
+    <!-- ====== TAB: テキスト ====== -->
+    <div class="tab-panel" id="panel-text">
+      <p class="panel-title">テキスト</p>
+
+      <div class="card">
+        <p class="card-label">ヒーロー</p>
+        <div class="form-group">
+          <label>眉毛テキスト（eyebrow）</label>
+          <input type="text" id="hero_eyebrow" placeholder="Inner Garage Specialist" />
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>見出し 1行目</label>
+            <input type="text" id="hero_headline1" placeholder="あなたのガレージを、" />
+          </div>
+          <div class="form-group">
+            <label>見出し 2行目（オレンジ）</label>
+            <input type="text" id="hero_headline2" placeholder="ショールームに変える。" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>サブテキスト</label>
+          <textarea id="hero_sub" rows="2" placeholder="床一枚で、空間の格が変わる。..."></textarea>
+        </div>
+      </div>
+
+      <div class="card">
+        <p class="card-label">イントロ</p>
+        <div class="form-group">
+          <label>キャッチコピー（冒頭の「知らなきゃ損する、〜」）</label>
+          <input type="text" id="intro_catchphrase" placeholder="知らなきゃ損する、インナーガレージを計画中の方へ" />
+        </div>
+        <div class="form-group">
+          <label>本文</label>
+          <textarea id="intro_body" rows="4"></textarea>
+        </div>
+      </div>
+
+      <div class="card">
+        <p class="card-label">メリット❶〜❺</p>
+        <div id="benefits-editor"></div>
+      </div>
+
+      <div class="card">
+        <p class="card-label">プロフィール（メッセージ）</p>
+        <div class="form-group">
+          <label>本文</label>
+          <textarea id="message_text" rows="5"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- ====== TAB: 画像 ====== -->
+    <div class="tab-panel" id="panel-images">
+      <p class="panel-title">画像URL</p>
+
+      <div class="card">
+        <p class="card-label">ヒーロー背景</p>
+        <div class="form-group">
+          <label>画像 URL</label>
+          <input type="text" id="hero_image" placeholder="Nu-Man/after1.jpg" oninput="previewImg('hero_image','prev_hero')" />
+          <img id="prev_hero" class="img-preview" src="" alt="" />
+        </div>
+      </div>
+
+      <div class="card">
+        <p class="card-label">Before / After スライダー</p>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Before 画像</label>
+            <input type="text" id="images_before" placeholder="Nu-Man/before.jpg" oninput="previewImg('images_before','prev_before')" />
+            <img id="prev_before" class="img-preview" src="" alt="" />
+          </div>
+          <div class="form-group">
+            <label>After 画像</label>
+            <input type="text" id="images_after" placeholder="Nu-Man/after1.jpg" oninput="previewImg('images_after','prev_after')" />
+            <img id="prev_after" class="img-preview" src="" alt="" />
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <p class="card-label">ギャラリー（3枚）</p>
+        <div id="gallery-editor"></div>
+      </div>
+
+      <div class="card">
+        <p class="card-label">プロフィール写真</p>
+        <div class="form-group">
+          <label>画像 URL</label>
+          <input type="text" id="message_image" placeholder="KIMARU/LP/images/numan_portrait.jpg" oninput="previewImg('message_image','prev_profile')" />
+          <img id="prev_profile" class="img-preview" src="" alt="" />
+        </div>
+      </div>
+    </div>
+
+    <!-- ====== TAB: カラー ====== -->
+    <div class="tab-panel" id="panel-color">
+      <p class="panel-title">カラー設定</p>
+
+      <div class="card">
+        <p class="card-label">メインカラー</p>
+        <div class="form-row">
+          <div class="form-group">
+            <label>カラーピッカー</label>
+            <input type="color" id="color_main" value="#f18200" oninput="syncColor()" />
+          </div>
+          <div class="form-group">
+            <label>HEX値</label>
+            <input type="text" id="color_main_hex" value="#f18200" placeholder="#f18200" oninput="syncColorFromHex()" maxlength="7" />
+          </div>
+        </div>
+        <div class="color-preview" id="color-preview" style="background:#f18200;"></div>
+        <p class="form-hint" style="margin-top:10px;">※ 変更後は「保存する」→「LPをプレビュー」でご確認ください。カラーはLP_CONFIGには現状未反映です（CSSカスタムプロパティで管理予定）。</p>
+      </div>
+    </div>
+
+    <!-- ====== TAB: 施工の流れ ====== -->
+    <div class="tab-panel" id="panel-flow">
+      <p class="panel-title">施工の流れ（STEP 1〜6）</p>
+      <div id="flow-editor"></div>
+    </div>
+
+    <!-- ====== TAB: お客様の声 ====== -->
+    <div class="tab-panel" id="panel-voice">
+      <p class="panel-title">お客様の声（4件）</p>
+      <div id="voice-editor"></div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+// ============================================================
+//  DEFAULT CONFIG (mirrors index_garage.html LP_CONFIG)
+// ============================================================
+var DEFAULT_CONFIG = {
+  meta: { theme: "インナーガレージ×ローラーストーン", place: "インナーガレージ床" },
+  contact: { lineUrl: "https://lin.ee/XXXXXXX", tel: "090-0000-0000", telRaw: "09000000000", area: "愛知・岐阜・三重エリア" },
+  hero: { image: "Nu-Man/after1.jpg", eyebrow: "Inner Garage Specialist", headline1: "あなたのガレージを、", headline2: "ショールームに変える。", sub: "床一枚で、空間の格が変わる。ローラーストーン施工で、憧れのガレージライフへ。" },
+  intro: { catchphrase: "知らなきゃ損する、インナーガレージを計画中の方へ", body: "せっかくインナーガレージを作るなら、「床」にこだわってほしい。コンクリート打ちっぱなしのまま使い始めた方の多くが、数年後に後悔します。白い粉塵、安っぽさ、掃除の大変さ——これらはすべて、最初の選択で防げます。" },
+  benefits: [
+    { emoji: "✨", title: "メリット❶ ショールーム級の高級感｜床一枚で空間が変わる", desc: "まるでプロのカーショップのような、重厚で洗練された空間へ。訪れるたびにテンションが上がる床になります。" },
+    { emoji: "🧹", title: "メリット❷ コンクリート粉塵を根本解決｜掃除の手間ゼロへ", desc: "塗膜がコンクリートを完全に封じ込め、白い粉の悩みとサヨナラ。車も荷物も清潔に保てます。" },
+    { emoji: "💰", title: "メリット❸ タイル・石材より断然お得｜費用対効果は最高クラス", desc: "金ゴテ仕上げ費が不要＋材料費が低い。クオリティを妥協せずに節約できます。" },
+    { emoji: "📅", title: "メリット❹ 引き渡し後でも施工OK｜リフォームとして後付け可能", desc: "新築から数年経っていても大丈夫。今すぐガレージを一新できます。" },
+    { emoji: "⚡", title: "メリット❺ わずか2〜3日で完成｜生活への影響を最小限に", desc: "あっという間に生まれ変わります。長期工事の心配なし。" }
+  ],
+  images: { before: "Nu-Man/before.jpg", after: "Nu-Man/after1.jpg", gallery: ["Nu-Man/after1.jpg","Nu-Man/after2.jpg","Nu-Man/material.jpg"] },
+  testimonials: [
+    { name: "40代 男性（愛知県）", rating: 5, text: "AIシミュレーションで完成形を見せてもらえたので安心して依頼できました。実際の仕上がりもイメージ通りで大満足です。" },
+    { name: "30代 男性（岐阜県）", rating: 5, text: "コンクリートの粉塵に悩んでいましたが、施工後は全く出なくなりました。見た目も一気にかっこよくなって毎朝ガレージに入るのが楽しみです。" },
+    { name: "50代 男性（三重県）", rating: 5, text: "他の業者より断然安く、でも仕上がりは最高でした。ぬーまんさんに頼んで正解でした。" },
+    { name: "40代 男性（愛知県）", rating: 5, text: "LINEで気軽に相談できて、2日で完成。生活への影響もほとんどなく、本当に助かりました。" }
+  ],
+  flow: [
+    { title: "LINEで無料相談", desc: "ガレージの写真を送るだけでOK。まずはお気軽にご連絡ください。費用の概算もすぐにお伝えします。" },
+    { title: "現地確認・ヒアリング", desc: "希望する仕上がりや予算をヒアリング。状態確認を行い、最適なプランをご提案します。" },
+    { title: "AIシミュレーション提案", desc: "あなたのガレージで仕上がりをリアルに確認。イメージを固めてから次のステップへ。" },
+    { title: "お見積もり・ご契約", desc: "明確な料金をご提示。納得してからご契約ください。追加費用は発生しません。" },
+    { title: "施工（2〜3日）", desc: "丁寧かつスピーディーに仕上げます。騒音や廃材も少なく、ご近所への配慮も万全。" },
+    { title: "完成・アフターフォロー", desc: "施工後もLINEで気軽にご相談いただけます。長くお付き合いできる職人を目指しています。" }
+  ],
+  message: { name: "ぬーまん", role: "Cement Artist", image: "KIMARU/LP/images/numan_portrait.jpg", text: "コンクリートを「素材」から「アート」へ昇華させる職人として、ローラーストーンを中心に、空間に命を吹き込む施工を行っています。AIシミュレーションを活用した提案力で、施主の理想を「見える化」してから施工。「イメージと違った」という後悔をゼロにすることにこだわっています。", instagramUrl: "https://www.instagram.com/cementart_numan/" }
+};
+
+var cfg = {};
+
+// ============================================================
+//  INIT
+// ============================================================
+function loadConfig() {
+  try {
+    var saved = localStorage.getItem('lp_config');
+    cfg = saved ? JSON.parse(saved) : JSON.parse(JSON.stringify(DEFAULT_CONFIG));
+    // fill missing keys from default
+    Object.keys(DEFAULT_CONFIG).forEach(function(k) {
+      if (cfg[k] === undefined) cfg[k] = JSON.parse(JSON.stringify(DEFAULT_CONFIG[k]));
+    });
+  } catch(e) {
+    cfg = JSON.parse(JSON.stringify(DEFAULT_CONFIG));
+  }
+}
+
+function populateForm() {
+  // Basic
+  setVal('meta_theme',           cfg.meta.theme);
+  setVal('meta_place',           cfg.meta.place);
+  setVal('contact_lineUrl',      cfg.contact.lineUrl);
+  setVal('contact_tel',          cfg.contact.tel);
+  setVal('contact_telRaw',       cfg.contact.telRaw);
+  setVal('contact_area',         cfg.contact.area);
+  setVal('message_name',         cfg.message.name);
+  setVal('message_role',         cfg.message.role);
+  setVal('message_instagramUrl', cfg.message.instagramUrl);
+
+  // Text
+  setVal('hero_eyebrow',    cfg.hero.eyebrow);
+  setVal('hero_headline1',  cfg.hero.headline1);
+  setVal('hero_headline2',  cfg.hero.headline2);
+  setVal('hero_sub',        cfg.hero.sub);
+  setVal('intro_catchphrase', cfg.intro.catchphrase);
+  setVal('intro_body',       cfg.intro.body);
+  setVal('message_text',     cfg.message.text);
+
+  // Images
+  setVal('hero_image',    cfg.hero.image);    previewImg('hero_image','prev_hero');
+  setVal('images_before', cfg.images.before); previewImg('images_before','prev_before');
+  setVal('images_after',  cfg.images.after);  previewImg('images_after','prev_after');
+  setVal('message_image', cfg.message.image); previewImg('message_image','prev_profile');
+
+  buildBenefitsEditor();
+  buildGalleryEditor();
+  buildFlowEditor();
+  buildVoiceEditor();
+}
+
+function setVal(id, val) {
+  var el = document.getElementById(id);
+  if (el) el.value = val || '';
+}
+
+// ============================================================
+//  Dynamic editors
+// ============================================================
+function buildBenefitsEditor() {
+  var wrap = document.getElementById('benefits-editor');
+  wrap.innerHTML = '';
+  cfg.benefits.forEach(function(b, i) {
+    wrap.innerHTML += '<div class="card" style="margin-bottom:12px;">' +
+      '<p class="card-label">メリット ' + (i+1) + '</p>' +
+      '<div class="form-row">' +
+        '<div class="form-group"><label>絵文字</label><input type="text" id="b_emoji_'+i+'" value="'+esc(b.emoji)+'" maxlength="4" /></div>' +
+        '<div class="form-group"><label>見出し</label><input type="text" id="b_title_'+i+'" value="'+esc(b.title)+'" /></div>' +
+      '</div>' +
+      '<div class="form-group"><label>説明</label><textarea id="b_desc_'+i+'" rows="2">'+esc(b.desc)+'</textarea></div>' +
+      '</div>';
+  });
+}
+
+function buildGalleryEditor() {
+  var wrap = document.getElementById('gallery-editor');
+  wrap.innerHTML = '';
+  for (var i = 0; i < 3; i++) {
+    var src = (cfg.images.gallery && cfg.images.gallery[i]) ? cfg.images.gallery[i] : '';
+    wrap.innerHTML += '<div class="form-group">' +
+      '<label>ギャラリー ' + (i+1) + '</label>' +
+      '<input type="text" id="gallery_'+i+'" value="'+esc(src)+'" oninput="previewImg(\'gallery_'+i+'\',\'prev_gallery_'+i+'\')" />' +
+      '<img id="prev_gallery_'+i+'" class="img-preview" src="'+esc(src)+'" alt="" />' +
+      '</div>';
+  }
+}
+
+function buildFlowEditor() {
+  var wrap = document.getElementById('flow-editor');
+  wrap.innerHTML = '';
+  cfg.flow.forEach(function(f, i) {
+    wrap.innerHTML += '<div class="card">' +
+      '<p class="card-label">STEP ' + (i+1) + '</p>' +
+      '<div class="form-group"><label>タイトル</label><input type="text" id="flow_title_'+i+'" value="'+esc(f.title)+'" /></div>' +
+      '<div class="form-group"><label>説明</label><textarea id="flow_desc_'+i+'" rows="3">'+esc(f.desc)+'</textarea></div>' +
+      '</div>';
+  });
+}
+
+function buildVoiceEditor() {
+  var wrap = document.getElementById('voice-editor');
+  wrap.innerHTML = '';
+  cfg.testimonials.forEach(function(t, i) {
+    var stars = '';
+    for (var s = 1; s <= 5; s++) {
+      stars += '<span id="star_'+i+'_'+s+'" class="'+(s<=t.rating?'on':'')+'" onclick="setStar('+i+','+s+')">★</span>';
+    }
+    wrap.innerHTML += '<div class="card">' +
+      '<p class="card-label">お客様の声 ' + (i+1) + '</p>' +
+      '<div class="form-group"><label>名前・属性</label><input type="text" id="voice_name_'+i+'" value="'+esc(t.name)+'" /></div>' +
+      '<div class="form-group"><label>評価</label><div class="star-select" id="stars_'+i+'">' + stars + '</div></div>' +
+      '<div class="form-group"><label>コメント</label><textarea id="voice_text_'+i+'" rows="3">'+esc(t.text)+'</textarea></div>' +
+      '</div>';
+  });
+}
+
+function setStar(idx, val) {
+  cfg.testimonials[idx].rating = val;
+  for (var s = 1; s <= 5; s++) {
+    var el = document.getElementById('star_'+idx+'_'+s);
+    if (el) el.className = s <= val ? 'on' : '';
+  }
+}
+
+// ============================================================
+//  Collect form → cfg
+// ============================================================
+function collectForm() {
+  cfg.meta.theme    = getVal('meta_theme');
+  cfg.meta.place    = getVal('meta_place');
+  cfg.contact.lineUrl  = getVal('contact_lineUrl');
+  cfg.contact.tel      = getVal('contact_tel');
+  cfg.contact.telRaw   = getVal('contact_telRaw');
+  cfg.contact.area     = getVal('contact_area');
+  cfg.message.name          = getVal('message_name');
+  cfg.message.role          = getVal('message_role');
+  cfg.message.instagramUrl  = getVal('message_instagramUrl');
+  cfg.message.text          = getVal('message_text');
+  cfg.message.image         = getVal('message_image');
+  cfg.hero.eyebrow   = getVal('hero_eyebrow');
+  cfg.hero.headline1 = getVal('hero_headline1');
+  cfg.hero.headline2 = getVal('hero_headline2');
+  cfg.hero.sub       = getVal('hero_sub');
+  cfg.hero.image     = getVal('hero_image');
+  cfg.intro.catchphrase = getVal('intro_catchphrase');
+  cfg.intro.body        = getVal('intro_body');
+  cfg.images.before = getVal('images_before');
+  cfg.images.after  = getVal('images_after');
+  cfg.images.gallery = [];
+  for (var g = 0; g < 3; g++) { cfg.images.gallery.push(getVal('gallery_'+g)); }
+
+  cfg.benefits.forEach(function(b, i) {
+    b.emoji = getVal('b_emoji_'+i);
+    b.title = getVal('b_title_'+i);
+    b.desc  = getVal('b_desc_'+i);
+  });
+  cfg.flow.forEach(function(f, i) {
+    f.title = getVal('flow_title_'+i);
+    f.desc  = getVal('flow_desc_'+i);
+  });
+  cfg.testimonials.forEach(function(t, i) {
+    t.name = getVal('voice_name_'+i);
+    t.text = getVal('voice_text_'+i);
+  });
+}
+
+function getVal(id) {
+  var el = document.getElementById(id);
+  return el ? el.value : '';
+}
+
+// ============================================================
+//  Save / Reset
+// ============================================================
+function saveConfig() {
+  collectForm();
+  localStorage.setItem('lp_config', JSON.stringify(cfg));
+  var st = document.getElementById('save-status');
+  st.classList.add('show');
+  setTimeout(function() { st.classList.remove('show'); }, 2500);
+}
+
+function resetConfig() {
+  if (!confirm('設定をデフォルトに戻しますか？')) return;
+  localStorage.removeItem('lp_config');
+  cfg = JSON.parse(JSON.stringify(DEFAULT_CONFIG));
+  populateForm();
+}
+
+// ============================================================
+//  Tabs
+// ============================================================
+function switchTab(name) {
+  document.querySelectorAll('.tab-panel').forEach(function(p) { p.classList.remove('active'); });
+  document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+  document.getElementById('panel-'+name).classList.add('active');
+  document.querySelector('[data-tab="'+name+'"]').classList.add('active');
+}
+
+// ============================================================
+//  Image preview
+// ============================================================
+function previewImg(inputId, imgId) {
+  var src = document.getElementById(inputId).value.trim();
+  var img = document.getElementById(imgId);
+  if (img) img.src = src;
+}
+
+// ============================================================
+//  Color sync
+// ============================================================
+function syncColor() {
+  var hex = document.getElementById('color_main').value;
+  document.getElementById('color_main_hex').value = hex;
+  document.getElementById('color-preview').style.background = hex;
+}
+function syncColorFromHex() {
+  var hex = document.getElementById('color_main_hex').value.trim();
+  if (/^#[0-9a-fA-F]{6}$/.test(hex)) {
+    document.getElementById('color_main').value = hex;
+    document.getElementById('color-preview').style.background = hex;
+  }
+}
+
+// ============================================================
+//  Util
+// ============================================================
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// ============================================================
+//  Boot
+// ============================================================
+loadConfig();
+populateForm();
+</script>
+</body>
+</html>

@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LPヒアリング | Nu-Man Roller Stone</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Inter:wght@400;500;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --brand-orange: #f18200;
+      --brand-dark:   #1a1a18;
+      --brand-mid:    #202020;
+      --brand-gray:   #2a2a28;
+      --brand-gray2:  #333331;
+      --line-green:   #06C755;
+      --white:        #f5f4f0;
+      --text:         #d8d7d2;
+      --text-muted:   #888882;
+      --border:       rgba(255,255,255,0.10);
+      --radius:       10px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--brand-dark); color: var(--text); font-family: 'Noto Sans JP', sans-serif; font-size: 14px; min-height: 100vh; }
+    button { cursor: pointer; font: inherit; }
+    textarea, input, select { font: inherit; }
+
+    .topbar {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(26,26,24,0.95); backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 24px;
+    }
+    .topbar-logo { font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 0.06em; color: var(--white); }
+    .topbar-logo span { color: var(--brand-orange); }
+    .topbar-links { display: flex; gap: 8px; }
+    .topbar-link { padding: 8px 16px; background: var(--brand-gray2); color: var(--text-muted); border: 1px solid var(--border); border-radius: 8px; font-size: 12px; transition: color 0.2s; cursor: pointer; }
+    .topbar-link:hover { color: var(--white); }
+
+    .page-wrap { max-width: 760px; margin: 0 auto; padding: 36px 24px 80px; }
+    .page-title { font-family: 'Inter', sans-serif; font-size: 20px; font-weight: 700; color: var(--white); margin-bottom: 6px; }
+    .page-sub { font-size: 13px; color: var(--text-muted); margin-bottom: 36px; }
+
+    /* Form card */
+    .card { background: var(--brand-mid); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; margin-bottom: 20px; }
+    .card-title { font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--brand-orange); margin-bottom: 18px; }
+
+    .form-group { margin-bottom: 18px; }
+    .form-group:last-child { margin-bottom: 0; }
+    .form-group label { display: block; font-size: 12px; font-weight: 700; letter-spacing: 0.04em; color: var(--text-muted); margin-bottom: 7px; }
+    .form-group input[type="text"],
+    .form-group input[type="url"],
+    .form-group input[type="tel"],
+    .form-group input[type="color"],
+    .form-group textarea,
+    .form-group select {
+      width: 100%; padding: 10px 14px;
+      background: var(--brand-gray); border: 1px solid var(--border);
+      border-radius: var(--radius); color: var(--white); font-size: 13px; line-height: 1.6;
+      transition: border-color 0.2s;
+    }
+    .form-group input:focus, .form-group textarea:focus, .form-group select:focus { outline: none; border-color: var(--brand-orange); }
+    .form-group textarea { resize: vertical; min-height: 72px; }
+    .form-group input[type="color"] { height: 40px; padding: 4px 8px; cursor: pointer; }
+
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+    /* Radio group */
+    .radio-group { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+    .radio-btn {
+      padding: 8px 16px; background: var(--brand-gray); border: 1px solid var(--border);
+      border-radius: 8px; color: var(--text-muted); font-size: 13px; cursor: pointer;
+      transition: all 0.15s;
+    }
+    .radio-btn:hover { border-color: rgba(241,130,0,0.3); color: var(--text); }
+    .radio-btn.selected { background: rgba(241,130,0,0.12); border-color: var(--brand-orange); color: var(--white); }
+    .radio-btn input { display: none; }
+
+    /* Generate button */
+    .generate-btn {
+      width: 100%; padding: 16px; background: var(--brand-orange); color: #fff;
+      border: none; border-radius: var(--radius); font-size: 15px; font-weight: 700;
+      margin-bottom: 28px; transition: opacity 0.2s;
+    }
+    .generate-btn:hover { opacity: 0.88; }
+
+    /* Output */
+    .output-section { display: none; }
+    .output-section.show { display: block; }
+    .output-block { background: var(--brand-mid); border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 20px; overflow: hidden; }
+    .output-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; border-bottom: 1px solid var(--border); }
+    .output-label { font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--brand-orange); }
+    .copy-btn { padding: 7px 16px; background: var(--brand-gray2); color: var(--text); border: 1px solid var(--border); border-radius: 6px; font-size: 12px; transition: background 0.2s; white-space: nowrap; }
+    .copy-btn:hover { background: rgba(255,255,255,0.08); }
+    .copy-btn.copied { background: rgba(6,199,85,0.15); border-color: rgba(6,199,85,0.3); color: var(--line-green); }
+    .output-body { padding: 20px; }
+    pre.output-text { font-family: 'Inter', monospace; font-size: 12px; line-height: 1.7; color: var(--text); white-space: pre-wrap; word-break: break-word; max-height: 520px; overflow-y: auto; }
+  </style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-logo">NU-MAN <span>HEARING</span></div>
+  <div class="topbar-links">
+    <span class="topbar-link" onclick="window.open('admin_garage.html')">管理画面</span>
+    <span class="topbar-link" onclick="window.open('editor_garage.html')">エディター</span>
+    <span class="topbar-link" onclick="window.open('index_garage.html')">LPプレビュー</span>
+  </div>
+</div>
+
+<div class="page-wrap">
+  <h1 class="page-title">ヒアリングシート</h1>
+  <p class="page-sub">クライアント情報を入力して、LP_CONFIG JSON と新規作成プロンプトを自動生成します。</p>
+
+  <!-- 1. 基本情報 -->
+  <div class="card">
+    <p class="card-title">① 基本情報</p>
+    <div class="form-row">
+      <div class="form-group">
+        <label>テーマ（LP題材）</label>
+        <input type="text" id="h_theme" placeholder="例: 外壁×ローラーストーン" />
+      </div>
+      <div class="form-group">
+        <label>施工箇所名</label>
+        <input type="text" id="h_place" placeholder="例: 外壁" />
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>担当者名</label>
+        <input type="text" id="h_name" placeholder="例: ぬーまん" />
+      </div>
+      <div class="form-group">
+        <label>役職・肩書き</label>
+        <input type="text" id="h_role" placeholder="例: Cement Artist" />
+      </div>
+    </div>
+    <div class="form-group">
+      <label>施工エリア</label>
+      <input type="text" id="h_area" placeholder="例: 愛知・岐阜・三重エリア" />
+    </div>
+  </div>
+
+  <!-- 2. 連絡先 -->
+  <div class="card">
+    <p class="card-title">② 連絡先</p>
+    <div class="form-group">
+      <label>LINE URL</label>
+      <input type="url" id="h_line" placeholder="https://lin.ee/XXXXXXX" />
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>電話番号（表示用）</label>
+        <input type="tel" id="h_tel" placeholder="090-0000-0000" />
+      </div>
+      <div class="form-group">
+        <label>電話番号（tel: リンク用）</label>
+        <input type="tel" id="h_tel_raw" placeholder="09000000000" />
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Instagram URL</label>
+      <input type="url" id="h_insta" placeholder="https://www.instagram.com/xxxxx/" />
+    </div>
+  </div>
+
+  <!-- 3. ターゲット・テイスト -->
+  <div class="card">
+    <p class="card-title">③ ターゲット・テイスト</p>
+    <div class="form-group">
+      <label>ターゲット層</label>
+      <div class="radio-group" id="rg-target">
+        <label class="radio-btn selected"><input type="radio" name="target" value="計画中" checked />計画中の方向け</label>
+        <label class="radio-btn"><input type="radio" name="target" value="既存" />既存ユーザー向け</label>
+        <label class="radio-btn"><input type="radio" name="target" value="両方" />両方</label>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>LPテイスト</label>
+      <div class="radio-group" id="rg-taste">
+        <label class="radio-btn selected"><input type="radio" name="taste" value="リッチ" checked />リッチ（高級感重視）</label>
+        <label class="radio-btn"><input type="radio" name="taste" value="シンプル" />シンプル（読みやすさ重視）</label>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>メインカラー</label>
+      <div style="display:flex;gap:12px;align-items:center;">
+        <input type="color" id="h_color" value="#f18200" style="width:60px;" oninput="syncHearingColor()" />
+        <input type="text" id="h_color_hex" value="#f18200" maxlength="7" placeholder="#f18200" style="flex:1;" oninput="syncHearingColorFromHex()" />
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. 画像パス -->
+  <div class="card">
+    <p class="card-title">④ 画像パス</p>
+    <div class="form-row">
+      <div class="form-group">
+        <label>ヒーロー背景画像</label>
+        <input type="text" id="h_img_hero" placeholder="Nu-Man/after1.jpg" />
+      </div>
+      <div class="form-group">
+        <label>プロフィール写真</label>
+        <input type="text" id="h_img_profile" placeholder="KIMARU/LP/images/numan_portrait.jpg" />
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Before 画像</label>
+        <input type="text" id="h_img_before" placeholder="Nu-Man/before.jpg" />
+      </div>
+      <div class="form-group">
+        <label>After 画像</label>
+        <input type="text" id="h_img_after" placeholder="Nu-Man/after1.jpg" />
+      </div>
+    </div>
+    <div class="form-group">
+      <label>ギャラリー（カンマ区切りで3枚）</label>
+      <input type="text" id="h_img_gallery" placeholder="Nu-Man/after1.jpg, Nu-Man/after2.jpg, Nu-Man/material.jpg" />
+    </div>
+  </div>
+
+  <!-- 5. LP内容メモ -->
+  <div class="card">
+    <p class="card-title">⑤ LP内容メモ（任意）</p>
+    <div class="form-group">
+      <label>ヒーローキャッチコピー（1行目 / 2行目）</label>
+      <div class="form-row">
+        <input type="text" id="h_h1" placeholder="あなたの〇〇を、" />
+        <input type="text" id="h_h2" placeholder="〇〇に変える。" />
+      </div>
+    </div>
+    <div class="form-group">
+      <label>差別化ポイント・強み（自由記述）</label>
+      <textarea id="h_memo" rows="4" placeholder="例: 外壁専用の特殊塗料を使用。雨・UV対応。施工実績50件以上。"></textarea>
+    </div>
+  </div>
+
+  <button class="generate-btn" onclick="generate()">LP設計書とプロンプトを生成する</button>
+
+  <!-- Output -->
+  <div class="output-section" id="output-section">
+
+    <div class="output-block">
+      <div class="output-header">
+        <span class="output-label">出力① LP_CONFIG JSON 雛形</span>
+        <button class="copy-btn" id="copy-json" onclick="copyOutput('output-json','copy-json')">📋 コピー</button>
+      </div>
+      <div class="output-body">
+        <pre class="output-text" id="output-json"></pre>
+      </div>
+    </div>
+
+    <div class="output-block">
+      <div class="output-header">
+        <span class="output-label">出力② Claude Code 新規LP作成プロンプト</span>
+        <button class="copy-btn" id="copy-prompt" onclick="copyOutput('output-prompt','copy-prompt')">📋 コピー</button>
+      </div>
+      <div class="output-body">
+        <pre class="output-text" id="output-prompt"></pre>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// Radio button UI
+document.querySelectorAll('.radio-group').forEach(function(rg) {
+  rg.querySelectorAll('.radio-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      rg.querySelectorAll('.radio-btn').forEach(function(b) { b.classList.remove('selected'); });
+      btn.classList.add('selected');
+    });
+  });
+});
+
+function syncHearingColor() {
+  var hex = document.getElementById('h_color').value;
+  document.getElementById('h_color_hex').value = hex;
+}
+function syncHearingColorFromHex() {
+  var hex = document.getElementById('h_color_hex').value.trim();
+  if (/^#[0-9a-fA-F]{6}$/.test(hex)) document.getElementById('h_color').value = hex;
+}
+
+function gv(id) { return (document.getElementById(id).value || '').trim(); }
+function rv(name) { var el = document.querySelector('input[name="'+name+'"]:checked'); return el ? el.value : ''; }
+
+function generate() {
+  var theme   = gv('h_theme')   || 'インナーガレージ×ローラーストーン';
+  var place   = gv('h_place')   || 'インナーガレージ床';
+  var name    = gv('h_name')    || 'ぬーまん';
+  var role    = gv('h_role')    || 'Cement Artist';
+  var area    = gv('h_area')    || '愛知・岐阜・三重エリア';
+  var lineUrl = gv('h_line')    || 'https://lin.ee/XXXXXXX';
+  var tel     = gv('h_tel')     || '090-0000-0000';
+  var telRaw  = gv('h_tel_raw') || '09000000000';
+  var insta   = gv('h_insta')   || 'https://www.instagram.com/cementart_numan/';
+  var target  = rv('target')    || '計画中';
+  var taste   = rv('taste')     || 'リッチ';
+  var color   = gv('h_color_hex') || '#f18200';
+  var imgHero    = gv('h_img_hero')    || 'Nu-Man/after1.jpg';
+  var imgProfile = gv('h_img_profile') || 'KIMARU/LP/images/numan_portrait.jpg';
+  var imgBefore  = gv('h_img_before')  || 'Nu-Man/before.jpg';
+  var imgAfter   = gv('h_img_after')   || 'Nu-Man/after1.jpg';
+  var galleryRaw = gv('h_img_gallery') || 'Nu-Man/after1.jpg, Nu-Man/after2.jpg, Nu-Man/material.jpg';
+  var gallery    = galleryRaw.split(',').map(function(s){return s.trim();}).filter(Boolean);
+  while (gallery.length < 3) gallery.push(gallery[gallery.length-1] || imgAfter);
+  var h1   = gv('h_h1')  || 'あなたの' + place + 'を、';
+  var h2   = gv('h_h2')  || 'ショールームに変える。';
+  var memo = gv('h_memo');
+
+  // JSON
+  var cfg = {
+    meta: { title: theme + ' 完全ガイド | ' + name, theme: theme, place: place },
+    contact: { lineUrl: lineUrl, tel: tel, telRaw: telRaw, area: area },
+    hero: { image: imgHero, eyebrow: place + ' Specialist', headline1: h1, headline2: h2, sub: place + 'に特化したローラーストーン施工で、理想の空間を実現します。' },
+    intro: { catchphrase: '知らなきゃ損する、' + place + 'を計画中の方へ', body: '（ここに導入文を入れてください。施主の悩みと解決の糸口を書きます。）' },
+    benefits: [
+      { emoji: '✨', title: 'メリット❶ ショールーム級の高級感｜' + place + 'が生まれ変わる', desc: '（説明を入れてください）' },
+      { emoji: '🧹', title: 'メリット❷ 〇〇を根本解決｜〇〇へ', desc: '（説明を入れてください）' },
+      { emoji: '💰', title: 'メリット❸ 費用対効果は最高クラス｜〇〇より断然お得', desc: '（説明を入れてください）' },
+      { emoji: '📅', title: 'メリット❹ 引き渡し後でも施工OK｜後付け可能', desc: '（説明を入れてください）' },
+      { emoji: '⚡', title: 'メリット❺ わずか2〜3日で完成｜生活への影響を最小限に', desc: '（説明を入れてください）' }
+    ],
+    images: { before: imgBefore, after: imgAfter, gallery: gallery },
+    testimonials: [
+      { name: '40代 男性（' + area.split('・')[0] + '）', rating: 5, text: '（お客様の声を入れてください）' },
+      { name: '30代 男性（' + area.split('・')[1] + '）', rating: 5, text: '（お客様の声を入れてください）' },
+      { name: '50代 男性（' + (area.split('・')[2]||area.split('・')[0]) + '）', rating: 5, text: '（お客様の声を入れてください）' },
+      { name: '40代 男性（' + area.split('・')[0] + '）', rating: 5, text: '（お客様の声を入れてください）' }
+    ],
+    flow: [
+      { title: 'LINEで無料相談', desc: place + 'の写真を送るだけでOK。費用の概算もすぐにお伝えします。' },
+      { title: '現地確認・ヒアリング', desc: '希望する仕上がりや予算をヒアリング。最適なプランをご提案します。' },
+      { title: 'AIシミュレーション提案', desc: 'あなたの' + place + 'で仕上がりをリアルに確認できます。' },
+      { title: 'お見積もり・ご契約', desc: '明確な料金をご提示。納得してからご契約ください。' },
+      { title: '施工（2〜3日）', desc: '丁寧かつスピーディーに仕上げます。' },
+      { title: '完成・アフターフォロー', desc: '施工後もLINEで気軽にご相談いただけます。' }
+    ],
+    message: { name: name, role: role, image: imgProfile, text: '（' + name + ' のプロフィール文を入れてください）', instagramUrl: insta }
+  };
+
+  document.getElementById('output-json').textContent = JSON.stringify(cfg, null, 2);
+
+  // Prompt
+  var memoLine = memo ? '\n### クライアントメモ・強み\n' + memo : '';
+  var prompt = [
+    '## 新規LP作成依頼: index_garage.html ベースで派生LP作成',
+    '',
+    '### LP概要',
+    '- テーマ: ' + theme,
+    '- 施工箇所: ' + place,
+    '- 担当者: ' + name + '（' + role + '）',
+    '- 施工エリア: ' + area,
+    '- ターゲット: ' + target,
+    '- テイスト: ' + taste,
+    '- メインカラー: ' + color,
+    '',
+    '### 作業内容',
+    '1. `/home/user/Roller-Stone-/index_garage.html` をコピーして新しいLPファイルを作成してください。',
+    '   ファイル名の例: index_' + place.replace(/[^a-zA-Z0-9]/g,'_') + '.html',
+    '2. LP_CONFIG オブジェクトを以下の JSON で上書きしてください:',
+    '',
+    JSON.stringify(cfg, null, 2),
+    '',
+    '3. CSS変数 `--brand-orange` を `' + color + '` に変更してください（テーマカラー）。',
+    '4. ページタイトル（<title>）を「' + theme + ' 完全ガイド | ' + name + '」に変更してください。',
+    memoLine,
+    '',
+    '### 必須言い回し（変更不可）',
+    '- 冒頭: 「知らなきゃ損する、」',
+    '- メリット見出し: 「メリット❶ 〇〇｜〇〇」形式',
+    '- 差別化: 「ここまでのメリットは、多くの業者が提案できる内容です。でも、' + name + 'は、ここで終わりません。」',
+    '- 結論: 「もう、やらない理由が見つかりません。」',
+    '- PS: 「知っているか知らないかで、10年後の満足度が変わります。」',
+    '',
+    '### セクション構成（12セクション維持）',
+    '#hero / #intro / #benefits / #before-after / #unique / #limit',
+    '#testimonials / #flow / #conclusion / #mindset / #summary / #message / #cta-final',
+    '',
+    '### 注意事項',
+    '- LP_CONFIG の値は必ず上記 JSON を使用してください。',
+    '- 12セクション構成・CSS変数・renderLP() 関数の構造は維持してください。',
+    '- 作業完了後に git add / git commit してください。'
+  ].join('\n');
+
+  document.getElementById('output-prompt').textContent = prompt;
+  var sec = document.getElementById('output-section');
+  sec.classList.add('show');
+  sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function copyOutput(textId, btnId) {
+  var text = document.getElementById(textId).textContent;
+  var btn  = document.getElementById(btnId);
+  navigator.clipboard.writeText(text).then(done).catch(function() {
+    var ta = document.createElement('textarea');
+    ta.value = text; document.body.appendChild(ta); ta.select();
+    document.execCommand('copy'); document.body.removeChild(ta); done();
+  });
+  function done() {
+    btn.textContent = '✓ コピーしました'; btn.className = 'copy-btn copied';
+    setTimeout(function() { btn.textContent = '📋 コピー'; btn.className = 'copy-btn'; }, 2000);
+  }
+}
+</script>
+</body>
+</html>
