@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LPエディター | Nu-Man Roller Stone</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Inter:wght@400;500;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --brand-orange: #f18200;
+      --brand-dark:   #1a1a18;
+      --brand-mid:    #202020;
+      --brand-gray:   #2a2a28;
+      --brand-gray2:  #333331;
+      --line-green:   #06C755;
+      --white:        #f5f4f0;
+      --text:         #d8d7d2;
+      --text-muted:   #888882;
+      --border:       rgba(255,255,255,0.10);
+      --radius:       10px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--brand-dark); color: var(--text); font-family: 'Noto Sans JP', sans-serif; font-size: 14px; min-height: 100vh; }
+    button { cursor: pointer; font: inherit; }
+    textarea, input, select { font: inherit; }
+
+    /* Topbar */
+    .topbar {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(26,26,24,0.95); backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 24px;
+    }
+    .topbar-logo { font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 0.06em; color: var(--white); }
+    .topbar-logo span { color: var(--brand-orange); }
+    .topbar-links { display: flex; gap: 8px; }
+    .topbar-link {
+      padding: 8px 16px; background: var(--brand-gray2); color: var(--text-muted);
+      border: 1px solid var(--border); border-radius: 8px; font-size: 12px;
+      transition: color 0.2s;
+    }
+    .topbar-link:hover { color: var(--white); cursor: pointer; }
+
+    /* Layout */
+    .layout { display: grid; grid-template-columns: 300px 1fr; min-height: calc(100vh - 53px); }
+
+    /* Left panel */
+    .left-panel { background: var(--brand-mid); border-right: 1px solid var(--border); padding: 24px 20px; overflow-y: auto; }
+    .panel-title { font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 0.06em; color: var(--text-muted); text-transform: uppercase; margin-bottom: 16px; }
+
+    .section-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 24px; }
+    .section-check {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 14px; background: var(--brand-gray); border: 1px solid var(--border);
+      border-radius: 8px; cursor: pointer; user-select: none;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .section-check:hover { background: var(--brand-gray2); }
+    .section-check input[type="checkbox"] { accent-color: var(--brand-orange); width: 15px; height: 15px; }
+    .section-check.checked { border-color: rgba(241,130,0,0.4); background: rgba(241,130,0,0.07); }
+    .section-check .sec-badge {
+      font-family: 'Inter', sans-serif; font-size: 10px; font-weight: 700;
+      color: var(--brand-orange); letter-spacing: 0.08em; min-width: 18px;
+    }
+    .section-check .sec-name { font-size: 13px; color: var(--text); }
+
+    .select-all-row { display: flex; gap: 8px; margin-bottom: 12px; }
+    .btn-small {
+      padding: 6px 12px; background: var(--brand-gray2); color: var(--text-muted);
+      border: 1px solid var(--border); border-radius: 6px; font-size: 11px;
+      transition: color 0.2s;
+    }
+    .btn-small:hover { color: var(--white); }
+
+    /* Right panel */
+    .right-panel { padding: 28px 32px; overflow-y: auto; }
+    .right-title { font-family: 'Inter', sans-serif; font-size: 16px; font-weight: 700; color: var(--white); margin-bottom: 24px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
+
+    .form-group { margin-bottom: 20px; }
+    .form-group label { display: block; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; }
+
+    .type-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .type-btn {
+      padding: 10px 8px; background: var(--brand-gray); border: 1px solid var(--border);
+      border-radius: 8px; color: var(--text-muted); font-size: 12px; text-align: center;
+      transition: all 0.2s; cursor: pointer;
+    }
+    .type-btn:hover { border-color: rgba(241,130,0,0.3); color: var(--text); }
+    .type-btn.selected { background: rgba(241,130,0,0.12); border-color: var(--brand-orange); color: var(--white); }
+
+    textarea.detail-input {
+      width: 100%; min-height: 140px; resize: vertical;
+      padding: 14px 16px; background: var(--brand-gray); border: 1px solid var(--border);
+      border-radius: var(--radius); color: var(--white); font-size: 13px; line-height: 1.7;
+      transition: border-color 0.2s;
+    }
+    textarea.detail-input:focus { outline: none; border-color: var(--brand-orange); }
+
+    .generate-btn {
+      width: 100%; padding: 14px; background: var(--brand-orange); color: #fff;
+      border: none; border-radius: var(--radius); font-size: 14px; font-weight: 700;
+      transition: opacity 0.2s; margin-bottom: 20px;
+    }
+    .generate-btn:hover { opacity: 0.88; }
+
+    .output-box {
+      background: var(--brand-gray); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 20px; display: none;
+    }
+    .output-box.show { display: block; }
+    .output-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+    .output-label { font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--brand-orange); }
+    .copy-btn {
+      padding: 7px 16px; background: var(--brand-gray2); color: var(--text);
+      border: 1px solid var(--border); border-radius: 6px; font-size: 12px;
+      transition: background 0.2s; white-space: nowrap;
+    }
+    .copy-btn:hover { background: rgba(255,255,255,0.08); }
+    .copy-btn.copied { background: rgba(6,199,85,0.15); border-color: rgba(6,199,85,0.3); color: var(--line-green); }
+    .output-text {
+      font-family: 'Inter', monospace; font-size: 12px; line-height: 1.7;
+      color: var(--text); white-space: pre-wrap; word-break: break-word;
+      max-height: 480px; overflow-y: auto;
+    }
+  </style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-logo">NU-MAN <span>EDITOR</span></div>
+  <div class="topbar-links">
+    <span class="topbar-link" onclick="window.open('admin_garage.html')">管理画面</span>
+    <span class="topbar-link" onclick="window.open('index_garage.html')">LPプレビュー</span>
+    <span class="topbar-link" onclick="window.open('hearing_garage.html')">ヒアリング</span>
+  </div>
+</div>
+
+<div class="layout">
+  <!-- Left: section checkboxes -->
+  <div class="left-panel">
+    <p class="panel-title">修正するセクション</p>
+    <div class="select-all-row">
+      <button class="btn-small" onclick="selectAll(true)">全選択</button>
+      <button class="btn-small" onclick="selectAll(false)">全解除</button>
+    </div>
+    <div class="section-list" id="section-list"></div>
+  </div>
+
+  <!-- Right: type + detail + output -->
+  <div class="right-panel">
+    <p class="right-title">修正プロンプト生成</p>
+
+    <div class="form-group">
+      <label>修正タイプ</label>
+      <div class="type-grid" id="type-grid">
+        <div class="type-btn selected" data-type="text"    onclick="selectType(this)">📝 テキスト修正</div>
+        <div class="type-btn"          data-type="image"   onclick="selectType(this)">🖼 画像差し替え</div>
+        <div class="type-btn"          data-type="add"     onclick="selectType(this)">➕ セクション追加</div>
+        <div class="type-btn"          data-type="layout"  onclick="selectType(this)">📐 レイアウト変更</div>
+        <div class="type-btn"          data-type="style"   onclick="selectType(this)">🎨 スタイル調整</div>
+        <div class="type-btn"          data-type="other"   onclick="selectType(this)">💬 その他</div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>修正内容の詳細</label>
+      <textarea class="detail-input" id="detail-input" placeholder="例: ヒーローのキャッチコピーを「外壁を、アートに変える。」に変更してください。サブテキストも外壁塗装向けに書き直してください。"></textarea>
+    </div>
+
+    <button class="generate-btn" onclick="generatePrompt()">プロンプトを生成する</button>
+
+    <div class="output-box" id="output-box">
+      <div class="output-header">
+        <span class="output-label">生成されたプロンプト</span>
+        <button class="copy-btn" id="copy-btn" onclick="copyPrompt()">📋 コピー</button>
+      </div>
+      <pre class="output-text" id="output-text"></pre>
+    </div>
+  </div>
+</div>
+
+<script>
+var SECTIONS = [
+  { id: "hero",         label: "ヒーロー",              no: "00" },
+  { id: "intro",        label: "イントロ（知らなきゃ損する）", no: "01" },
+  { id: "benefits",     label: "メリット❶〜❺",          no: "02" },
+  { id: "before-after", label: "Before/After スライダー", no: "03" },
+  { id: "unique",       label: "ぬーまんだけの提案",      no: "04" },
+  { id: "limit",        label: "一般業者との違い",        no: "05" },
+  { id: "testimonials", label: "お客様の声",              no: "06" },
+  { id: "flow",         label: "施工の流れ（6STEP）",     no: "07" },
+  { id: "conclusion",   label: "結論",                    no: "08" },
+  { id: "mindset",      label: "考え方のアップデート",    no: "09" },
+  { id: "summary",      label: "まとめ",                  no: "10" },
+  { id: "message",      label: "ぬーまんのメッセージ",    no: "11" },
+  { id: "cta-final",    label: "最終CTA",                 no: "12" }
+];
+
+var TYPE_LABELS = {
+  text:   "テキスト修正",
+  image:  "画像差し替え",
+  add:    "セクション追加",
+  layout: "レイアウト変更",
+  style:  "スタイル調整",
+  other:  "その他"
+};
+
+var selectedType = "text";
+
+// Build section checkboxes
+(function() {
+  var list = document.getElementById('section-list');
+  SECTIONS.forEach(function(s) {
+    var div = document.createElement('label');
+    div.className = 'section-check';
+    div.innerHTML =
+      '<input type="checkbox" value="'+s.id+'" onchange="onCheck(this)" />' +
+      '<span class="sec-badge">#'+s.no+'</span>' +
+      '<span class="sec-name">'+s.label+'</span>';
+    list.appendChild(div);
+  });
+})();
+
+function onCheck(cb) {
+  var label = cb.closest('.section-check');
+  label.classList.toggle('checked', cb.checked);
+}
+
+function selectAll(val) {
+  document.querySelectorAll('#section-list input[type="checkbox"]').forEach(function(cb) {
+    cb.checked = val;
+    cb.closest('.section-check').classList.toggle('checked', val);
+  });
+}
+
+function selectType(btn) {
+  document.querySelectorAll('.type-btn').forEach(function(b) { b.classList.remove('selected'); });
+  btn.classList.add('selected');
+  selectedType = btn.getAttribute('data-type');
+}
+
+function generatePrompt() {
+  var checked = [];
+  document.querySelectorAll('#section-list input[type="checkbox"]:checked').forEach(function(cb) {
+    var s = SECTIONS.find(function(x) { return x.id === cb.value; });
+    if (s) checked.push(s);
+  });
+
+  var detail = document.getElementById('detail-input').value.trim();
+
+  if (checked.length === 0 && detail === '') {
+    alert('セクションを選択するか、修正内容を入力してください。');
+    return;
+  }
+
+  var sectionText = checked.length > 0
+    ? checked.map(function(s) { return '  - #' + s.id + '（' + s.label + '）'; }).join('\n')
+    : '  （セクション未選択 — 以下の詳細を参照）';
+
+  var typeLabel = TYPE_LABELS[selectedType] || selectedType;
+
+  var prompt = [
+    '## 修正依頼: index_garage.html',
+    '',
+    '### 修正タイプ',
+    typeLabel,
+    '',
+    '### 対象セクション',
+    sectionText,
+    '',
+    '### 修正内容',
+    detail || '（詳細未記入）',
+    '',
+    '### ファイル情報',
+    '- ファイルパス: /home/user/Roller-Stone-/index_garage.html',
+    '- LP_CONFIG オブジェクトが先頭の <script> に定義されており、テキスト・画像・連絡先は全てそこに集約されています。',
+    '- テキスト変更は LP_CONFIG 内の値を編集してください。',
+    '- HTML/CSS/JS の構造変更が必要な場合はセクションのマークアップを直接修正してください。',
+    '',
+    '### 注意事項',
+    '- 12セクション構成（#hero〜#cta-final）を維持してください。',
+    '- CSS変数（--brand-orange: #f18200 等）は変更しないでください。',
+    '- renderLP() 関数でLP_CONFIGの値がDOMに注入されます。動的に生成される要素はJSを確認してください。',
+    '- 修正後に git add / git commit してください。'
+  ].join('\n');
+
+  document.getElementById('output-text').textContent = prompt;
+  var box = document.getElementById('output-box');
+  box.classList.add('show');
+  box.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  var btn = document.getElementById('copy-btn');
+  btn.className = 'copy-btn';
+  btn.textContent = '📋 コピー';
+}
+
+function copyPrompt() {
+  var text = document.getElementById('output-text').textContent;
+  navigator.clipboard.writeText(text).then(function() {
+    var btn = document.getElementById('copy-btn');
+    btn.textContent = '✓ コピーしました';
+    btn.className = 'copy-btn copied';
+    setTimeout(function() { btn.textContent = '📋 コピー'; btn.className = 'copy-btn'; }, 2000);
+  }).catch(function() {
+    var ta = document.createElement('textarea');
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    var btn = document.getElementById('copy-btn');
+    btn.textContent = '✓ コピーしました';
+    btn.className = 'copy-btn copied';
+    setTimeout(function() { btn.textContent = '📋 コピー'; btn.className = 'copy-btn'; }, 2000);
+  });
+}
+</script>
+</body>
+</html>

@@ -3,1064 +3,708 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>インナーガレージ専門｜ローラーストーン施工 - セメントアーティスト ぬーまん</title>
-  <meta name="description" content="インナーガレージをショールームに変える。AIシミュレーションで完成形を確認してから施工。2〜3日で完成・引き渡し後OK。セメントアーティスト ぬーまんへ無料相談。" />
-
-  <!-- Google Fonts -->
+  <title>インナーガレージ床をローラーストーンで仕上げる完全ガイド | Nu-Man</title>
+  <meta name="description" content="インナーガレージの床をショールーム級に変えるローラーストーン施工。AIシミュレーションで完成形を見てから依頼できます。" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700&family=Noto+Sans+JP:wght@300;400;500&family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Noto+Serif+JP:wght@700&family=Inter:wght@400;500;700&display=swap" rel="stylesheet" />
+
+  <!-- ============================================================
+       LP_CONFIG — ここを編集するか admin_garage.html で管理
+  ============================================================ -->
+  <script>
+    var LP_CONFIG = {
+      meta: {
+        title: "インナーガレージ床をローラーストーンで仕上げる完全ガイド",
+        theme: "インナーガレージ×ローラーストーン",
+        place: "インナーガレージ床"
+      },
+      contact: {
+        lineUrl: "https://lin.ee/XXXXXXX",
+        tel: "090-0000-0000",
+        telRaw: "09000000000",
+        area: "愛知・岐阜・三重エリア"
+      },
+      hero: {
+        image: "Nu-Man/after1.jpg",
+        eyebrow: "Inner Garage Specialist",
+        headline1: "あなたのガレージを、",
+        headline2: "ショールームに変える。",
+        sub: "床一枚で、空間の格が変わる。ローラーストーン施工で、憧れのガレージライフへ。"
+      },
+      intro: {
+        catchphrase: "知らなきゃ損する、インナーガレージを計画中の方へ",
+        body: "せっかくインナーガレージを作るなら、「床」にこだわってほしい。コンクリート打ちっぱなしのまま使い始めた方の多くが、数年後に後悔します。白い粉塵、安っぽさ、掃除の大変さ——これらはすべて、最初の選択で防げます。"
+      },
+      benefits: [
+        { emoji: "✨", title: "メリット❶ ショールーム級の高級感｜床一枚で空間が変わる", desc: "まるでプロのカーショップのような、重厚で洗練された空間へ。訪れるたびにテンションが上がる床になります。" },
+        { emoji: "🧹", title: "メリット❷ コンクリート粉塵を根本解決｜掃除の手間ゼロへ", desc: "塗膜がコンクリートを完全に封じ込め、白い粉の悩みとサヨナラ。車も荷物も清潔に保てます。" },
+        { emoji: "💰", title: "メリット❸ タイル・石材より断然お得｜費用対効果は最高クラス", desc: "金ゴテ仕上げ費が不要＋材料費が低い。クオリティを妥協せずに節約できます。" },
+        { emoji: "📅", title: "メリット❹ 引き渡し後でも施工OK｜リフォームとして後付け可能", desc: "新築から数年経っていても大丈夫。今すぐガレージを一新できます。" },
+        { emoji: "⚡", title: "メリット❺ わずか2〜3日で完成｜生活への影響を最小限に", desc: "あっという間に生まれ変わります。長期工事の心配なし。" }
+      ],
+      images: {
+        before: "Nu-Man/before.jpg",
+        after: "Nu-Man/after1.jpg",
+        gallery: ["Nu-Man/after1.jpg","Nu-Man/after2.jpg","Nu-Man/material.jpg"]
+      },
+      testimonials: [
+        { name: "40代 男性（愛知県）", rating: 5, text: "AIシミュレーションで完成形を見せてもらえたので安心して依頼できました。実際の仕上がりもイメージ通りで大満足です。" },
+        { name: "30代 男性（岐阜県）", rating: 5, text: "コンクリートの粉塵に悩んでいましたが、施工後は全く出なくなりました。見た目も一気にかっこよくなって毎朝ガレージに入るのが楽しみです。" },
+        { name: "50代 男性（三重県）", rating: 5, text: "他の業者より断然安く、でも仕上がりは最高でした。ぬーまんさんに頼んで正解でした。" },
+        { name: "40代 男性（愛知県）", rating: 5, text: "LINEで気軽に相談できて、2日で完成。生活への影響もほとんどなく、本当に助かりました。" }
+      ],
+      flow: [
+        { title: "LINEで無料相談", desc: "ガレージの写真を送るだけでOK。まずはお気軽にご連絡ください。費用の概算もすぐにお伝えします。" },
+        { title: "現地確認・ヒアリング", desc: "希望する仕上がりや予算をヒアリング。状態確認を行い、最適なプランをご提案します。" },
+        { title: "AIシミュレーション提案", desc: "あなたのガレージで仕上がりをリアルに確認。イメージを固めてから次のステップへ。" },
+        { title: "お見積もり・ご契約", desc: "明確な料金をご提示。納得してからご契約ください。追加費用は発生しません。" },
+        { title: "施工（2〜3日）", desc: "丁寧かつスピーディーに仕上げます。騒音や廃材も少なく、ご近所への配慮も万全。" },
+        { title: "完成・アフターフォロー", desc: "施工後もLINEで気軽にご相談いただけます。長くお付き合いできる職人を目指しています。" }
+      ],
+      message: {
+        name: "ぬーまん",
+        role: "Cement Artist",
+        image: "KIMARU/LP/images/numan_portrait.jpg",
+        text: "コンクリートを「素材」から「アート」へ昇華させる職人として、ローラーストーンを中心に、空間に命を吹き込む施工を行っています。AIシミュレーションを活用した提案力で、施主の理想を「見える化」してから施工。「イメージと違った」という後悔をゼロにすることにこだわっています。",
+        instagramUrl: "https://www.instagram.com/cementart_numan/"
+      }
+    };
+
+    // localStorage の値があればマージして上書き
+    (function() {
+      try {
+        var saved = localStorage.getItem('lp_config');
+        if (saved) {
+          var parsed = JSON.parse(saved);
+          Object.keys(parsed).forEach(function(k) {
+            if (parsed[k] && typeof parsed[k] === 'object' && !Array.isArray(parsed[k])) {
+              LP_CONFIG[k] = Object.assign({}, LP_CONFIG[k], parsed[k]);
+            } else {
+              LP_CONFIG[k] = parsed[k];
+            }
+          });
+        }
+      } catch(e) {}
+    })();
+  </script>
 
   <style>
     /* ============================================================
-       CSS Variables & Reset
+       Variables & Reset
     ============================================================ */
     :root {
-      --brand-orange: #f18200;
-      --brand-orange-dim: rgba(241, 130, 0, 0.15);
-      --brand-orange-border: rgba(241, 130, 0, 0.3);
-      --brand-dark: #1a1a1a;
-      --brand-mid: #202020;
-      --brand-gray: #2a2a2a;
-      --border: rgba(241, 130, 0, 0.2);
-      --border-subtle: rgba(255, 255, 255, 0.08);
-      --text: #d8d7d2;
-      --text-muted: #888882;
-      --text-dim: #555550;
-      --line-green: #06C755;
-      --white: #f5f4f0;
-      --section-pad: clamp(72px, 10vw, 120px) clamp(20px, 6vw, 80px);
-      --radius: 12px;
+      --brand-orange:        #f18200;
+      --brand-orange-dim:    rgba(241,130,0,0.12);
+      --brand-orange-border: rgba(241,130,0,0.35);
+      --brand-dark:          #1a1a18;
+      --brand-mid:           #202020;
+      --brand-gray:          #2a2a28;
+      --line-green:          #06C755;
+      --white:               #f5f4f0;
+      --text:                #d8d7d2;
+      --text-muted:          #888882;
+      --text-dim:            #555550;
+      --border-subtle:       rgba(255,255,255,0.08);
+      --radius:              12px;
+      --section-pad:         clamp(60px,10vw,120px) clamp(20px,6vw,80px);
     }
-
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     html { scroll-behavior: smooth; }
-
     body {
-      font-family: 'Noto Sans JP', sans-serif;
-      font-weight: 300;
       background: var(--brand-dark);
       color: var(--text);
-      line-height: 1.75;
-      -webkit-tap-highlight-color: transparent;
-      overflow-x: hidden;
+      font-family: 'Noto Sans JP', sans-serif;
+      font-size: 15px;
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
     }
-
-    img { display: block; max-width: 100%; }
     a { color: inherit; text-decoration: none; }
-    button { cursor: pointer; border: none; background: none; font-family: inherit; }
-
-    /* ============================================================
-       Typography
-    ============================================================ */
-    .font-serif { font-family: 'Noto Serif JP', serif; }
-    .font-inter { font-family: 'Inter', sans-serif; }
-
-    .label {
-      font-family: 'Inter', sans-serif;
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--brand-orange);
-    }
+    img { display: block; max-width: 100%; }
+    button { background: none; border: none; cursor: pointer; font: inherit; }
 
     /* ============================================================
        Animations
     ============================================================ */
+    @keyframes ticker {
+      0%   { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
     @keyframes fadeInDown {
-      from { opacity: 0; transform: translateY(-16px); }
+      from { opacity: 0; transform: translateY(-18px); }
       to   { opacity: 1; transform: translateY(0); }
     }
     @keyframes fadeInUp {
       from { opacity: 0; transform: translateY(24px); }
       to   { opacity: 1; transform: translateY(0); }
     }
-    @keyframes orbFloat {
-      0%, 100% { transform: translateY(0) scale(1); }
-      50%       { transform: translateY(-30px) scale(1.04); }
-    }
-    @keyframes ticker {
-      from { transform: translateX(0); }
-      to   { transform: translateX(-50%); }
-    }
     @keyframes pulseBorder {
-      0%, 100% { border-color: var(--brand-orange-border); }
-      50%       { border-color: var(--brand-orange); }
+      0%,100% { box-shadow: 0 0 0 0 rgba(6,199,85,0.4); }
+      50%      { box-shadow: 0 0 0 10px rgba(6,199,85,0); }
     }
-    @keyframes bounceY {
-      0%, 100% { transform: translateY(0); }
-      50%       { transform: translateY(6px); }
+    @keyframes floatIn {
+      from { opacity: 0; transform: translateY(20px) scale(0.95); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
     }
 
     .anim-fadeInDown { animation: fadeInDown 0.7s ease both; }
     .anim-fadeInUp   { animation: fadeInUp  0.7s ease both; }
-    .delay-1 { animation-delay: 0.1s; }
-    .delay-2 { animation-delay: 0.2s; }
-    .delay-3 { animation-delay: 0.35s; }
-    .delay-4 { animation-delay: 0.5s; }
+    .delay-1 { animation-delay: 0.15s; }
+    .delay-2 { animation-delay: 0.3s; }
+    .delay-3 { animation-delay: 0.45s; }
 
     /* Scroll reveal */
-    .reveal {
-      opacity: 0;
-      transform: translateY(28px);
-      transition: opacity 0.65s ease, transform 0.65s ease;
-    }
-    .reveal.revealed {
-      opacity: 1;
-      transform: translateY(0);
-    }
-    .reveal-delay-1.revealed { transition-delay: 0.1s; }
-    .reveal-delay-2.revealed { transition-delay: 0.2s; }
-    .reveal-delay-3.revealed { transition-delay: 0.35s; }
-    .reveal-delay-4.revealed { transition-delay: 0.5s; }
+    .reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.65s ease, transform 0.65s ease; }
+    .reveal.revealed { opacity: 1; transform: none; }
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; }
 
     /* ============================================================
-       Header / Nav
+       Header
     ============================================================ */
     #site-header {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 100;
-      padding: 0 clamp(16px, 4vw, 40px);
-      height: 60px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      transition: background 0.4s, border-color 0.4s;
-      border-bottom: 1px solid transparent;
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px clamp(16px,4vw,48px);
+      background: transparent;
+      transition: background 0.3s, backdrop-filter 0.3s;
     }
     #site-header.scrolled {
-      background: rgba(26, 26, 26, 0.92);
+      background: rgba(26,26,24,0.92);
       backdrop-filter: blur(12px);
-      border-bottom-color: var(--border-subtle);
+      border-bottom: 1px solid var(--border-subtle);
     }
-
     .header-logo {
       font-family: 'Inter', sans-serif;
-      font-size: 13px;
-      font-weight: 700;
-      letter-spacing: 0.08em;
+      font-size: 14px; font-weight: 700; letter-spacing: 0.08em;
       color: var(--white);
     }
     .header-logo span { color: var(--brand-orange); }
-
     .header-cta {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 8px 18px;
-      background: var(--line-green);
-      color: #fff;
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 9px 18px;
+      background: var(--line-green); color: #fff;
       border-radius: 100px;
-      font-size: 13px;
-      font-weight: 500;
-      transition: opacity 0.2s, transform 0.2s;
+      font-size: 0.82rem; font-weight: 500;
+      transition: opacity 0.2s;
     }
-    .header-cta:hover { opacity: 0.9; transform: scale(1.02); }
-    .header-cta svg { width: 15px; height: 15px; flex-shrink: 0; }
+    .header-cta:hover { opacity: 0.88; }
+    .header-cta svg { width: 16px; height: 16px; }
 
     /* ============================================================
-       Hero
+       Hero — Parallax
     ============================================================ */
     #hero {
       position: relative;
       min-height: 100svh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 80px clamp(20px, 6vw, 80px) 60px;
-      text-align: center;
+      display: flex; align-items: center; justify-content: center;
       overflow: hidden;
     }
-
-    .hero-bg {
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(160deg, #0f0f0e 0%, #1a1a1a 50%, #0d0c0b 100%);
+    .hero-parallax-bg {
+      position: absolute; inset: -20%;
+      background-size: cover; background-position: center;
+      background-attachment: fixed;
+      will-change: transform;
+    }
+    .hero-parallax-bg::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(160deg, rgba(26,26,24,0.72) 0%, rgba(26,26,24,0.55) 50%, rgba(26,26,24,0.8) 100%);
     }
     .hero-orb {
-      position: absolute;
-      border-radius: 50%;
-      filter: blur(80px);
-      opacity: 0.35;
-      pointer-events: none;
+      position: absolute; border-radius: 50%; filter: blur(80px); pointer-events: none;
     }
     .hero-orb-1 {
-      width: 380px; height: 380px;
-      background: radial-gradient(circle, #f18200 0%, transparent 70%);
-      top: -100px; left: -120px;
-      animation: orbFloat 9s ease-in-out infinite;
+      width: 500px; height: 500px; top: -10%; right: -10%;
+      background: radial-gradient(circle, rgba(241,130,0,0.18) 0%, transparent 70%);
     }
     .hero-orb-2 {
-      width: 300px; height: 300px;
-      background: radial-gradient(circle, #ff6b00 0%, transparent 70%);
-      bottom: -80px; right: -80px;
-      animation: orbFloat 12s ease-in-out infinite reverse;
+      width: 400px; height: 400px; bottom: 5%; left: -8%;
+      background: radial-gradient(circle, rgba(241,130,0,0.10) 0%, transparent 70%);
     }
-
-    .hero-content { position: relative; z-index: 10; max-width: 640px; }
-
+    .hero-content {
+      position: relative; z-index: 2;
+      text-align: center;
+      padding: clamp(100px,14vw,140px) clamp(20px,6vw,60px) clamp(60px,8vw,100px);
+      max-width: 760px;
+    }
     .hero-eyebrow {
-      display: inline-block;
       font-family: 'Inter', sans-serif;
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
+      font-size: 11px; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase;
       color: var(--brand-orange);
-      border: 1px solid var(--brand-orange-border);
-      padding: 5px 16px;
-      border-radius: 100px;
-      margin-bottom: 28px;
+      margin-bottom: 20px;
     }
-
     .hero-headline {
       font-family: 'Noto Serif JP', serif;
-      font-size: clamp(2rem, 7vw, 3.6rem);
-      font-weight: 700;
-      line-height: 1.3;
-      color: var(--white);
+      font-size: clamp(2rem, 6vw, 3.4rem);
+      font-weight: 700; line-height: 1.3; color: var(--white);
       margin-bottom: 20px;
     }
     .hero-headline .accent { color: var(--brand-orange); }
-
     .hero-sub {
-      font-size: clamp(0.88rem, 2.2vw, 1.05rem);
-      color: var(--text-muted);
+      font-size: clamp(0.88rem, 2vw, 1.05rem);
+      color: rgba(245,244,240,0.78); line-height: 1.9;
       margin-bottom: 40px;
-      line-height: 1.9;
     }
-
-    .hero-cta-group {
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-      align-items: center;
-    }
-
+    .hero-cta-group { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; }
     .btn-line {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      width: 100%;
-      max-width: 360px;
+      display: inline-flex; align-items: center; justify-content: center; gap: 10px;
       padding: 18px 32px;
-      background: var(--line-green);
-      color: #fff;
+      background: var(--line-green); color: #fff;
       border-radius: 100px;
-      font-size: 1rem;
-      font-weight: 500;
+      font-family: 'Noto Sans JP', sans-serif; font-size: 0.95rem; font-weight: 500;
       transition: opacity 0.2s, transform 0.15s;
-      box-shadow: 0 8px 30px rgba(6, 199, 85, 0.3);
+      box-shadow: 0 8px 32px rgba(6,199,85,0.35);
+      animation: pulseBorder 3s infinite;
     }
-    .btn-line:hover { opacity: 0.92; transform: translateY(-2px); }
-    .btn-line:active { transform: scale(0.97); }
-    .btn-line svg { width: 22px; height: 22px; flex-shrink: 0; }
-
+    .btn-line:hover { opacity: 0.9; transform: translateY(-2px); }
+    .btn-line svg { width: 20px; height: 20px; }
     .btn-ghost {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 0.85rem;
-      color: var(--text-muted);
-      letter-spacing: 0.04em;
-      padding: 8px 0;
-      border-bottom: 1px solid var(--border-subtle);
-      transition: color 0.2s, border-color 0.2s;
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 17px 28px;
+      background: rgba(255,255,255,0.06); color: var(--white);
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 100px; font-size: 0.9rem; font-weight: 400;
+      transition: background 0.2s;
     }
-    .btn-ghost:hover { color: var(--white); border-color: var(--text-muted); }
-
+    .btn-ghost:hover { background: rgba(255,255,255,0.10); }
     .hero-scroll-hint {
-      position: absolute;
-      bottom: 28px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 10;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 8px;
+      position: absolute; bottom: 28px; left: 50%; transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center; gap: 6px;
+      font-family: 'Inter', sans-serif; font-size: 10px; letter-spacing: 0.15em;
+      color: rgba(245,244,240,0.4); z-index: 2;
     }
-    .hero-scroll-hint span {
-      font-size: 10px;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: var(--text-dim);
-      font-family: 'Inter', sans-serif;
-    }
-    .scroll-arrow {
-      width: 20px;
-      height: 20px;
-      color: var(--brand-orange);
-      animation: bounceY 1.6s ease-in-out infinite;
-    }
+    .scroll-arrow { width: 18px; height: 18px; animation: fadeInUp 1.5s ease infinite; }
 
     /* ============================================================
        Ticker
     ============================================================ */
     .ticker-wrap {
-      overflow: hidden;
-      background: var(--brand-orange);
-      padding: 10px 0;
+      overflow: hidden; background: var(--brand-orange); padding: 10px 0;
     }
     .ticker-track {
-      display: flex;
-      white-space: nowrap;
-      animation: ticker 22s linear infinite;
+      display: flex; white-space: nowrap; animation: ticker 22s linear infinite;
     }
     .ticker-track span {
       padding: 0 40px;
-      font-family: 'Inter', sans-serif;
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: #fff;
+      font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 700;
+      letter-spacing: 0.18em; text-transform: uppercase; color: #fff;
     }
 
     /* ============================================================
        Section common
     ============================================================ */
-    section {
-      padding: var(--section-pad);
+    section { padding: var(--section-pad); }
+    .section-inner { max-width: 880px; margin: 0 auto; }
+    .section-header { text-align: center; margin-bottom: clamp(36px,6vw,64px); }
+    .label {
+      font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 700;
+      letter-spacing: 0.2em; text-transform: uppercase; color: var(--brand-orange);
     }
-
-    .section-inner {
-      max-width: 880px;
-      margin: 0 auto;
-    }
-
-    .section-header {
-      text-align: center;
-      margin-bottom: clamp(36px, 6vw, 64px);
-    }
-
     .section-title {
       font-family: 'Noto Serif JP', serif;
-      font-size: clamp(1.4rem, 4vw, 2.2rem);
-      font-weight: 700;
-      color: var(--white);
-      line-height: 1.4;
-      margin-top: 14px;
+      font-size: clamp(1.4rem,4vw,2.2rem); font-weight: 700;
+      color: var(--white); line-height: 1.4; margin-top: 14px;
     }
-
     .section-sub {
-      font-size: 0.88rem;
-      color: var(--text-muted);
-      margin-top: 14px;
-      line-height: 1.9;
+      font-size: 0.88rem; color: var(--text-muted); margin-top: 14px; line-height: 1.9;
     }
-
-    /* Divider */
-    .divider {
-      width: 40px;
-      height: 2px;
-      background: var(--brand-orange);
-      margin: 16px auto;
-      border-radius: 2px;
-    }
+    .divider { width: 40px; height: 2px; background: var(--brand-orange); margin: 16px auto; border-radius: 2px; }
 
     /* ============================================================
-       Problem Section
+       #intro
     ============================================================ */
-    #problem {
-      background: var(--brand-mid);
-      border-top: 1px solid var(--border-subtle);
-      border-bottom: 1px solid var(--border-subtle);
-    }
-
-    .problem-list {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-      margin-bottom: 40px;
-    }
-
-    .problem-item {
-      display: flex;
-      align-items: flex-start;
-      gap: 14px;
-      padding: 18px 22px;
+    #intro { background: var(--brand-mid); border-bottom: 1px solid var(--border-subtle); }
+    .intro-box {
       background: var(--brand-gray);
       border: 1px solid var(--border-subtle);
+      border-left: 3px solid var(--brand-orange);
       border-radius: var(--radius);
+      padding: 32px 36px;
+      max-width: 720px; margin: 0 auto;
     }
-
-    .problem-x {
-      flex-shrink: 0;
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      background: rgba(200, 60, 60, 0.15);
-      border: 1px solid rgba(200, 60, 60, 0.3);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 14px;
-      color: #e05555;
-      font-weight: 700;
-    }
-
-    .problem-text {
-      font-size: 0.9rem;
-      color: var(--text);
-      line-height: 1.7;
-    }
-
-    .problem-solution {
-      text-align: center;
-      padding: 28px 24px;
-      background: var(--brand-orange-dim);
-      border: 1px solid var(--brand-orange-border);
-      border-radius: var(--radius);
-    }
-    .problem-solution p {
+    .intro-catchphrase {
       font-family: 'Noto Serif JP', serif;
-      font-size: clamp(1rem, 3vw, 1.25rem);
-      color: var(--white);
-      line-height: 1.7;
+      font-size: clamp(1.1rem,3vw,1.5rem); font-weight: 700;
+      color: var(--white); margin-bottom: 18px; line-height: 1.5;
     }
-    .problem-solution strong { color: var(--brand-orange); }
+    .intro-body { font-size: 0.92rem; color: var(--text); line-height: 1.9; }
 
     /* ============================================================
-       Before/After Slider
+       #benefits
     ============================================================ */
-    #before-after {
-      background: #111110;
-    }
-
-    .comparison-slider {
-      position: relative;
-      width: 100%;
-      padding-top: 62%;
-      overflow: hidden;
-      border-radius: var(--radius);
-      cursor: ew-resize;
-      user-select: none;
-      background: #222;
-      border: 1px solid var(--border-subtle);
-    }
-
-    .comparison-slider img {
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      object-fit: cover;
-      pointer-events: none;
-    }
-
-    .img-before {
-      z-index: 10;
-      clip-path: inset(0 50% 0 0);
-      will-change: clip-path;
-      filter: grayscale(30%) brightness(0.85);
-    }
-
-    .img-after {
-      filter: saturate(1.15) brightness(1.02);
-    }
-
-    .slider-handle {
-      position: absolute;
-      top: 0; left: 50%; bottom: 0;
-      width: 2px;
-      background: #fff;
-      z-index: 20;
-      transform: translateX(-50%);
-      box-shadow: 0 0 12px rgba(0, 0, 0, 0.6);
-    }
-
-    .slider-button {
-      position: absolute;
-      top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      width: 48px; height: 48px;
-      background: #fff;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-      z-index: 21;
-    }
-
-    .slider-button svg { width: 22px; height: 22px; color: #1a1a1a; }
-
-    .slider-label {
-      position: absolute;
-      bottom: 14px;
-      z-index: 30;
-      padding: 4px 12px;
-      border-radius: 4px;
-      font-family: 'Inter', sans-serif;
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.1em;
-    }
-    .label-before {
-      left: 14px;
-      background: rgba(0, 0, 0, 0.65);
-      color: #fff;
-    }
-    .label-after {
-      right: 14px;
-      background: var(--brand-orange);
-      color: #fff;
-    }
-
-    /* ============================================================
-       Benefits
-    ============================================================ */
-    #benefits {
-      background: var(--brand-dark);
-    }
-
-    .benefits-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 16px;
-    }
-
-    @media (min-width: 560px) {
-      .benefits-grid { grid-template-columns: repeat(2, 1fr); }
-    }
-    @media (min-width: 840px) {
-      .benefits-grid { grid-template-columns: repeat(3, 1fr); }
-    }
-
-    .benefit-card {
-      padding: 28px 24px;
+    #benefits { background: var(--brand-dark); }
+    .benefits-list { display: flex; flex-direction: column; gap: 16px; }
+    .benefit-item {
+      display: flex; gap: 20px; align-items: flex-start;
+      padding: 24px 28px;
       background: var(--brand-gray);
       border: 1px solid var(--border-subtle);
       border-radius: var(--radius);
       transition: border-color 0.3s, transform 0.3s;
     }
-    .benefit-card:hover {
-      border-color: var(--brand-orange-border);
-      transform: translateY(-4px);
+    .benefit-item:hover { border-color: var(--brand-orange-border); transform: translateX(4px); }
+    .benefit-emoji { font-size: 1.8rem; flex-shrink: 0; line-height: 1; margin-top: 2px; }
+    .benefit-body h3 {
+      font-family: 'Noto Serif JP', serif; font-size: 1rem; font-weight: 700;
+      color: var(--white); margin-bottom: 8px; line-height: 1.5;
     }
-
-    .benefit-number {
-      font-family: 'Inter', sans-serif;
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.2em;
-      color: var(--brand-orange);
-      margin-bottom: 14px;
-    }
-
-    .benefit-icon {
-      width: 44px; height: 44px;
-      margin-bottom: 16px;
-      color: var(--brand-orange);
-    }
-
-    .benefit-title {
-      font-family: 'Noto Serif JP', serif;
-      font-size: 1.05rem;
-      font-weight: 700;
-      color: var(--white);
-      margin-bottom: 10px;
-      line-height: 1.4;
-    }
-
-    .benefit-desc {
-      font-size: 0.84rem;
-      color: var(--text-muted);
-      line-height: 1.8;
-    }
+    .benefit-body p { font-size: 0.85rem; color: var(--text-muted); line-height: 1.8; }
 
     /* ============================================================
-       AI Simulation
+       #before-after
     ============================================================ */
-    #simulation {
-      background: var(--brand-mid);
-      border-top: 1px solid var(--border-subtle);
-      border-bottom: 1px solid var(--border-subtle);
+    #before-after { background: #111110; }
+    .comparison-slider {
+      position: relative; width: 100%; padding-top: 62%;
+      overflow: hidden; border-radius: var(--radius);
+      cursor: ew-resize; user-select: none;
+      background: #222; border: 1px solid var(--border-subtle);
     }
+    .comparison-slider img {
+      position: absolute; top: 0; left: 0;
+      width: 100%; height: 100%; object-fit: cover; pointer-events: none;
+    }
+    .img-before {
+      z-index: 10; clip-path: inset(0 50% 0 0); will-change: clip-path;
+      filter: grayscale(30%) brightness(0.85);
+    }
+    .img-after { filter: saturate(1.15) brightness(1.02); }
+    .slider-handle {
+      position: absolute; top: 0; left: 50%; bottom: 0;
+      width: 2px; background: #fff; z-index: 20;
+      transform: translateX(-50%);
+      box-shadow: 0 0 12px rgba(0,0,0,0.6);
+    }
+    .slider-button {
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%,-50%);
+      width: 48px; height: 48px; background: #fff; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.4); z-index: 21;
+    }
+    .slider-button svg { width: 22px; height: 22px; color: #1a1a1a; }
+    .slider-label {
+      position: absolute; bottom: 14px; z-index: 30;
+      padding: 4px 12px; border-radius: 4px;
+      font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 0.1em;
+    }
+    .label-before { left: 14px; background: rgba(0,0,0,0.65); color: #fff; }
+    .label-after  { right: 14px; background: var(--brand-orange); color: #fff; }
 
-    .sim-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 6px 16px;
-      background: var(--brand-orange-dim);
-      border: 1px solid var(--brand-orange-border);
-      border-radius: 100px;
-      font-family: 'Inter', sans-serif;
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--brand-orange);
-      margin-bottom: 24px;
+    /* ============================================================
+       #unique
+    ============================================================ */
+    #unique { background: var(--brand-mid); border-top: 1px solid var(--border-subtle); border-bottom: 1px solid var(--border-subtle); }
+    .unique-lead {
+      max-width: 660px; margin: 0 auto 48px;
+      text-align: center;
+      font-size: 0.95rem; color: var(--text); line-height: 1.9;
     }
+    .unique-lead strong { color: var(--brand-orange); }
+    .unique-points { display: grid; gap: 16px; margin-bottom: 48px; }
+    @media (min-width: 600px) { .unique-points { grid-template-columns: repeat(3,1fr); } }
+    .unique-point {
+      padding: 24px 20px; background: var(--brand-gray);
+      border: 1px solid var(--border-subtle); border-radius: var(--radius);
+      text-align: center;
+    }
+    .unique-point h3 {
+      font-family: 'Noto Serif JP', serif; font-size: 0.95rem; font-weight: 700;
+      color: var(--white); margin-bottom: 10px;
+    }
+    .unique-point p { font-size: 0.82rem; color: var(--text-muted); line-height: 1.8; }
+    .unique-gallery { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; }
+    .unique-gallery-item {
+      aspect-ratio: 1; border-radius: 8px; overflow: hidden;
+      background: var(--brand-gray); border: 1px solid var(--border-subtle);
+    }
+    .unique-gallery-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s; }
+    .unique-gallery-item:hover img { transform: scale(1.06); }
 
-    .sim-content {
-      display: grid;
-      gap: 40px;
-      align-items: center;
+    /* ============================================================
+       #limit
+    ============================================================ */
+    #limit { background: var(--brand-dark); }
+    .limit-grid {
+      display: grid; gap: 24px;
     }
-    @media (min-width: 700px) {
-      .sim-content { grid-template-columns: 1fr 1fr; }
-    }
-
-    .sim-image {
-      border-radius: var(--radius);
-      overflow: hidden;
+    @media (min-width: 640px) { .limit-grid { grid-template-columns: 1fr 1fr; } }
+    .limit-col {
+      padding: 28px 24px; border-radius: var(--radius);
       border: 1px solid var(--border-subtle);
-      aspect-ratio: 4/3;
     }
-    .sim-image img {
-      width: 100%; height: 100%;
-      object-fit: cover;
+    .limit-col.col-bad  { background: rgba(200,60,60,0.06); border-color: rgba(200,60,60,0.2); }
+    .limit-col.col-good { background: var(--brand-orange-dim); border-color: var(--brand-orange-border); }
+    .limit-col-title {
+      font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 700;
+      letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 20px;
     }
-
-    .sim-steps {
-      display: flex;
-      flex-direction: column;
-      gap: 24px;
-    }
-
-    .sim-step {
-      display: flex;
-      gap: 16px;
-    }
-
-    .sim-step-num {
-      flex-shrink: 0;
-      width: 32px; height: 32px;
-      border-radius: 50%;
-      background: var(--brand-orange);
-      color: #fff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: 'Inter', sans-serif;
-      font-size: 13px;
-      font-weight: 700;
-    }
-
-    .sim-step-text h4 {
-      font-size: 0.9rem;
-      font-weight: 500;
-      color: var(--white);
-      margin-bottom: 4px;
-    }
-    .sim-step-text p {
-      font-size: 0.82rem;
-      color: var(--text-muted);
-      line-height: 1.7;
-    }
+    .col-bad  .limit-col-title { color: #e05555; }
+    .col-good .limit-col-title { color: var(--brand-orange); }
+    .limit-item { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 14px; font-size: 0.88rem; line-height: 1.7; }
+    .limit-icon { flex-shrink: 0; font-size: 1rem; margin-top: 1px; }
 
     /* ============================================================
-       Flow
+       #testimonials
     ============================================================ */
-    #flow {
-      background: var(--brand-dark);
+    #testimonials { background: var(--brand-mid); border-top: 1px solid var(--border-subtle); }
+    .testimonial-grid {
+      display: grid; gap: 16px;
     }
-
-    .flow-list {
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      gap: 0;
+    @media (min-width: 600px) { .testimonial-grid { grid-template-columns: repeat(2,1fr); } }
+    .testimonial-card {
+      padding: 24px; background: var(--brand-gray);
+      border: 1px solid var(--border-subtle); border-radius: var(--radius);
     }
+    .testimonial-stars { color: #f5a623; font-size: 1rem; margin-bottom: 12px; letter-spacing: 2px; }
+    .testimonial-text { font-size: 0.88rem; color: var(--text); line-height: 1.9; margin-bottom: 16px; }
+    .testimonial-name { font-size: 0.8rem; color: var(--text-muted); }
 
+    /* ============================================================
+       #flow
+    ============================================================ */
+    #flow { background: var(--brand-dark); }
+    .flow-list { position: relative; display: flex; flex-direction: column; }
     .flow-line {
-      position: absolute;
-      left: 22px;
-      top: 0; bottom: 0;
-      width: 1px;
+      position: absolute; left: 22px; top: 0; bottom: 0; width: 1px;
       background: linear-gradient(to bottom, var(--brand-orange), transparent);
     }
-
     .flow-item {
-      display: flex;
-      gap: 20px;
-      padding: 24px 24px 24px 0;
-      position: relative;
+      display: flex; gap: 20px; padding: 24px 24px 24px 0; position: relative;
     }
-    .flow-item:not(:last-child) {
-      border-bottom: 1px solid var(--border-subtle);
-    }
-
+    .flow-item:not(:last-child) { border-bottom: 1px solid var(--border-subtle); }
     .flow-num {
-      flex-shrink: 0;
-      width: 44px; height: 44px;
-      border-radius: 50%;
-      background: var(--brand-orange);
-      color: #fff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: 'Inter', sans-serif;
-      font-size: 14px;
-      font-weight: 700;
-      position: relative;
-      z-index: 1;
+      flex-shrink: 0; width: 44px; height: 44px; border-radius: 50%;
+      background: var(--brand-orange); color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 700;
+      position: relative; z-index: 1;
       box-shadow: 0 0 0 6px var(--brand-dark);
     }
-
     .flow-body h4 {
-      font-family: 'Noto Serif JP', serif;
-      font-size: 1rem;
-      font-weight: 700;
-      color: var(--white);
-      margin-bottom: 6px;
+      font-family: 'Noto Serif JP', serif; font-size: 1rem; font-weight: 700;
+      color: var(--white); margin-bottom: 6px;
     }
-    .flow-body p {
-      font-size: 0.84rem;
-      color: var(--text-muted);
-      line-height: 1.8;
-    }
+    .flow-body p { font-size: 0.84rem; color: var(--text-muted); line-height: 1.8; }
 
     /* ============================================================
-       Gallery
+       #conclusion
     ============================================================ */
-    #gallery {
-      background: var(--brand-mid);
-      border-top: 1px solid var(--border-subtle);
-    }
-
-    .gallery-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 10px;
-    }
-
-    @media (min-width: 600px) {
-      .gallery-grid { grid-template-columns: repeat(3, 1fr); }
-    }
-
-    .gallery-item {
-      border-radius: 8px;
-      overflow: hidden;
-      aspect-ratio: 1;
-      background: var(--brand-gray);
-      border: 1px solid var(--border-subtle);
-    }
-    .gallery-item img {
-      width: 100%; height: 100%;
-      object-fit: cover;
-      transition: transform 0.5s ease, filter 0.5s ease;
-    }
-    .gallery-item:hover img {
-      transform: scale(1.06);
-      filter: brightness(1.08);
-    }
-
-    /* ============================================================
-       Profile
-    ============================================================ */
-    #profile {
-      background: var(--brand-dark);
-    }
-
-    .profile-inner {
-      display: grid;
-      gap: 40px;
-      align-items: center;
-    }
-    @media (min-width: 700px) {
-      .profile-inner { grid-template-columns: 260px 1fr; }
-    }
-
-    .profile-photo {
-      aspect-ratio: 1;
-      max-width: 260px;
-      margin: 0 auto;
-      width: 100%;
+    #conclusion { background: var(--brand-mid); border-top: 1px solid var(--border-subtle); text-align: center; }
+    .conclusion-box {
+      max-width: 680px; margin: 0 auto;
+      padding: 48px 36px;
+      background: var(--brand-orange-dim); border: 1px solid var(--brand-orange-border);
       border-radius: var(--radius);
-      overflow: hidden;
+    }
+    .conclusion-headline {
+      font-family: 'Noto Serif JP', serif;
+      font-size: clamp(1.3rem,4vw,2rem); font-weight: 700; color: var(--white);
+      line-height: 1.4; margin-bottom: 20px;
+    }
+    .conclusion-headline span { color: var(--brand-orange); }
+    .conclusion-body { font-size: 0.9rem; color: var(--text); line-height: 1.9; }
+
+    /* ============================================================
+       #mindset
+    ============================================================ */
+    #mindset { background: var(--brand-dark); }
+    .mindset-list { display: flex; flex-direction: column; gap: 12px; }
+    .mindset-row {
+      display: grid; gap: 12px; align-items: center;
+      padding: 18px 20px;
+      background: var(--brand-gray); border: 1px solid var(--border-subtle);
+      border-radius: var(--radius);
+    }
+    @media (min-width: 600px) { .mindset-row { grid-template-columns: 1fr 40px 1fr; } }
+    .mindset-old {
+      padding: 12px 16px; background: rgba(200,60,60,0.07);
+      border-left: 3px solid rgba(200,60,60,0.4); border-radius: 6px;
+      font-size: 0.86rem; color: var(--text-muted);
+    }
+    .mindset-old::before { content: "❌ "; }
+    .mindset-arrow {
+      text-align: center; font-size: 1.2rem; color: var(--brand-orange);
+      font-weight: 700;
+    }
+    .mindset-new {
+      padding: 12px 16px; background: var(--brand-orange-dim);
+      border-left: 3px solid var(--brand-orange-border); border-radius: 6px;
+      font-size: 0.86rem; color: var(--white);
+    }
+    .mindset-new::before { content: "✅ "; }
+
+    /* ============================================================
+       #summary
+    ============================================================ */
+    #summary { background: var(--brand-mid); border-top: 1px solid var(--border-subtle); }
+    .summary-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 36px; }
+    .summary-item {
+      display: flex; align-items: flex-start; gap: 12px;
+      padding: 16px 20px;
+      background: var(--brand-gray); border: 1px solid var(--border-subtle);
+      border-radius: var(--radius);
+      font-size: 0.9rem; color: var(--text);
+    }
+    .summary-check { flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%; background: var(--brand-orange); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; }
+    .summary-ps {
+      text-align: center; padding: 24px;
+      background: var(--brand-orange-dim); border: 1px solid var(--brand-orange-border);
+      border-radius: var(--radius);
+      font-family: 'Noto Serif JP', serif; font-size: clamp(0.95rem,2.5vw,1.15rem);
+      font-weight: 700; color: var(--white); line-height: 1.6;
+    }
+
+    /* ============================================================
+       #message (profile)
+    ============================================================ */
+    #message { background: var(--brand-dark); }
+    .message-inner { display: grid; gap: 40px; align-items: center; }
+    @media (min-width: 700px) { .message-inner { grid-template-columns: 240px 1fr; } }
+    .message-photo {
+      aspect-ratio: 1; max-width: 240px; margin: 0 auto; width: 100%;
+      border-radius: var(--radius); overflow: hidden;
       border: 1px solid var(--border-subtle);
     }
-    .profile-photo img {
-      width: 100%; height: 100%;
-      object-fit: cover;
+    .message-photo img { width: 100%; height: 100%; object-fit: cover; }
+    .message-role {
+      font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 700;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--brand-orange); margin-bottom: 10px;
     }
-
-    .profile-role {
-      font-family: 'Inter', sans-serif;
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--brand-orange);
-      margin-bottom: 12px;
-    }
-
-    .profile-name {
+    .message-name {
       font-family: 'Noto Serif JP', serif;
-      font-size: clamp(1.4rem, 4vw, 1.9rem);
-      font-weight: 700;
-      color: var(--white);
-      margin-bottom: 20px;
+      font-size: clamp(1.4rem,4vw,1.9rem); font-weight: 700;
+      color: var(--white); margin-bottom: 18px;
     }
-
-    .profile-desc {
-      font-size: 0.88rem;
-      color: var(--text-muted);
-      line-height: 1.9;
-      margin-bottom: 28px;
-    }
-
-    .profile-social {
-      display: flex;
-      gap: 12px;
-    }
-
+    .message-text { font-size: 0.88rem; color: var(--text-muted); line-height: 1.9; margin-bottom: 24px; }
     .btn-insta {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
+      display: inline-flex; align-items: center; gap: 8px;
       padding: 11px 22px;
       background: linear-gradient(135deg, #833ab4, #fd1d1d, #fcb045);
-      color: #fff;
-      border-radius: 100px;
-      font-size: 0.84rem;
-      font-weight: 500;
+      color: #fff; border-radius: 100px; font-size: 0.84rem; font-weight: 500;
       transition: opacity 0.2s;
     }
     .btn-insta:hover { opacity: 0.88; }
     .btn-insta svg { width: 18px; height: 18px; }
 
     /* ============================================================
-       FAQ
+       #cta-final
     ============================================================ */
-    #faq {
-      background: var(--brand-mid);
-      border-top: 1px solid var(--border-subtle);
-    }
-
-    .faq-list {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .faq-item {
-      background: var(--brand-gray);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius);
-      overflow: hidden;
-      transition: border-color 0.3s;
-    }
-    .faq-item.open { border-color: var(--brand-orange-border); }
-
-    .faq-q {
-      width: 100%;
-      padding: 20px 22px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      text-align: left;
-      color: var(--text);
-      transition: color 0.2s;
-    }
-    .faq-q:hover { color: var(--white); }
-
-    .faq-q-text {
-      font-size: 0.9rem;
-      font-weight: 500;
-      line-height: 1.5;
-    }
-
-    .faq-q-icon {
-      flex-shrink: 0;
-      width: 22px; height: 22px;
-      border-radius: 50%;
-      border: 1px solid var(--border-subtle);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: transform 0.3s, background 0.3s, border-color 0.3s;
-    }
-    .faq-item.open .faq-q-icon {
-      transform: rotate(180deg);
-      background: var(--brand-orange);
-      border-color: var(--brand-orange);
-    }
-    .faq-q-icon svg { width: 14px; height: 14px; }
-
-    .faq-a {
-      max-height: 0;
-      overflow: hidden;
-      opacity: 0;
-      transition: max-height 0.35s ease, opacity 0.3s ease;
-    }
-    .faq-item.open .faq-a {
-      max-height: 400px;
-      opacity: 1;
-    }
-
-    .faq-a-inner {
-      padding: 0 22px 22px;
-      font-size: 0.85rem;
-      color: var(--text-muted);
-      line-height: 1.9;
-      border-top: 1px solid var(--border-subtle);
-      padding-top: 16px;
-    }
-
-    /* ============================================================
-       Final CTA
-    ============================================================ */
-    #cta-final {
-      background: var(--brand-dark);
-      text-align: center;
-    }
-
-    .cta-box {
-      max-width: 520px;
-      margin: 0 auto;
-    }
-
+    #cta-final { background: var(--brand-mid); text-align: center; border-top: 1px solid var(--border-subtle); }
+    .cta-box { max-width: 520px; margin: 0 auto; }
     .cta-title {
       font-family: 'Noto Serif JP', serif;
-      font-size: clamp(1.4rem, 4vw, 2rem);
-      font-weight: 700;
-      color: var(--white);
-      line-height: 1.4;
-      margin-bottom: 16px;
+      font-size: clamp(1.4rem,4vw,2rem); font-weight: 700; color: var(--white);
+      line-height: 1.4; margin-bottom: 16px;
     }
-
-    .cta-sub {
-      font-size: 0.88rem;
-      color: var(--text-muted);
-      line-height: 1.9;
-      margin-bottom: 36px;
-    }
-
-    .cta-buttons {
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-      align-items: center;
-    }
-
+    .cta-sub { font-size: 0.88rem; color: var(--text-muted); line-height: 1.9; margin-bottom: 36px; }
+    .cta-buttons { display: flex; flex-direction: column; gap: 14px; align-items: center; }
     .btn-line-lg {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 12px;
-      width: 100%;
-      max-width: 420px;
-      padding: 20px 36px;
-      background: var(--line-green);
-      color: #fff;
-      border-radius: 100px;
-      font-family: 'Noto Sans JP', sans-serif;
-      font-size: 1.05rem;
-      font-weight: 500;
+      display: inline-flex; align-items: center; justify-content: center; gap: 12px;
+      width: 100%; max-width: 420px; padding: 20px 36px;
+      background: var(--line-green); color: #fff; border-radius: 100px;
+      font-family: 'Noto Sans JP', sans-serif; font-size: 1.05rem; font-weight: 500;
       transition: opacity 0.2s, transform 0.15s;
-      box-shadow: 0 10px 40px rgba(6, 199, 85, 0.3);
+      box-shadow: 0 10px 40px rgba(6,199,85,0.3);
       animation: pulseBorder 3s infinite;
     }
     .btn-line-lg:hover { opacity: 0.92; transform: translateY(-2px); }
-    .btn-line-lg:active { transform: scale(0.97); }
-    .btn-line-lg svg { width: 24px; height: 24px; flex-shrink: 0; }
-
+    .btn-line-lg svg { width: 24px; height: 24px; }
     .btn-tel {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      width: 100%;
-      max-width: 420px;
-      padding: 18px 36px;
-      background: var(--brand-gray);
-      color: var(--white);
-      border: 1px solid var(--border-subtle);
-      border-radius: 100px;
-      font-size: 1rem;
-      font-weight: 500;
+      display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+      width: 100%; max-width: 420px; padding: 18px 36px;
+      background: var(--brand-gray); color: var(--white);
+      border: 1px solid var(--border-subtle); border-radius: 100px;
+      font-size: 1rem; font-weight: 500;
       transition: background 0.2s, border-color 0.2s;
     }
-    .btn-tel:hover {
-      background: rgba(255, 255, 255, 0.06);
-      border-color: var(--brand-orange-border);
-    }
+    .btn-tel:hover { background: rgba(255,255,255,0.06); border-color: var(--brand-orange-border); }
     .btn-tel svg { width: 20px; height: 20px; color: var(--brand-orange); }
-
-    .cta-note {
-      font-size: 11px;
-      color: var(--text-dim);
-      margin-top: 20px;
-      letter-spacing: 0.04em;
-    }
+    .cta-note { font-size: 11px; color: var(--text-dim); margin-top: 20px; letter-spacing: 0.04em; }
 
     /* ============================================================
        Footer
     ============================================================ */
     footer {
-      background: #111110;
-      border-top: 1px solid var(--border-subtle);
-      padding: 40px clamp(20px, 6vw, 80px);
-      text-align: center;
+      background: #111110; border-top: 1px solid var(--border-subtle);
+      padding: 40px clamp(20px,6vw,80px); text-align: center;
     }
-
-    .footer-logo {
-      font-family: 'Inter', sans-serif;
-      font-size: 14px;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      color: var(--white);
-      margin-bottom: 8px;
-    }
+    .footer-logo { font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 700; letter-spacing: 0.08em; color: var(--white); margin-bottom: 8px; }
     .footer-logo span { color: var(--brand-orange); }
-
-    .footer-tagline {
-      font-size: 12px;
-      color: var(--text-dim);
-      letter-spacing: 0.06em;
-      margin-bottom: 24px;
-    }
-
-    .footer-links {
-      display: flex;
-      justify-content: center;
-      gap: 24px;
-      margin-bottom: 24px;
-      flex-wrap: wrap;
-    }
-
-    .footer-links a {
-      font-size: 12px;
-      color: var(--text-muted);
-      transition: color 0.2s;
-    }
+    .footer-tagline { font-size: 12px; color: var(--text-dim); letter-spacing: 0.06em; margin-bottom: 24px; }
+    .footer-links { display: flex; justify-content: center; gap: 24px; margin-bottom: 24px; flex-wrap: wrap; }
+    .footer-links a { font-size: 12px; color: var(--text-muted); transition: color 0.2s; }
     .footer-links a:hover { color: var(--white); }
-
-    .footer-copy {
-      font-size: 11px;
-      color: var(--text-dim);
-      letter-spacing: 0.06em;
-    }
+    .footer-copy { font-size: 11px; color: var(--text-dim); letter-spacing: 0.06em; }
 
     /* ============================================================
-       Responsive tweaks
+       Float CTA
     ============================================================ */
+    .float-cta {
+      position: fixed; bottom: 24px; right: 24px; z-index: 200;
+      display: flex; flex-direction: column; gap: 10px; align-items: flex-end;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.4s ease;
+      animation: floatIn 0.5s ease both;
+    }
+    .float-cta.visible { opacity: 1; pointer-events: auto; }
+    .float-btn-line {
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 14px 22px;
+      background: var(--line-green); color: #fff;
+      border-radius: 100px;
+      font-size: 0.88rem; font-weight: 500;
+      box-shadow: 0 6px 24px rgba(6,199,85,0.45);
+      transition: transform 0.2s, opacity 0.2s;
+      white-space: nowrap;
+    }
+    .float-btn-line:hover { transform: translateY(-2px); opacity: 0.9; }
+    .float-btn-line svg { width: 18px; height: 18px; }
+    .float-btn-tel {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 11px 18px;
+      background: var(--brand-gray); color: var(--white);
+      border: 1px solid var(--border-subtle); border-radius: 100px;
+      font-size: 0.82rem;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+      transition: transform 0.2s;
+      white-space: nowrap;
+    }
+    .float-btn-tel:hover { transform: translateY(-2px); }
+    .float-btn-tel svg { width: 15px; height: 15px; color: var(--brand-orange); }
+
     @media (max-width: 400px) {
       .hero-cta-group .btn-line { padding: 16px 24px; font-size: 0.92rem; }
+      .float-cta { bottom: 16px; right: 16px; }
     }
   </style>
 </head>
 <body>
 
   <!-- ============================================================
+       Float CTA
+  ============================================================ -->
+  <div class="float-cta" id="float-cta">
+    <a id="float-line-btn" href="#" class="float-btn-line" target="_blank">
+      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.48 2 2 6.02 2 11c0 3.16 1.7 5.97 4.29 7.68L5.5 22l3.3-1.64C9.76 20.78 10.86 21 12 21c5.52 0 10-4.02 10-9S17.52 2 12 2z"/></svg>
+      LINEで無料相談
+    </a>
+    <a id="float-tel-btn" href="#" class="float-btn-tel">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.6 3.38 2 2 0 0 1 3.57 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.54a16 16 0 0 0 6 6l.92-.92a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+      <span id="float-tel-num">090-0000-0000</span>
+    </a>
+  </div>
+
+  <!-- ============================================================
        Header
   ============================================================ -->
   <header id="site-header">
     <div class="header-logo">NU-MAN <span>ROLLER STONE</span></div>
-    <a href="https://lin.ee/XXXXXXX" target="_blank" class="header-cta">
-      <!-- LINE icon -->
-      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.48 2 2 6.02 2 11c0 3.16 1.7 5.97 4.29 7.68L5.5 22l3.3-1.64C9.76 20.78 10.86 21 12 21c5.52 0 10-4.02 10-9S17.52 2 12 2zm1 13H8v-1.5h5V15zm2-3H8v-1.5h7V12zm0-3H8V7.5h7V9z"/></svg>
+    <a id="header-line-btn" href="#" target="_blank" class="header-cta">
+      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.48 2 2 6.02 2 11c0 3.16 1.7 5.97 4.29 7.68L5.5 22l3.3-1.64C9.76 20.78 10.86 21 12 21c5.52 0 10-4.02 10-9S17.52 2 12 2z"/></svg>
       無料相談
     </a>
   </header>
@@ -1069,31 +713,25 @@
        Hero
   ============================================================ -->
   <section id="hero">
-    <div class="hero-bg">
-      <div class="hero-orb hero-orb-1"></div>
-      <div class="hero-orb hero-orb-2"></div>
-    </div>
+    <div class="hero-parallax-bg" id="hero-bg"></div>
+    <div class="hero-orb hero-orb-1"></div>
+    <div class="hero-orb hero-orb-2"></div>
 
     <div class="hero-content">
-      <div class="hero-eyebrow anim-fadeInDown">Inner Garage Specialist</div>
+      <div class="hero-eyebrow anim-fadeInDown" id="hero-eyebrow">Inner Garage Specialist</div>
       <h1 class="hero-headline anim-fadeInUp delay-1">
-        あなたのガレージを、<br>
-        <span class="accent">ショールーム</span>に変える。
+        <span id="hero-h1"></span><br>
+        <span class="accent" id="hero-h2"></span>
       </h1>
-      <p class="hero-sub anim-fadeInUp delay-2">
-        床一枚で、空間の格が変わる。<br>
-        ローラーストーン施工で、憧れのガレージライフへ。
-      </p>
+      <p class="hero-sub anim-fadeInUp delay-2" id="hero-sub"></p>
 
       <div class="hero-cta-group anim-fadeInUp delay-3">
-        <a href="https://lin.ee/XXXXXXX" target="_blank" class="btn-line">
-          <!-- LINE icon -->
-          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.48 2 2 6.02 2 11c0 3.16 1.7 5.97 4.29 7.68L5.5 22l3.3-1.64C9.76 20.78 10.86 21 12 21c5.52 0 10-4.02 10-9S17.52 2 12 2zm1 13H8v-1.5h5V15zm2-3H8v-1.5h7V12zm0-3H8V7.5h7V9z"/></svg>
+        <a id="hero-line-btn" href="#" target="_blank" class="btn-line">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.48 2 2 6.02 2 11c0 3.16 1.7 5.97 4.29 7.68L5.5 22l3.3-1.64C9.76 20.78 10.86 21 12 21c5.52 0 10-4.02 10-9S17.52 2 12 2z"/></svg>
           まずは写真を送って相談する（無料）
         </a>
-        <a href="#before-after" class="btn-ghost">
-          施工例を見る
-          <!-- chevron down -->
+        <a href="#intro" class="btn-ghost">
+          詳しく見る
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg>
         </a>
       </div>
@@ -1105,9 +743,7 @@
     </div>
   </section>
 
-  <!-- ============================================================
-       Ticker
-  ============================================================ -->
+  <!-- Ticker -->
   <div class="ticker-wrap" aria-hidden="true">
     <div class="ticker-track">
       <span>ROLLER STONE</span><span>INNER GARAGE</span><span>AI SIMULATION</span><span>2-3 DAYS</span><span>DUST FREE</span><span>SHOWROOM QUALITY</span><span>Nu-Man</span><span>CEMENT ARTIST</span>
@@ -1116,42 +752,34 @@
   </div>
 
   <!-- ============================================================
-       Problem
+       SECTION 1: #intro
   ============================================================ -->
-  <section id="problem">
+  <section id="intro">
     <div class="section-inner">
-      <div class="section-header reveal">
-        <p class="label">こんなお悩みありませんか？</p>
-        <h2 class="section-title">コンクリートのまま、<br>満足していませんか？</h2>
-        <div class="divider"></div>
-      </div>
-
-      <div class="problem-list">
-        <div class="problem-item reveal">
-          <div class="problem-x">✕</div>
-          <p class="problem-text">白い粉塵が車や荷物を汚す。掃除してもキリがない…</p>
-        </div>
-        <div class="problem-item reveal reveal-delay-1">
-          <div class="problem-x">✕</div>
-          <p class="problem-text">素のコンクリートは安っぽく見えて、ガレージに入るたびにがっかりする</p>
-        </div>
-        <div class="problem-item reveal reveal-delay-2">
-          <div class="problem-x">✕</div>
-          <p class="problem-text">タイルや石材は高額すぎて予算オーバー。かといって妥協もしたくない</p>
-        </div>
-      </div>
-
-      <div class="problem-solution reveal">
-        <p>
-          そのすべてを解決するのが、<br>
-          <strong>ローラーストーン施工</strong>です。
-        </p>
+      <div class="intro-box reveal">
+        <p class="intro-catchphrase" id="intro-catchphrase"></p>
+        <p class="intro-body" id="intro-body"></p>
       </div>
     </div>
   </section>
 
   <!-- ============================================================
-       Before / After
+       SECTION 2: #benefits
+  ============================================================ -->
+  <section id="benefits">
+    <div class="section-inner">
+      <div class="section-header reveal">
+        <p class="label">Why Roller Stone?</p>
+        <h2 class="section-title">5つのメリット</h2>
+        <div class="divider"></div>
+        <p class="section-sub">ローラーストーン施工だからこそできること。</p>
+      </div>
+      <div class="benefits-list" id="benefits-list"></div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 3: #before-after
   ============================================================ -->
   <section id="before-after">
     <div class="section-inner">
@@ -1163,12 +791,10 @@
       </div>
 
       <div class="comparison-slider reveal" id="comparison-slider">
-        <img src="Nu-Man/after1.jpg" alt="施工後" class="img-after" onerror="this.src='Nu-Man/after1.jpg.JPG'" />
-        <img src="Nu-Man/before.jpg" alt="施工前" class="img-before" id="slider-img-before" onerror="this.src='Nu-Man/before.jpg.JPG'" />
-
+        <img id="slider-img-after" src="" alt="施工後" class="img-after" />
+        <img id="slider-img-before" src="" alt="施工前" class="img-before" />
         <div class="slider-handle" id="slider-handle">
           <div class="slider-button">
-            <!-- chevrons-left-right -->
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
               <polyline points="7 8 3 12 7 16"></polyline>
               <polyline points="17 8 21 12 17 16"></polyline>
@@ -1176,7 +802,6 @@
             </svg>
           </div>
         </div>
-
         <div class="slider-label label-before">BEFORE</div>
         <div class="slider-label label-after">AFTER</div>
       </div>
@@ -1184,355 +809,218 @@
   </section>
 
   <!-- ============================================================
-       Benefits
+       SECTION 4: #unique
   ============================================================ -->
-  <section id="benefits">
+  <section id="unique">
     <div class="section-inner">
       <div class="section-header reveal">
-        <p class="label">Why Roller Stone?</p>
-        <h2 class="section-title">なぜ、インナーガレージに<br>ローラーストーンなのか</h2>
+        <p class="label">Only Nu-Man</p>
+        <h2 class="section-title">ぬーまんだけの、特別な提案</h2>
         <div class="divider"></div>
       </div>
 
-      <div class="benefits-grid">
-        <!-- Card 1 -->
-        <div class="benefit-card reveal">
-          <p class="benefit-number">01</p>
-          <svg class="benefit-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
-          <h3 class="benefit-title">ショールーム級の高級感</h3>
-          <p class="benefit-desc">まるでプロのカーショップのような、重厚で洗練された空間へ。訪れるたびにテンションが上がる床に。</p>
+      <div class="unique-lead reveal">
+        <p>ここまでのメリットは、多くの業者が提案できる内容です。<br>でも、<strong>ぬーまんは、ここで終わりません。</strong></p>
+      </div>
+
+      <div class="unique-points">
+        <div class="unique-point reveal">
+          <h3>AIシミュレーション（無料）</h3>
+          <p>あなたのガレージに実際に施工したリアルなビジュアルを事前に確認。「イメージと違った」をゼロにします。</p>
         </div>
-        <!-- Card 2 -->
-        <div class="benefit-card reveal reveal-delay-1">
-          <p class="benefit-number">02</p>
-          <svg class="benefit-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-5"/></svg>
-          <h3 class="benefit-title">コンクリート粉塵を根本解決</h3>
-          <p class="benefit-desc">塗膜がコンクリートを完全に封じ込め、白い粉の悩みとサヨナラ。車も荷物も清潔に保てます。</p>
+        <div class="unique-point reveal reveal-delay-1">
+          <h3>LINE完結の気軽さ</h3>
+          <p>写真を送るだけでOK。難しい説明不要。スマホ1台で相談から完成まで。</p>
         </div>
-        <!-- Card 3 -->
-        <div class="benefit-card reveal reveal-delay-2">
-          <p class="benefit-number">03</p>
-          <svg class="benefit-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-          <h3 class="benefit-title">タイル・石材より断然お得</h3>
-          <p class="benefit-desc">金ゴテ仕上げ費が不要＋材料費が低い。費用対効果は最高クラス。クオリティを妥協せずに節約できます。</p>
+        <div class="unique-point reveal reveal-delay-2">
+          <h3>完成後もLINEでフォロー</h3>
+          <p>施工後も気軽に相談できる関係性。長く付き合える職人を目指しています。</p>
         </div>
-        <!-- Card 4 -->
-        <div class="benefit-card reveal reveal-delay-1">
-          <p class="benefit-number">04</p>
-          <svg class="benefit-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-          <h3 class="benefit-title">引き渡し後でも施工OK</h3>
-          <p class="benefit-desc">リフォームとして後付け可能。新築から数年経っていても大丈夫。今すぐガレージを一新できます。</p>
+      </div>
+
+      <div class="unique-gallery" id="unique-gallery"></div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 5: #limit
+  ============================================================ -->
+  <section id="limit">
+    <div class="section-inner">
+      <div class="section-header reveal">
+        <p class="label">Comparison</p>
+        <h2 class="section-title">一般業者との違い</h2>
+        <div class="divider"></div>
+      </div>
+
+      <div class="limit-grid">
+        <div class="limit-col col-bad reveal">
+          <p class="limit-col-title">一般業者の課題</p>
+          <div class="limit-item"><span class="limit-icon">❌</span><span>完成イメージが見られないまま決断しなければならない</span></div>
+          <div class="limit-item"><span class="limit-icon">❌</span><span>工期が長く、車が使えない期間が長い</span></div>
+          <div class="limit-item"><span class="limit-icon">❌</span><span>費用が高く、予算オーバーになりがち</span></div>
+          <div class="limit-item"><span class="limit-icon">❌</span><span>施工後のアフターフォローが手薄</span></div>
         </div>
-        <!-- Card 5 -->
-        <div class="benefit-card reveal reveal-delay-2">
-          <p class="benefit-number">05</p>
-          <svg class="benefit-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-          <h3 class="benefit-title">わずか2〜3日で完成</h3>
-          <p class="benefit-desc">生活への影響を最小限に。あっという間に生まれ変わります。長期工事の心配なし。</p>
+        <div class="limit-col col-good reveal reveal-delay-1">
+          <p class="limit-col-title">ぬーまんの強み</p>
+          <div class="limit-item"><span class="limit-icon">✅</span><span>AIで完成形を見てから決められる</span></div>
+          <div class="limit-item"><span class="limit-icon">✅</span><span>2〜3日のスピード施工</span></div>
+          <div class="limit-item"><span class="limit-icon">✅</span><span>タイル・石材より断然リーズナブル</span></div>
+          <div class="limit-item"><span class="limit-icon">✅</span><span>LINEで施工後も継続サポート</span></div>
         </div>
       </div>
     </div>
   </section>
 
   <!-- ============================================================
-       AI Simulation
+       SECTION 6: #testimonials
   ============================================================ -->
-  <section id="simulation">
+  <section id="testimonials">
     <div class="section-inner">
       <div class="section-header reveal">
-        <div class="sim-badge">
-          <!-- sparkles icon -->
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17 5.8 21.3l2.4-7.4L2 9.4h7.6L12 2z"/></svg>
-          ぬーまん独自 / AI シミュレーション提案
-        </div>
-        <h2 class="section-title">あなたのガレージで、<br>完成形を見てから決める。</h2>
+        <p class="label">Customer Voice</p>
+        <h2 class="section-title">お客様の声</h2>
         <div class="divider"></div>
-        <p class="section-sub">「イメージと違った」は、ゼロにします。</p>
       </div>
-
-      <div class="sim-content">
-        <div class="sim-image reveal">
-          <img src="Nu-Man/material.jpg" alt="AIシミュレーション素材" onerror="this.src='Nu-Man/material.jpg.JPG'" />
-        </div>
-
-        <div class="sim-steps">
-          <div class="sim-step reveal">
-            <div class="sim-step-num">1</div>
-            <div class="sim-step-text">
-              <h4>ガレージの写真を送る</h4>
-              <p>LINEで現状の写真を送るだけ。スマホ撮影で十分です。</p>
-            </div>
-          </div>
-          <div class="sim-step reveal reveal-delay-1">
-            <div class="sim-step-num">2</div>
-            <div class="sim-step-text">
-              <h4>AIが完成形を生成</h4>
-              <p>あなたのガレージに実際に施工したリアルなビジュアルを作成します。</p>
-            </div>
-          </div>
-          <div class="sim-step reveal reveal-delay-2">
-            <div class="sim-step-num">3</div>
-            <div class="sim-step-text">
-              <h4>見てから判断できる</h4>
-              <p>仕上がりを確認してから施工を決められるので、安心してお任せいただけます。</p>
-            </div>
-          </div>
-          <div class="sim-step reveal reveal-delay-3">
-            <div class="sim-step-num">4</div>
-            <div class="sim-step-text">
-              <h4>無料で提供中</h4>
-              <p>シミュレーションは無料。契約前でも気軽にご相談ください。</p>
-            </div>
-          </div>
-        </div>
-      </div>
+      <div class="testimonial-grid" id="testimonial-grid"></div>
     </div>
   </section>
 
   <!-- ============================================================
-       Flow
+       SECTION 7: #flow
   ============================================================ -->
   <section id="flow">
     <div class="section-inner">
       <div class="section-header reveal">
         <p class="label">Process</p>
-        <h2 class="section-title">問い合わせから完成まで、<br>たったの4ステップ</h2>
+        <h2 class="section-title">問い合わせから完成まで、<br>たったの6ステップ</h2>
         <div class="divider"></div>
       </div>
 
-      <div class="flow-list">
+      <div class="flow-list" id="flow-list">
         <div class="flow-line"></div>
-
-        <div class="flow-item reveal">
-          <div class="flow-num">01</div>
-          <div class="flow-body">
-            <h4>LINEで無料相談</h4>
-            <p>ガレージの写真を送るだけでOK。まずはお気軽にご連絡ください。費用の概算もすぐにお伝えします。</p>
-          </div>
-        </div>
-
-        <div class="flow-item reveal reveal-delay-1">
-          <div class="flow-num">02</div>
-          <div class="flow-body">
-            <h4>AIシミュレーション提案</h4>
-            <p>あなたのガレージで仕上がりをリアルに確認。イメージを固めてから次のステップへ。</p>
-          </div>
-        </div>
-
-        <div class="flow-item reveal reveal-delay-2">
-          <div class="flow-num">03</div>
-          <div class="flow-body">
-            <h4>施工（2〜3日）</h4>
-            <p>丁寧かつスピーディーに仕上げます。騒音や廃材も少なく、ご近所への配慮も万全。</p>
-          </div>
-        </div>
-
-        <div class="flow-item reveal reveal-delay-3">
-          <div class="flow-num">04</div>
-          <div class="flow-body">
-            <h4>完成・アフターフォロー</h4>
-            <p>施工後もLINEで気軽にご相談いただけます。長くお付き合いできる職人を目指しています。</p>
-          </div>
-        </div>
       </div>
     </div>
   </section>
 
   <!-- ============================================================
-       Gallery
+       SECTION 8: #conclusion
   ============================================================ -->
-  <section id="gallery">
+  <section id="conclusion">
+    <div class="section-inner">
+      <div class="conclusion-box reveal">
+        <h2 class="conclusion-headline">もう、<span>やらない理由が</span><br>見つかりません。</h2>
+        <p class="conclusion-body">ローラーストーン施工は、インナーガレージ床の「新常識」です。高品質・低コスト・スピード施工の三拍子が揃い、AIシミュレーションで安心して決断できる。これを知ってしまったら、コンクリートのままにしておく理由はありません。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 9: #mindset
+  ============================================================ -->
+  <section id="mindset">
     <div class="section-inner">
       <div class="section-header reveal">
-        <p class="label">Works</p>
-        <h2 class="section-title">施工事例</h2>
+        <p class="label">Mindset Update</p>
+        <h2 class="section-title">考え方のアップデート</h2>
         <div class="divider"></div>
-        <p class="section-sub">実際の施工写真をご覧ください。</p>
       </div>
-
-      <div class="gallery-grid">
-        <div class="gallery-item reveal">
-          <img src="Nu-Man/after1.jpg" alt="施工事例1" onerror="this.src='Nu-Man/after1.jpg.JPG'" />
+      <div class="mindset-list">
+        <div class="mindset-row reveal">
+          <div class="mindset-old">コンクリートのままで十分</div>
+          <div class="mindset-arrow">→</div>
+          <div class="mindset-new">ローラーストーンで高級感と実用性を両立</div>
         </div>
-        <div class="gallery-item reveal reveal-delay-1">
-          <img src="Nu-Man/after2.jpg" alt="施工事例2" onerror="this.src='Nu-Man/after2.jpg.JPG'" />
+        <div class="mindset-row reveal reveal-delay-1">
+          <div class="mindset-old">施工は完成してから考える</div>
+          <div class="mindset-arrow">→</div>
+          <div class="mindset-new">AIシミュレーションで先に完成形を確認</div>
         </div>
-        <div class="gallery-item reveal reveal-delay-2">
-          <img src="Nu-Man/material.jpg" alt="使用素材" onerror="this.src='Nu-Man/material.jpg.JPG'" />
+        <div class="mindset-row reveal reveal-delay-2">
+          <div class="mindset-old">リフォームは高くて大変</div>
+          <div class="mindset-arrow">→</div>
+          <div class="mindset-new">2〜3日・手頃な価格で劇的に変わる</div>
         </div>
-        <div class="gallery-item reveal reveal-delay-1">
-          <img src="Nu-Man/after2.jpg" alt="施工事例3" onerror="this.src='Nu-Man/after2.jpg.JPG'" />
-        </div>
-        <div class="gallery-item reveal reveal-delay-2">
-          <img src="Nu-Man/after1.jpg" alt="施工事例4" onerror="this.src='Nu-Man/after1.jpg.JPG'" />
-        </div>
-        <div class="gallery-item reveal reveal-delay-3">
-          <img src="Nu-Man/before.jpg" alt="施工前" onerror="this.src='Nu-Man/before.jpg.JPG'" />
+        <div class="mindset-row reveal reveal-delay-3">
+          <div class="mindset-old">業者選びは難しい</div>
+          <div class="mindset-arrow">→</div>
+          <div class="mindset-new">LINEで気軽に相談・見積もりまで完結</div>
         </div>
       </div>
     </div>
   </section>
 
   <!-- ============================================================
-       Profile
+       SECTION 10: #summary
   ============================================================ -->
-  <section id="profile">
+  <section id="summary">
+    <div class="section-inner">
+      <div class="section-header reveal">
+        <p class="label">Summary</p>
+        <h2 class="section-title">まとめ｜後悔しないために</h2>
+        <div class="divider"></div>
+      </div>
+      <div class="summary-list">
+        <div class="summary-item reveal"><div class="summary-check">✓</div><span>インナーガレージ床はコンクリートのままにしない</span></div>
+        <div class="summary-item reveal reveal-delay-1"><div class="summary-check">✓</div><span>ローラーストーンは高級感・耐久性・コストパフォーマンスを兼ね備えた最適解</span></div>
+        <div class="summary-item reveal reveal-delay-2"><div class="summary-check">✓</div><span>AIシミュレーションで完成形を見てから決断できる</span></div>
+        <div class="summary-item reveal reveal-delay-3"><div class="summary-check">✓</div><span>2〜3日のスピード施工で生活への影響を最小限に</span></div>
+        <div class="summary-item reveal"><div class="summary-check">✓</div><span>施工後もLINEで継続サポート</span></div>
+      </div>
+      <div class="summary-ps reveal">
+        知っているか知らないかで、10年後の満足度が変わります。
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 11: #message
+  ============================================================ -->
+  <section id="message">
     <div class="section-inner">
       <div class="section-header reveal">
         <p class="label">About</p>
-        <h2 class="section-title">施工者について</h2>
+        <h2 class="section-title">ぬーまんからのメッセージ</h2>
         <div class="divider"></div>
       </div>
 
-      <div class="profile-inner">
-        <div class="profile-photo reveal">
-          <img src="KIMARU/LP/images/numan_portrait.jpg" alt="ぬーまん" onerror="this.style.background='#2a2a2a'" />
+      <div class="message-inner">
+        <div class="message-photo reveal">
+          <img id="message-img" src="" alt="ぬーまん" onerror="this.style.background='#2a2a2a'" />
         </div>
-
         <div class="reveal reveal-delay-1">
-          <p class="profile-role">Cement Artist</p>
-          <h3 class="profile-name">ぬーまん</h3>
-          <p class="profile-desc">
-            コンクリートを「素材」から「アート」へ昇華させる職人。ローラーストーンを中心に、空間に命を吹き込む施工を行っています。<br><br>
-            AIシミュレーションを活用した提案力で、施主の理想を「見える化」してから施工。「イメージと違った」という後悔をゼロにすることにこだわっています。
-          </p>
-          <div class="profile-social">
-            <a href="https://www.instagram.com/cementart_numan/" target="_blank" class="btn-insta">
-              <!-- instagram icon -->
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
-              Instagram で施工例を見る
-            </a>
-          </div>
+          <p class="message-role" id="message-role">Cement Artist</p>
+          <h3 class="message-name" id="message-name">ぬーまん</h3>
+          <p class="message-text" id="message-text"></p>
+          <a id="message-insta-btn" href="#" target="_blank" class="btn-insta">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+            Instagram で施工例を見る
+          </a>
         </div>
       </div>
     </div>
   </section>
 
   <!-- ============================================================
-       FAQ
-  ============================================================ -->
-  <section id="faq">
-    <div class="section-inner">
-      <div class="section-header reveal">
-        <p class="label">Frequently Asked Questions</p>
-        <h2 class="section-title">よくあるご質問</h2>
-        <div class="divider"></div>
-      </div>
-
-      <div class="faq-list">
-
-        <div class="faq-item reveal" data-faq="1">
-          <button class="faq-q" onclick="toggleFaq(1)" aria-expanded="false">
-            <span class="faq-q-text">費用はどのくらいかかりますか？</span>
-            <span class="faq-q-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg>
-            </span>
-          </button>
-          <div class="faq-a" id="faq-a-1">
-            <div class="faq-a-inner">
-              ガレージの広さや仕様によって異なります。まずはLINEでご相談いただければ、写真を送っていただくだけで概算をお伝えできます。無料でお見積もりいたします。
-            </div>
-          </div>
-        </div>
-
-        <div class="faq-item reveal reveal-delay-1" data-faq="2">
-          <button class="faq-q" onclick="toggleFaq(2)" aria-expanded="false">
-            <span class="faq-q-text">既存のコンクリートにも施工できますか？</span>
-            <span class="faq-q-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg>
-            </span>
-          </button>
-          <div class="faq-a" id="faq-a-2">
-            <div class="faq-a-inner">
-              はい、引き渡し後の既存ガレージにも対応しています。既存のコンクリートを壊す必要がなく、上から施工できるため、工事費用・騒音・廃材を大幅に削減できます。
-            </div>
-          </div>
-        </div>
-
-        <div class="faq-item reveal reveal-delay-2" data-faq="3">
-          <button class="faq-q" onclick="toggleFaq(3)" aria-expanded="false">
-            <span class="faq-q-text">施工中は車を使えませんか？</span>
-            <span class="faq-q-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg>
-            </span>
-          </button>
-          <div class="faq-a" id="faq-a-3">
-            <div class="faq-a-inner">
-              基本的に2〜3日の施工期間中はガレージ内の使用を控えていただきます。施工前に日程調整をしっかり行いますので、スケジュールに合わせてご対応いたします。
-            </div>
-          </div>
-        </div>
-
-        <div class="faq-item reveal" data-faq="4">
-          <button class="faq-q" onclick="toggleFaq(4)" aria-expanded="false">
-            <span class="faq-q-text">耐久性はどのくらいですか？</span>
-            <span class="faq-q-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg>
-            </span>
-          </button>
-          <div class="faq-a" id="faq-a-4">
-            <div class="faq-a-inner">
-              高強度な特殊材料を使用しており、大型車両が乗っても問題ない強度を持っています。適切にメンテナンスすれば長期間美しい状態を保てます。
-            </div>
-          </div>
-        </div>
-
-        <div class="faq-item reveal reveal-delay-1" data-faq="5">
-          <button class="faq-q" onclick="toggleFaq(5)" aria-expanded="false">
-            <span class="faq-q-text">遠方でも施工できますか？</span>
-            <span class="faq-q-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg>
-            </span>
-          </button>
-          <div class="faq-a" id="faq-a-5">
-            <div class="faq-a-inner">
-              まずはご相談ください。エリアによって対応いたします。遠方の場合は交通費・宿泊費が別途必要になる場合があります。
-            </div>
-          </div>
-        </div>
-
-        <div class="faq-item reveal reveal-delay-2" data-faq="6">
-          <button class="faq-q" onclick="toggleFaq(6)" aria-expanded="false">
-            <span class="faq-q-text">AIシミュレーションは本当に無料ですか？</span>
-            <span class="faq-q-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg>
-            </span>
-          </button>
-          <div class="faq-a" id="faq-a-6">
-            <div class="faq-a-inner">
-              はい、完全無料です。契約前の段階でもお気軽にご依頼ください。「まず見てから考えたい」という方にこそ使っていただきたいサービスです。
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </section>
-
-  <!-- ============================================================
-       Final CTA
+       SECTION 12: #cta-final
   ============================================================ -->
   <section id="cta-final">
     <div class="section-inner">
       <div class="cta-box reveal">
-        <p class="label" style="text-align:center; margin-bottom: 16px;">Free Consultation</p>
+        <p class="label" style="text-align:center; margin-bottom:16px;">Free Consultation</p>
         <h2 class="cta-title">まずは、無料で<br>シミュレーションを体験してください。</h2>
-        <p class="cta-sub">
-          AIがあなたのガレージの完成形をお見せします。<br>
-          費用のご相談だけでも大歓迎です。
-        </p>
+        <p class="cta-sub">AIがあなたのガレージの完成形をお見せします。<br>費用のご相談だけでも大歓迎です。</p>
 
         <div class="cta-buttons">
-          <a href="https://lin.ee/XXXXXXX" target="_blank" class="btn-line-lg">
-            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.48 2 2 6.02 2 11c0 3.16 1.7 5.97 4.29 7.68L5.5 22l3.3-1.64C9.76 20.78 10.86 21 12 21c5.52 0 10-4.02 10-9S17.52 2 12 2zm1 13H8v-1.5h5V15zm2-3H8v-1.5h7V12zm0-3H8V7.5h7V9z"/></svg>
+          <a id="cta-line-btn" href="#" target="_blank" class="btn-line-lg">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.48 2 2 6.02 2 11c0 3.16 1.7 5.97 4.29 7.68L5.5 22l3.3-1.64C9.76 20.78 10.86 21 12 21c5.52 0 10-4.02 10-9S17.52 2 12 2z"/></svg>
             LINEで無料相談する
           </a>
-          <a href="tel:09000000000" class="btn-tel">
+          <a id="cta-tel-btn" href="#" class="btn-tel">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.6 3.38 2 2 0 0 1 3.57 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.54a16 16 0 0 0 6 6l.92-.92a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-            電話で相談する
+            <span id="cta-tel-num">電話で相談する</span>
           </a>
         </div>
-
         <p class="cta-note">※ LINEは24時間受付。電話対応は平日9:00〜18:00（目安）</p>
       </div>
     </div>
@@ -1545,12 +1033,11 @@
     <div class="footer-logo">NU-MAN <span>ROLLER STONE</span></div>
     <p class="footer-tagline">Cement Artist × Inner Garage Specialist</p>
     <div class="footer-links">
-      <a href="#hero">トップ</a>
+      <a href="#intro">はじめに</a>
       <a href="#benefits">メリット</a>
-      <a href="#simulation">AI提案</a>
+      <a href="#before-after">施工例</a>
       <a href="#flow">施工の流れ</a>
-      <a href="#profile">プロフィール</a>
-      <a href="#faq">FAQ</a>
+      <a href="#message">プロフィール</a>
     </div>
     <p class="footer-copy">&copy; 2025 Nu-Man Cement Artist. All rights reserved.</p>
   </footer>
@@ -1559,99 +1046,182 @@
        JavaScript
   ============================================================ -->
   <script>
+    // ---- renderLP: LP_CONFIGをDOMに注入 ----
+    function renderLP() {
+      var C = LP_CONFIG;
+
+      // Hero
+      document.getElementById('hero-bg').style.backgroundImage = 'url("' + C.hero.image + '")';
+      document.getElementById('hero-eyebrow').textContent = C.hero.eyebrow;
+      document.getElementById('hero-h1').textContent = C.hero.headline1;
+      document.getElementById('hero-h2').textContent = C.hero.headline2;
+      document.getElementById('hero-sub').textContent = C.hero.sub;
+
+      // Intro
+      document.getElementById('intro-catchphrase').textContent = C.intro.catchphrase;
+      document.getElementById('intro-body').textContent = C.intro.body;
+
+      // Benefits
+      var bl = document.getElementById('benefits-list');
+      bl.innerHTML = '';
+      C.benefits.forEach(function(b, i) {
+        var delay = i < 3 ? ' reveal-delay-' + i : '';
+        bl.innerHTML += '<div class="benefit-item reveal' + delay + '">' +
+          '<div class="benefit-emoji">' + b.emoji + '</div>' +
+          '<div class="benefit-body"><h3>' + b.title + '</h3><p>' + b.desc + '</p></div>' +
+          '</div>';
+      });
+
+      // Before/After images
+      document.getElementById('slider-img-after').src  = C.images.after;
+      document.getElementById('slider-img-before').src = C.images.before;
+
+      // Unique gallery
+      var ug = document.getElementById('unique-gallery');
+      ug.innerHTML = '';
+      C.images.gallery.forEach(function(src) {
+        ug.innerHTML += '<div class="unique-gallery-item"><img src="' + src + '" alt="施工例" /></div>';
+      });
+
+      // Testimonials
+      var tg = document.getElementById('testimonial-grid');
+      tg.innerHTML = '';
+      C.testimonials.forEach(function(t, i) {
+        var delay = (i % 2 === 1) ? ' reveal-delay-1' : '';
+        var stars = '★'.repeat(t.rating);
+        tg.innerHTML += '<div class="testimonial-card reveal' + delay + '">' +
+          '<div class="testimonial-stars">' + stars + '</div>' +
+          '<p class="testimonial-text">' + t.text + '</p>' +
+          '<p class="testimonial-name">— ' + t.name + '</p>' +
+          '</div>';
+      });
+
+      // Flow
+      var fl = document.getElementById('flow-list');
+      // Keep the flow-line div
+      var flowLine = fl.querySelector('.flow-line');
+      fl.innerHTML = '';
+      fl.appendChild(flowLine);
+      C.flow.forEach(function(f, i) {
+        var num = String(i + 1).padStart(2, '0');
+        var delay = i < 4 ? ' reveal-delay-' + (i % 4) : '';
+        fl.innerHTML += '<div class="flow-item reveal' + delay + '">' +
+          '<div class="flow-num">' + num + '</div>' +
+          '<div class="flow-body"><h4>' + f.title + '</h4><p>' + f.desc + '</p></div>' +
+          '</div>';
+      });
+
+      // Message
+      document.getElementById('message-img').src = C.message.image;
+      document.getElementById('message-role').textContent = C.message.role;
+      document.getElementById('message-name').textContent = C.message.name;
+      document.getElementById('message-text').textContent = C.message.text;
+      document.getElementById('message-insta-btn').href = C.message.instagramUrl;
+
+      // Contact links
+      var lineUrl = C.contact.lineUrl;
+      var telHref = 'tel:' + C.contact.telRaw;
+      var telDisplay = C.contact.tel;
+      ['header-line-btn','hero-line-btn','float-line-btn','cta-line-btn'].forEach(function(id) {
+        var el = document.getElementById(id);
+        if (el) el.href = lineUrl;
+      });
+      var ctaTel = document.getElementById('cta-tel-btn');
+      if (ctaTel) { ctaTel.href = telHref; document.getElementById('cta-tel-num').textContent = '電話で相談する（' + telDisplay + '）'; }
+      var floatTel = document.getElementById('float-tel-btn');
+      if (floatTel) { floatTel.href = telHref; document.getElementById('float-tel-num').textContent = telDisplay; }
+
+      // Re-observe new .reveal elements
+      document.querySelectorAll('.reveal:not(.revealed)').forEach(function(el) {
+        revealObserver.observe(el);
+      });
+    }
+
     // ---- Scroll Nav ----
-    const header = document.getElementById('site-header');
-    window.addEventListener('scroll', () => {
+    var header = document.getElementById('site-header');
+    window.addEventListener('scroll', function() {
       header.classList.toggle('scrolled', window.scrollY > 40);
     }, { passive: true });
 
     // ---- IntersectionObserver (Scroll Reveal) ----
-    const revealEls = document.querySelectorAll('.reveal');
-    const revealObserver = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
+    var revealObserver = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
         if (entry.isIntersecting) {
           entry.target.classList.add('revealed');
           revealObserver.unobserve(entry.target);
         }
       });
-    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
-    revealEls.forEach(el => revealObserver.observe(el));
+    }, { threshold: 0.10, rootMargin: '0px 0px -40px 0px' });
+
+    document.querySelectorAll('.reveal').forEach(function(el) { revealObserver.observe(el); });
+
+    // ---- Float CTA: IntersectionObserver on hero ----
+    var floatCta = document.getElementById('float-cta');
+    var heroSection = document.getElementById('hero');
+    var heroObserver = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          floatCta.classList.remove('visible');
+        } else {
+          floatCta.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.1 });
+    heroObserver.observe(heroSection);
 
     // ---- Before/After Slider ----
     (function () {
-      const slider   = document.getElementById('comparison-slider');
-      const beforeImg = document.getElementById('slider-img-before');
-      const handle   = document.getElementById('slider-handle');
+      var slider    = document.getElementById('comparison-slider');
+      var beforeImg = document.getElementById('slider-img-before');
+      var handle    = document.getElementById('slider-handle');
       if (!slider || !beforeImg || !handle) return;
-
-      let isDragging = false;
+      var isDragging = false;
 
       function updateSlider(clientX) {
-        const rect = slider.getBoundingClientRect();
-        let pos = ((clientX - rect.left) / rect.width) * 100;
+        var rect = slider.getBoundingClientRect();
+        var pos  = ((clientX - rect.left) / rect.width) * 100;
         pos = Math.max(2, Math.min(98, pos));
-        beforeImg.style.clipPath = `inset(0 ${100 - pos}% 0 0)`;
-        handle.style.left = `${pos}%`;
+        beforeImg.style.clipPath = 'inset(0 ' + (100 - pos) + '% 0 0)';
+        handle.style.left = pos + '%';
       }
 
-      // Mouse
-      slider.addEventListener('mousedown', (e) => {
-        isDragging = true;
-        updateSlider(e.clientX);
-        e.preventDefault();
-      });
-      window.addEventListener('mouseup',   () => { isDragging = false; });
-      window.addEventListener('mousemove', (e) => {
-        if (!isDragging) return;
-        updateSlider(e.clientX);
-      });
-
-      // Touch
-      slider.addEventListener('touchstart', (e) => {
-        isDragging = true;
-        updateSlider(e.touches[0].clientX);
-        e.preventDefault();
-      }, { passive: false });
-      window.addEventListener('touchend',   () => { isDragging = false; });
-      window.addEventListener('touchmove',  (e) => {
-        if (!isDragging) return;
-        updateSlider(e.touches[0].clientX);
-      }, { passive: true });
-
-      // Click
-      slider.addEventListener('click', (e) => { updateSlider(e.clientX); });
+      slider.addEventListener('mousedown', function(e) { isDragging = true; updateSlider(e.clientX); e.preventDefault(); });
+      window.addEventListener('mouseup',   function() { isDragging = false; });
+      window.addEventListener('mousemove', function(e) { if (isDragging) updateSlider(e.clientX); });
+      slider.addEventListener('touchstart', function(e) { isDragging = true; updateSlider(e.touches[0].clientX); e.preventDefault(); }, { passive: false });
+      window.addEventListener('touchend',   function() { isDragging = false; });
+      window.addEventListener('touchmove',  function(e) { if (isDragging) updateSlider(e.touches[0].clientX); }, { passive: true });
+      slider.addEventListener('click', function(e) { updateSlider(e.clientX); });
     })();
 
-    // ---- FAQ Accordion ----
-    function toggleFaq(id) {
-      const item   = document.querySelector(`[data-faq="${id}"]`);
-      const answer = document.getElementById(`faq-a-${id}`);
-      const btn    = item.querySelector('.faq-q');
-
-      const isOpen = item.classList.contains('open');
-
-      // Close all
-      document.querySelectorAll('.faq-item.open').forEach(el => {
-        el.classList.remove('open');
-        el.querySelector('.faq-q').setAttribute('aria-expanded', 'false');
-      });
-
-      // Open clicked if it was closed
-      if (!isOpen) {
-        item.classList.add('open');
-        btn.setAttribute('aria-expanded', 'true');
-      }
-    }
-
-    // ---- Smooth scroll for anchor links ----
-    document.querySelectorAll('a[href^="#"]').forEach(a => {
-      a.addEventListener('click', (e) => {
-        const target = document.querySelector(a.getAttribute('href'));
+    // ---- Smooth scroll ----
+    document.querySelectorAll('a[href^="#"]').forEach(function(a) {
+      a.addEventListener('click', function(e) {
+        var target = document.querySelector(a.getAttribute('href'));
         if (!target) return;
         e.preventDefault();
-        const top = target.getBoundingClientRect().top + window.scrollY - 64;
-        window.scrollTo({ top, behavior: 'smooth' });
+        var top = target.getBoundingClientRect().top + window.scrollY - 64;
+        window.scrollTo({ top: top, behavior: 'smooth' });
       });
+    });
+
+    // ---- Run on load ----
+    document.addEventListener('DOMContentLoaded', function() {
+      // Re-merge localStorage (in case page loads after storage was set)
+      try {
+        var saved = localStorage.getItem('lp_config');
+        if (saved) {
+          var parsed = JSON.parse(saved);
+          Object.keys(parsed).forEach(function(k) {
+            if (parsed[k] && typeof parsed[k] === 'object' && !Array.isArray(parsed[k])) {
+              LP_CONFIG[k] = Object.assign({}, LP_CONFIG[k], parsed[k]);
+            } else {
+              LP_CONFIG[k] = parsed[k];
+            }
+          });
+        }
+      } catch(e) {}
+      renderLP();
     });
   </script>
 
