@@ -1,0 +1,1070 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>現場管理ダッシュボード | Roller Stone</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Noto Sans JP', sans-serif; }
+    body { background-color: #0a0a0a; color: #e5e5e5; }
+
+    /* Gold gradient text */
+    .gold-text {
+      background: linear-gradient(135deg, #D4AF37, #B8860B);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* Tab styles */
+    .tab-btn {
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s ease;
+    }
+    .tab-btn.active {
+      border-bottom: 2px solid #D4AF37;
+      color: #D4AF37;
+    }
+    .tab-btn:not(.active):hover {
+      color: #c5a059;
+    }
+
+    /* Card hover */
+    .project-card {
+      transition: all 0.2s ease;
+      border: 1px solid #2a2a2a;
+    }
+    .project-card:hover {
+      border-color: #D4AF37;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 20px rgba(212, 175, 55, 0.1);
+    }
+
+    /* Modal backdrop */
+    .modal-backdrop {
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+    }
+
+    /* Input styles */
+    .form-input {
+      background: #1a1a1a;
+      border: 1px solid #333;
+      color: #e5e5e5;
+      transition: border-color 0.2s;
+    }
+    .form-input:focus {
+      outline: none;
+      border-color: #D4AF37;
+      box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.1);
+    }
+    .form-input::placeholder { color: #555; }
+
+    /* Select styles */
+    .form-select {
+      background: #1a1a1a;
+      border: 1px solid #333;
+      color: #e5e5e5;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23888' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+    }
+    .form-select:focus {
+      outline: none;
+      border-color: #D4AF37;
+    }
+
+    /* Status badges */
+    .badge-mitsumori { background: #1a2a3a; color: #60a5fa; border: 1px solid #1e40af; }
+    .badge-chakko { background: #1a2a1a; color: #4ade80; border: 1px solid #166534; }
+    .badge-kanryo { background: #2a1a2a; color: #c084fc; border: 1px solid #6b21a8; }
+    .badge-pending { background: #2a2a1a; color: #facc15; border: 1px solid #854d0e; }
+
+    /* Gold button */
+    .btn-gold {
+      background: linear-gradient(135deg, #D4AF37, #B8860B);
+      color: #0a0a0a;
+      font-weight: 600;
+      transition: all 0.2s ease;
+    }
+    .btn-gold:hover {
+      background: linear-gradient(135deg, #e8c84a, #c5a027);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+    }
+    .btn-gold:active { transform: translateY(0); }
+
+    /* Toast notification */
+    #toast {
+      transition: all 0.3s ease;
+      transform: translateY(100px);
+      opacity: 0;
+    }
+    #toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #1a1a1a; }
+    ::-webkit-scrollbar-thumb { background: #444; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #D4AF37; }
+
+    /* Sync indicator pulse */
+    @keyframes pulse-gold {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+    .syncing { animation: pulse-gold 1.5s ease-in-out infinite; }
+  </style>
+</head>
+<body class="min-h-screen">
+
+  <!-- ===== HEADER ===== -->
+  <header class="border-b border-gray-800 bg-black/50 sticky top-0 z-30">
+    <div class="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <a href="RS.Portalsite.html" class="text-gray-500 hover:text-gray-300 transition-colors text-sm">← Portal</a>
+        <span class="text-gray-700">|</span>
+        <h1 class="text-lg font-bold gold-text">現場管理</h1>
+      </div>
+      <div class="flex items-center gap-3">
+        <div id="syncStatus" class="flex items-center gap-1.5 text-xs text-gray-500">
+          <span id="syncDot" class="w-2 h-2 rounded-full bg-gray-600"></span>
+          <span id="syncLabel">--</span>
+        </div>
+        <button onclick="openSettingsModal()" class="text-gray-500 hover:text-gray-300 transition-colors" title="設定">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===== MAIN ===== -->
+  <main class="max-w-4xl mx-auto px-4 py-6">
+
+    <!-- Pending sync warning -->
+    <div id="pendingBanner" class="hidden mb-4 bg-yellow-900/30 border border-yellow-700/50 rounded-lg px-4 py-3 flex items-center justify-between gap-3">
+      <div class="flex items-center gap-2 text-yellow-400 text-sm">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+          <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+        </svg>
+        <span id="pendingCount">未同期の案件があります</span>
+      </div>
+      <button onclick="retryPendingSync()" class="text-xs bg-yellow-700/50 hover:bg-yellow-700 text-yellow-300 px-3 py-1 rounded transition-colors">再試行</button>
+    </div>
+
+    <!-- Status Tabs -->
+    <div class="flex border-b border-gray-800 mb-6 gap-1">
+      <button class="tab-btn active px-5 py-3 text-sm font-medium" data-tab="見積中" onclick="switchTab('見積中', this)">
+        見積中 <span id="count-見積中" class="ml-1.5 text-xs bg-blue-900/50 text-blue-400 px-1.5 py-0.5 rounded-full">0</span>
+      </button>
+      <button class="tab-btn px-5 py-3 text-sm font-medium text-gray-400" data-tab="着工中" onclick="switchTab('着工中', this)">
+        着工中 <span id="count-着工中" class="ml-1.5 text-xs bg-green-900/50 text-green-400 px-1.5 py-0.5 rounded-full">0</span>
+      </button>
+      <button class="tab-btn px-5 py-3 text-sm font-medium text-gray-400" data-tab="完了" onclick="switchTab('完了', this)">
+        完了 <span id="count-完了" class="ml-1.5 text-xs bg-purple-900/50 text-purple-400 px-1.5 py-0.5 rounded-full">0</span>
+      </button>
+    </div>
+
+    <!-- Add New Button -->
+    <div class="mb-5">
+      <button onclick="openAddModal()" class="btn-gold px-5 py-2.5 rounded-lg text-sm flex items-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+        </svg>
+        新規案件追加
+      </button>
+    </div>
+
+    <!-- Project List -->
+    <div id="projectList" class="space-y-3">
+      <!-- Cards rendered by JS -->
+    </div>
+
+    <!-- Empty State -->
+    <div id="emptyState" class="hidden text-center py-20 text-gray-600">
+      <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto mb-4 opacity-30" width="48" height="48" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+      </svg>
+      <p class="text-sm">このステータスの案件はありません</p>
+      <button onclick="openAddModal()" class="mt-4 text-xs text-yellow-600 hover:text-yellow-500 underline">新規案件を追加する</button>
+    </div>
+
+  </main>
+
+  <!-- ===== ADD / EDIT MODAL ===== -->
+  <div id="projectModal" class="fixed inset-0 z-50 hidden">
+    <div class="modal-backdrop fixed inset-0 bg-black/70" onclick="closeProjectModal()"></div>
+    <div class="fixed inset-0 flex items-end sm:items-center justify-center p-0 sm:p-4">
+      <div class="bg-gray-900 w-full sm:max-w-lg rounded-t-2xl sm:rounded-2xl border border-gray-700 relative max-h-[92vh] overflow-y-auto">
+
+        <!-- Modal header -->
+        <div class="sticky top-0 bg-gray-900 border-b border-gray-800 px-5 py-4 flex items-center justify-between rounded-t-2xl">
+          <h2 id="modalTitle" class="font-bold text-base">新規案件追加</h2>
+          <button onclick="closeProjectModal()" class="text-gray-500 hover:text-gray-300 transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Modal body -->
+        <form id="projectForm" onsubmit="saveProject(event)" class="px-5 py-5 space-y-4">
+          <input type="hidden" id="editingId">
+
+          <!-- Status (always shown) -->
+          <div>
+            <label class="block text-xs text-gray-400 mb-1.5">ステータス</label>
+            <select id="fieldStatus" class="form-select w-full px-3 py-2.5 rounded-lg text-sm" onchange="onStatusChange(this.value)">
+              <option value="見積中">見積中</option>
+              <option value="着工中">着工中</option>
+              <option value="完了">完了</option>
+            </select>
+          </div>
+
+          <!-- 顧客名 / 案件名 -->
+          <div>
+            <label class="block text-xs text-gray-400 mb-1.5">顧客名 / 案件名 <span class="text-red-500">*</span></label>
+            <input type="text" id="fieldName" class="form-input w-full px-3 py-2.5 rounded-lg text-sm" placeholder="例：田中様 / 大阪ガレージ" required>
+          </div>
+
+          <!-- 見積日 -->
+          <div>
+            <label class="block text-xs text-gray-400 mb-1.5">見積日</label>
+            <input type="date" id="fieldEstimateDate" class="form-input w-full px-3 py-2.5 rounded-lg text-sm">
+          </div>
+
+          <!-- 見積金額 + 規模 (2 cols) -->
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs text-gray-400 mb-1.5">見積金額（円）</label>
+              <input type="number" id="fieldEstimateAmount" class="form-input w-full px-3 py-2.5 rounded-lg text-sm" placeholder="236500" min="0">
+            </div>
+            <div>
+              <label class="block text-xs text-gray-400 mb-1.5">規模（㎡）</label>
+              <input type="number" id="fieldScale" class="form-input w-full px-3 py-2.5 rounded-lg text-sm" placeholder="20" min="0" step="0.1">
+            </div>
+          </div>
+
+          <!-- 施工パターン -->
+          <div>
+            <label class="block text-xs text-gray-400 mb-1.5">施工パターン</label>
+            <div class="flex gap-2">
+              <select id="fieldPatternSelect" class="form-select flex-1 px-3 py-2.5 rounded-lg text-sm" onchange="onPatternSelectChange(this.value)">
+                <option value="">-- 選択 --</option>
+                <option value="下張">下張</option>
+                <option value="Exceed">Exceed</option>
+                <option value="RS-Pro">RS-Pro</option>
+                <option value="カスタム">カスタム入力</option>
+              </select>
+              <input type="text" id="fieldPatternCustom" class="form-input flex-1 px-3 py-2.5 rounded-lg text-sm hidden" placeholder="カスタム入力">
+            </div>
+          </div>
+
+          <!-- === 着工中以降のフィールド === -->
+          <div id="chakkoFields" class="hidden space-y-4 border-t border-gray-800 pt-4">
+            <p class="text-xs text-green-500 font-medium">着工中・完了 追加項目</p>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs text-gray-400 mb-1.5">決定金額（円）</label>
+                <input type="number" id="fieldDecidedAmount" class="form-input w-full px-3 py-2.5 rounded-lg text-sm" placeholder="0" min="0">
+              </div>
+              <div>
+                <label class="block text-xs text-gray-400 mb-1.5">入金額（円）</label>
+                <input type="number" id="fieldDepositAmount" class="form-input w-full px-3 py-2.5 rounded-lg text-sm" placeholder="0" min="0">
+              </div>
+            </div>
+          </div>
+
+          <!-- 備考 -->
+          <div>
+            <label class="block text-xs text-gray-400 mb-1.5">備考</label>
+            <textarea id="fieldMemo" class="form-input w-full px-3 py-2.5 rounded-lg text-sm resize-none" rows="2" placeholder="メモを入力..."></textarea>
+          </div>
+
+          <!-- Action buttons -->
+          <div class="flex items-center justify-between pt-2">
+            <button type="button" id="deleteBtn" class="hidden text-xs text-red-500 hover:text-red-400 transition-colors" onclick="deleteProject()">
+              削除
+            </button>
+            <div class="flex gap-3 ml-auto">
+              <button type="button" onclick="closeProjectModal()" class="px-4 py-2 rounded-lg text-sm text-gray-400 hover:text-gray-200 bg-gray-800 hover:bg-gray-700 transition-colors">
+                キャンセル
+              </button>
+              <button type="submit" id="saveBtn" class="btn-gold px-5 py-2 rounded-lg text-sm flex items-center gap-2">
+                <span id="saveBtnText">保存</span>
+                <span id="saveBtnSpinner" class="hidden">
+                  <svg class="animate-spin w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 14 6.477 14 12h-4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                </span>
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SETTINGS MODAL ===== -->
+  <div id="settingsModal" class="fixed inset-0 z-50 hidden">
+    <div class="modal-backdrop fixed inset-0 bg-black/70" onclick="closeSettingsModal()"></div>
+    <div class="fixed inset-0 flex items-end sm:items-center justify-center p-0 sm:p-4">
+      <div class="bg-gray-900 w-full sm:max-w-md rounded-t-2xl sm:rounded-2xl border border-gray-700 relative">
+
+        <div class="border-b border-gray-800 px-5 py-4 flex items-center justify-between rounded-t-2xl">
+          <h2 class="font-bold text-base">設定</h2>
+          <button onclick="closeSettingsModal()" class="text-gray-500 hover:text-gray-300 transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+          </button>
+        </div>
+
+        <div class="px-5 py-5 space-y-4">
+          <p class="text-xs text-gray-500">Notion API との連携設定。APIキーは Cloudflare Worker の環境変数で管理します。ここでは Worker の URL のみを設定します。</p>
+
+          <div>
+            <label class="block text-xs text-gray-400 mb-1.5">Cloudflare Worker URL</label>
+            <input type="url" id="settingWorkerUrl" class="form-input w-full px-3 py-2.5 rounded-lg text-sm" placeholder="https://your-worker.your-subdomain.workers.dev">
+            <p class="text-xs text-gray-600 mt-1">Notion API プロキシのURL（Cloudflare Workersデプロイ後に設定）</p>
+          </div>
+
+          <div id="notionStatus" class="bg-gray-800/50 rounded-lg px-4 py-3 text-xs space-y-1">
+            <p class="text-gray-400 font-medium">Notion 接続状態</p>
+            <p id="notionStatusText" class="text-gray-500">未設定</p>
+          </div>
+
+          <div class="border-t border-gray-800 pt-4">
+            <p class="text-xs text-gray-500 mb-3">データ管理</p>
+            <div class="flex gap-2 flex-wrap">
+              <button onclick="exportData()" class="text-xs bg-gray-800 hover:bg-gray-700 text-gray-300 px-3 py-2 rounded-lg transition-colors">データをエクスポート</button>
+              <button onclick="triggerImport()" class="text-xs bg-gray-800 hover:bg-gray-700 text-gray-300 px-3 py-2 rounded-lg transition-colors">データをインポート</button>
+              <input type="file" id="importFile" accept=".json" class="hidden" onchange="importData(event)">
+              <button onclick="syncFromNotion()" class="text-xs bg-gray-800 hover:bg-gray-700 text-gray-300 px-3 py-2 rounded-lg transition-colors">Notionから同期</button>
+            </div>
+          </div>
+
+          <div class="flex justify-end gap-3 pt-2">
+            <button onclick="closeSettingsModal()" class="px-4 py-2 rounded-lg text-sm text-gray-400 hover:text-gray-200 bg-gray-800 hover:bg-gray-700 transition-colors">キャンセル</button>
+            <button onclick="saveSettings()" class="btn-gold px-5 py-2 rounded-lg text-sm">保存</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TOAST ===== -->
+  <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 px-5 py-3 rounded-xl text-sm font-medium shadow-2xl flex items-center gap-2 min-w-[200px] max-w-xs">
+    <span id="toastIcon"></span>
+    <span id="toastMsg"></span>
+  </div>
+
+  <!-- ===== JAVASCRIPT ===== -->
+  <script>
+  // =============================================
+  // CONFIG — ワーカーURLはここで設定される（設定モーダルから変更可能）
+  // =============================================
+  const STORAGE_KEY = 'rs_genba_projects';
+  const CONFIG_KEY  = 'rs_genba_config';
+
+  // =============================================
+  // STATE
+  // =============================================
+  let currentTab   = '見積中';
+  let projects     = [];
+  let config       = { workerUrl: '', lastSynced: null };
+  let notionSchema = null; // キャッシュされたNotionプロパティ定義
+
+  // =============================================
+  // INIT
+  // =============================================
+  document.addEventListener('DOMContentLoaded', () => {
+    loadFromStorage();
+    renderAll();
+    checkPendingSync();
+    updateSyncStatus();
+
+    // 今日の日付をデフォルトに
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('fieldEstimateDate').value = today;
+
+    // 設定がある場合はNotionスキーマを取得
+    if (config.workerUrl) {
+      fetchNotionSchema().catch(() => {});
+    }
+  });
+
+  // =============================================
+  // STORAGE
+  // =============================================
+  function loadFromStorage() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      projects = raw ? JSON.parse(raw) : [];
+    } catch(e) { projects = []; }
+
+    try {
+      const raw = localStorage.getItem(CONFIG_KEY);
+      config = raw ? { ...config, ...JSON.parse(raw) } : config;
+    } catch(e) {}
+  }
+
+  function saveToStorage() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(projects));
+    localStorage.setItem(CONFIG_KEY, JSON.stringify(config));
+  }
+
+  // =============================================
+  // RENDER
+  // =============================================
+  function renderAll() {
+    renderProjects();
+    updateTabCounts();
+  }
+
+  function updateTabCounts() {
+    ['見積中','着工中','完了'].forEach(status => {
+      const count = projects.filter(p => p.status === status).length;
+      document.getElementById(`count-${status}`).textContent = count;
+    });
+  }
+
+  function renderProjects() {
+    const list = document.getElementById('projectList');
+    const empty = document.getElementById('emptyState');
+    const filtered = projects.filter(p => p.status === currentTab)
+                              .sort((a,b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+
+    if (filtered.length === 0) {
+      list.innerHTML = '';
+      empty.classList.remove('hidden');
+      return;
+    }
+    empty.classList.add('hidden');
+    list.innerHTML = filtered.map(renderCard).join('');
+  }
+
+  function renderCard(p) {
+    const badgeClass = {
+      '見積中': 'badge-mitsumori',
+      '着工中': 'badge-chakko',
+      '完了':   'badge-kanryo'
+    }[p.status] || 'badge-mitsumori';
+
+    const pendingDot = p.syncPending
+      ? `<span class="w-1.5 h-1.5 rounded-full bg-yellow-500 ml-1 inline-block" title="未同期"></span>`
+      : '';
+
+    const estimateDate = p.estimateDate ? formatDate(p.estimateDate) : '未設定';
+    const estimateAmt  = p.estimateAmount ? formatCurrency(p.estimateAmount) : '--';
+    const scale        = p.scale ? `${p.scale}㎡` : '--';
+    const pattern      = p.constructionPattern || '--';
+
+    const extraInfo = (p.status === '着工中' || p.status === '完了') ? `
+      <div class="flex gap-4 mt-1 text-xs text-gray-500">
+        <span>決定: ${p.decidedAmount ? formatCurrency(p.decidedAmount) : '--'}</span>
+        <span>入金: ${p.depositAmount ? formatCurrency(p.depositAmount) : '--'}</span>
+      </div>` : '';
+
+    return `
+      <div class="project-card bg-gray-900 rounded-xl px-4 py-4 cursor-pointer" onclick="openEditModal('${p.id}')">
+        <div class="flex items-start justify-between gap-2">
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-2 mb-1">
+              <span class="text-sm font-medium truncate">${escHtml(p.name || '（名称未設定）')}</span>
+              ${pendingDot}
+            </div>
+            <p class="text-xs text-gray-500 mb-2">見積日: ${estimateDate}</p>
+            <div class="flex items-center gap-3 text-sm">
+              <span class="font-semibold text-yellow-500">${estimateAmt}</span>
+              <span class="text-gray-600 text-xs">${scale} / ${escHtml(pattern)}</span>
+            </div>
+            ${extraInfo}
+            ${p.memo ? `<p class="text-xs text-gray-600 mt-2 truncate">${escHtml(p.memo)}</p>` : ''}
+          </div>
+          <div class="flex flex-col items-end gap-1.5 flex-shrink-0">
+            <span class="text-xs px-2 py-0.5 rounded-full ${badgeClass}">${p.status}</span>
+          </div>
+        </div>
+      </div>`;
+  }
+
+  // =============================================
+  // TAB SWITCH
+  // =============================================
+  function switchTab(tab, btn) {
+    currentTab = tab;
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active', 'text-gray-400'));
+    btn.classList.add('active');
+    renderProjects();
+  }
+
+  // =============================================
+  // MODAL: ADD
+  // =============================================
+  function openAddModal() {
+    document.getElementById('modalTitle').textContent = '新規案件追加';
+    document.getElementById('editingId').value = '';
+    document.getElementById('deleteBtn').classList.add('hidden');
+    document.getElementById('projectForm').reset();
+
+    // Defaults
+    document.getElementById('fieldStatus').value = currentTab;
+    document.getElementById('fieldEstimateDate').value = new Date().toISOString().split('T')[0];
+    document.getElementById('fieldPatternCustom').classList.add('hidden');
+    onStatusChange(currentTab);
+
+    document.getElementById('projectModal').classList.remove('hidden');
+  }
+
+  // =============================================
+  // MODAL: EDIT
+  // =============================================
+  function openEditModal(id) {
+    const p = projects.find(x => x.id === id);
+    if (!p) return;
+
+    document.getElementById('modalTitle').textContent = '案件編集';
+    document.getElementById('editingId').value = id;
+    document.getElementById('deleteBtn').classList.remove('hidden');
+
+    // Populate fields
+    document.getElementById('fieldStatus').value         = p.status;
+    document.getElementById('fieldName').value           = p.name || '';
+    document.getElementById('fieldEstimateDate').value   = p.estimateDate || '';
+    document.getElementById('fieldEstimateAmount').value = p.estimateAmount || '';
+    document.getElementById('fieldScale').value          = p.scale || '';
+    document.getElementById('fieldDecidedAmount').value  = p.decidedAmount || '';
+    document.getElementById('fieldDepositAmount').value  = p.depositAmount || '';
+    document.getElementById('fieldMemo').value           = p.memo || '';
+
+    // Pattern
+    const knownPatterns = ['下張','Exceed','RS-Pro'];
+    if (p.constructionPattern && !knownPatterns.includes(p.constructionPattern)) {
+      document.getElementById('fieldPatternSelect').value = 'カスタム';
+      document.getElementById('fieldPatternCustom').value = p.constructionPattern;
+      document.getElementById('fieldPatternCustom').classList.remove('hidden');
+    } else {
+      document.getElementById('fieldPatternSelect').value = p.constructionPattern || '';
+      document.getElementById('fieldPatternCustom').classList.add('hidden');
+    }
+
+    onStatusChange(p.status);
+    document.getElementById('projectModal').classList.remove('hidden');
+  }
+
+  function closeProjectModal() {
+    document.getElementById('projectModal').classList.add('hidden');
+  }
+
+  // =============================================
+  // FORM HELPERS
+  // =============================================
+  function onStatusChange(status) {
+    const show = (status === '着工中' || status === '完了');
+    document.getElementById('chakkoFields').classList.toggle('hidden', !show);
+  }
+
+  function onPatternSelectChange(val) {
+    const custom = document.getElementById('fieldPatternCustom');
+    if (val === 'カスタム') {
+      custom.classList.remove('hidden');
+      custom.focus();
+    } else {
+      custom.classList.add('hidden');
+    }
+  }
+
+  // =============================================
+  // SAVE PROJECT
+  // =============================================
+  async function saveProject(e) {
+    e.preventDefault();
+
+    const id         = document.getElementById('editingId').value;
+    const patSel     = document.getElementById('fieldPatternSelect').value;
+    const patCustom  = document.getElementById('fieldPatternCustom').value.trim();
+    const pattern    = patSel === 'カスタム' ? patCustom : (patSel === '' ? '' : patSel);
+    const status     = document.getElementById('fieldStatus').value;
+
+    const now = new Date().toISOString();
+    const data = {
+      status,
+      name:                 document.getElementById('fieldName').value.trim(),
+      estimateDate:         document.getElementById('fieldEstimateDate').value,
+      estimateAmount:       parseFloat(document.getElementById('fieldEstimateAmount').value) || null,
+      scale:                parseFloat(document.getElementById('fieldScale').value) || null,
+      constructionPattern:  pattern,
+      decidedAmount:        parseFloat(document.getElementById('fieldDecidedAmount').value) || null,
+      depositAmount:        parseFloat(document.getElementById('fieldDepositAmount').value) || null,
+      memo:                 document.getElementById('fieldMemo').value.trim(),
+      updatedAt:            now,
+    };
+
+    setSavingState(true);
+
+    if (id) {
+      // Edit existing
+      const idx = projects.findIndex(p => p.id === id);
+      if (idx !== -1) {
+        projects[idx] = { ...projects[idx], ...data };
+        saveToStorage();
+        renderAll();
+        closeProjectModal();
+        showToast('更新しました', 'success');
+        // Notion sync
+        await notionUpdate(projects[idx]);
+      }
+    } else {
+      // New project
+      const newProject = {
+        id:           generateId(),
+        notionPageId: null,
+        syncPending:  false,
+        createdAt:    now,
+        ...data,
+      };
+      projects.unshift(newProject);
+      saveToStorage();
+      renderAll();
+      closeProjectModal();
+      showToast('保存しました', 'success');
+      // Notion sync
+      await notionCreate(newProject);
+    }
+
+    setSavingState(false);
+    checkPendingSync();
+  }
+
+  // =============================================
+  // DELETE PROJECT
+  // =============================================
+  function deleteProject() {
+    const id = document.getElementById('editingId').value;
+    if (!id) return;
+    if (!confirm('この案件を削除しますか？\n（Notionのデータは削除されません）')) return;
+
+    projects = projects.filter(p => p.id !== id);
+    saveToStorage();
+    renderAll();
+    closeProjectModal();
+    showToast('削除しました', 'info');
+    checkPendingSync();
+  }
+
+  // =============================================
+  // NOTION API — via Cloudflare Worker proxy
+  // =============================================
+
+  /**
+   * Notionデータベースのスキーマ（プロパティ定義）を取得
+   * 将来的に新規プロパティが追加されても自動対応するための仕組み
+   */
+  async function fetchNotionSchema() {
+    if (!config.workerUrl) return null;
+    try {
+      const res = await fetch(`${config.workerUrl}/schema`, { method: 'GET' });
+      if (!res.ok) return null;
+      const data = await res.json();
+      notionSchema = data.properties || null;
+      return notionSchema;
+    } catch(e) {
+      return null;
+    }
+  }
+
+  /**
+   * アプリのフィールドからNotionプロパティオブジェクトを構築
+   * スキーマを取得済みの場合、既知のプロパティのみを安全に送信
+   */
+  function buildNotionProperties(project) {
+    // 既知プロパティのマッピング（Notion側のプロパティ名に合わせる）
+    const knownProps = {
+      '工事ID':       { rich_text: [{ text: { content: project.id } }] },
+      'ステータス':   { select: { name: project.status } },
+      '名称':         { title: [{ text: { content: project.name || '' } }] },
+      '見積日':       project.estimateDate ? { date: { start: project.estimateDate } } : undefined,
+      '見積金額':     project.estimateAmount != null ? { number: project.estimateAmount } : undefined,
+      '規模':         project.scale != null ? { number: project.scale } : undefined,
+      '施工パターン': project.constructionPattern ? { rich_text: [{ text: { content: project.constructionPattern } }] } : undefined,
+      '決定金額':     project.decidedAmount != null ? { number: project.decidedAmount } : undefined,
+      '入金額':       project.depositAmount != null ? { number: project.depositAmount } : undefined,
+      '備考':         project.memo ? { rich_text: [{ text: { content: project.memo } }] } : undefined,
+    };
+
+    // undefinedを除外
+    const props = {};
+    for (const [key, val] of Object.entries(knownProps)) {
+      if (val !== undefined) {
+        // スキーマ取得済みの場合、Notionに存在するプロパティのみ送信（エラー防止）
+        if (!notionSchema || key in notionSchema) {
+          props[key] = val;
+        }
+      }
+    }
+    return props;
+  }
+
+  async function notionCreate(project) {
+    if (!config.workerUrl) {
+      markPending(project.id);
+      return;
+    }
+    try {
+      setSyncStatus('syncing');
+      const body = {
+        properties: buildNotionProperties(project),
+      };
+      const res = await fetch(`${config.workerUrl}/pages`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+
+      // Notion page IDを保存
+      const idx = projects.findIndex(p => p.id === project.id);
+      if (idx !== -1) {
+        projects[idx].notionPageId = data.id;
+        projects[idx].syncPending  = false;
+        saveToStorage();
+      }
+      config.lastSynced = new Date().toISOString();
+      saveToStorage();
+      setSyncStatus('ok');
+    } catch(err) {
+      console.error('Notion create error:', err);
+      markPending(project.id);
+      setSyncStatus('error');
+      showToast('Notion同期に失敗しました（ローカル保存済み）', 'warning');
+    }
+  }
+
+  async function notionUpdate(project) {
+    if (!config.workerUrl) {
+      markPending(project.id);
+      return;
+    }
+    if (!project.notionPageId) {
+      // PageIDがない場合は新規作成
+      await notionCreate(project);
+      return;
+    }
+    try {
+      setSyncStatus('syncing');
+      const body = {
+        properties: buildNotionProperties(project),
+      };
+      const res = await fetch(`${config.workerUrl}/pages/${project.notionPageId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+      const idx = projects.findIndex(p => p.id === project.id);
+      if (idx !== -1) {
+        projects[idx].syncPending = false;
+        saveToStorage();
+      }
+      config.lastSynced = new Date().toISOString();
+      saveToStorage();
+      setSyncStatus('ok');
+    } catch(err) {
+      console.error('Notion update error:', err);
+      markPending(project.id);
+      setSyncStatus('error');
+      showToast('Notion同期に失敗しました（ローカル保存済み）', 'warning');
+    }
+  }
+
+  /**
+   * NotionからデータをFetchしてローカルに反映
+   * （双方向同期 - 別デバイスでの変更を取り込む）
+   */
+  async function syncFromNotion() {
+    if (!config.workerUrl) {
+      showToast('Worker URLが設定されていません', 'warning');
+      return;
+    }
+    setSyncStatus('syncing');
+    showToast('Notionから同期中...', 'info');
+    try {
+      const res = await fetch(`${config.workerUrl}/pages`, { method: 'GET' });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+
+      // Notionのデータをローカル形式に変換してマージ
+      const notionProjects = (data.results || []).map(page => parseNotionPage(page));
+      mergeNotionProjects(notionProjects);
+      saveToStorage();
+      renderAll();
+      config.lastSynced = new Date().toISOString();
+      saveToStorage();
+      setSyncStatus('ok');
+      showToast(`Notionから${notionProjects.length}件を同期しました`, 'success');
+      closeSettingsModal();
+    } catch(err) {
+      console.error('Sync from Notion error:', err);
+      setSyncStatus('error');
+      showToast('Notion同期に失敗しました', 'error');
+    }
+  }
+
+  function parseNotionPage(page) {
+    const props = page.properties || {};
+    const getText   = key => props[key]?.rich_text?.[0]?.plain_text || props[key]?.title?.[0]?.plain_text || '';
+    const getNum    = key => props[key]?.number ?? null;
+    const getSelect = key => props[key]?.select?.name || '';
+    const getDate   = key => props[key]?.date?.start || '';
+
+    return {
+      id:                   getText('工事ID') || generateId(),
+      notionPageId:         page.id,
+      status:               getSelect('ステータス') || '見積中',
+      name:                 getText('名称'),
+      estimateDate:         getDate('見積日'),
+      estimateAmount:       getNum('見積金額'),
+      scale:                getNum('規模'),
+      constructionPattern:  getText('施工パターン'),
+      decidedAmount:        getNum('決定金額'),
+      depositAmount:        getNum('入金額'),
+      memo:                 getText('備考'),
+      syncPending:          false,
+      createdAt:            page.created_time || new Date().toISOString(),
+      updatedAt:            page.last_edited_time || new Date().toISOString(),
+    };
+  }
+
+  function mergeNotionProjects(notionProjects) {
+    for (const np of notionProjects) {
+      const existingIdx = projects.findIndex(p =>
+        p.notionPageId === np.notionPageId || p.id === np.id
+      );
+      if (existingIdx !== -1) {
+        // Notionのほうが新しければ上書き
+        if (new Date(np.updatedAt) > new Date(projects[existingIdx].updatedAt)) {
+          projects[existingIdx] = { ...projects[existingIdx], ...np };
+        }
+      } else {
+        // ローカルに存在しない → 追加
+        projects.push(np);
+      }
+    }
+  }
+
+  // =============================================
+  // PENDING SYNC
+  // =============================================
+  function markPending(id) {
+    const idx = projects.findIndex(p => p.id === id);
+    if (idx !== -1) {
+      projects[idx].syncPending = true;
+      saveToStorage();
+      renderAll();
+    }
+  }
+
+  function checkPendingSync() {
+    const pending = projects.filter(p => p.syncPending);
+    const banner  = document.getElementById('pendingBanner');
+    if (pending.length > 0) {
+      document.getElementById('pendingCount').textContent = `未同期の案件が ${pending.length} 件あります`;
+      banner.classList.remove('hidden');
+    } else {
+      banner.classList.add('hidden');
+    }
+  }
+
+  async function retryPendingSync() {
+    const pending = projects.filter(p => p.syncPending);
+    for (const p of pending) {
+      if (p.notionPageId) {
+        await notionUpdate(p);
+      } else {
+        await notionCreate(p);
+      }
+    }
+    checkPendingSync();
+  }
+
+  // =============================================
+  // SETTINGS
+  // =============================================
+  function openSettingsModal() {
+    document.getElementById('settingWorkerUrl').value = config.workerUrl || '';
+    updateNotionStatusDisplay();
+    document.getElementById('settingsModal').classList.remove('hidden');
+  }
+
+  function closeSettingsModal() {
+    document.getElementById('settingsModal').classList.add('hidden');
+  }
+
+  function saveSettings() {
+    config.workerUrl = document.getElementById('settingWorkerUrl').value.trim().replace(/\/$/, '');
+    saveToStorage();
+    showToast('設定を保存しました', 'success');
+    closeSettingsModal();
+    if (config.workerUrl) {
+      fetchNotionSchema().then(() => updateSyncStatus());
+    }
+  }
+
+  function updateNotionStatusDisplay() {
+    const el = document.getElementById('notionStatusText');
+    if (!config.workerUrl) {
+      el.textContent = 'Worker URLが未設定です';
+      el.className = 'text-gray-500';
+    } else {
+      el.textContent = `Worker: ${config.workerUrl}${config.lastSynced ? ` / 最終同期: ${formatDate(config.lastSynced)}` : ''}`;
+      el.className = 'text-green-400';
+    }
+  }
+
+  // =============================================
+  // SYNC STATUS INDICATOR
+  // =============================================
+  function setSyncStatus(status) {
+    const dot   = document.getElementById('syncDot');
+    const label = document.getElementById('syncLabel');
+    const map = {
+      'ok':      { color: 'bg-green-500',  text: '同期済み' },
+      'syncing': { color: 'bg-yellow-500 syncing', text: '同期中...' },
+      'error':   { color: 'bg-red-500',    text: '同期エラー' },
+    };
+    const s = map[status] || { color: 'bg-gray-600', text: '--' };
+    dot.className   = `w-2 h-2 rounded-full ${s.color}`;
+    label.textContent = s.text;
+  }
+
+  function updateSyncStatus() {
+    if (!config.workerUrl) {
+      setSyncStatus('idle');
+      document.getElementById('syncLabel').textContent = 'Notion未設定';
+      return;
+    }
+    if (config.lastSynced) {
+      setSyncStatus('ok');
+    }
+  }
+
+  // =============================================
+  // EXPORT / IMPORT
+  // =============================================
+  function exportData() {
+    const blob = new Blob([JSON.stringify({ projects, exportedAt: new Date().toISOString() }, null, 2)], { type: 'application/json' });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href     = url;
+    a.download = `rs-genba-export-${new Date().toISOString().split('T')[0]}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  function triggerImport() {
+    document.getElementById('importFile').click();
+  }
+
+  function importData(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+      try {
+        const data = JSON.parse(e.target.result);
+        if (data.projects && Array.isArray(data.projects)) {
+          if (!confirm(`${data.projects.length}件のデータをインポートします。\n既存データとマージされます。よろしいですか？`)) return;
+          mergeNotionProjects(data.projects);
+          saveToStorage();
+          renderAll();
+          showToast(`${data.projects.length}件をインポートしました`, 'success');
+          closeSettingsModal();
+        } else {
+          showToast('無効なファイル形式です', 'error');
+        }
+      } catch(err) {
+        showToast('ファイルの読み込みに失敗しました', 'error');
+      }
+    };
+    reader.readAsText(file);
+    event.target.value = '';
+  }
+
+  // =============================================
+  // UI HELPERS
+  // =============================================
+  function setSavingState(saving) {
+    const btn     = document.getElementById('saveBtn');
+    const text    = document.getElementById('saveBtnText');
+    const spinner = document.getElementById('saveBtnSpinner');
+    btn.disabled      = saving;
+    text.textContent  = saving ? '保存中...' : '保存';
+    spinner.classList.toggle('hidden', !saving);
+  }
+
+  let toastTimer;
+  function showToast(msg, type = 'success') {
+    const toast = document.getElementById('toast');
+    const icon  = document.getElementById('toastIcon');
+    const msgEl = document.getElementById('toastMsg');
+
+    const styles = {
+      success: { bg: 'bg-green-900 border border-green-700 text-green-200',  icon: '✓' },
+      error:   { bg: 'bg-red-900 border border-red-700 text-red-200',        icon: '✗' },
+      warning: { bg: 'bg-yellow-900 border border-yellow-700 text-yellow-200', icon: '⚠' },
+      info:    { bg: 'bg-gray-800 border border-gray-600 text-gray-200',     icon: 'ℹ' },
+    };
+    const s = styles[type] || styles.info;
+
+    toast.className = `fixed bottom-6 left-1/2 -translate-x-1/2 z-50 px-5 py-3 rounded-xl text-sm font-medium shadow-2xl flex items-center gap-2 min-w-[200px] max-w-xs ${s.bg}`;
+    icon.textContent  = s.icon;
+    msgEl.textContent = msg;
+
+    clearTimeout(toastTimer);
+    toast.classList.add('show');
+    toastTimer = setTimeout(() => toast.classList.remove('show'), 3000);
+  }
+
+  function formatCurrency(n) {
+    if (n == null) return '--';
+    return '¥' + Number(n).toLocaleString('ja-JP');
+  }
+
+  function formatDate(str) {
+    if (!str) return '--';
+    const d = new Date(str);
+    if (isNaN(d)) return str;
+    return `${d.getFullYear()}/${String(d.getMonth()+1).padStart(2,'0')}/${String(d.getDate()).padStart(2,'0')}`;
+  }
+
+  function escHtml(str) {
+    return (str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  function generateId() {
+    return 'xxxx-xxxx-xxxx'.replace(/x/g, () => Math.random().toString(36)[2]);
+  }
+
+  // Close modals on Escape
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+      closeProjectModal();
+      closeSettingsModal();
+    }
+  });
+  </script>
+</body>
+</html>

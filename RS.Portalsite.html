@@ -170,6 +170,10 @@
             <div class="info-title">🚀 UPDATE INFO</div>
             <ul class="update-list">
                 <li class="update-item">
+                    <span class="update-date">2026.03.09</span>
+                    <span class="update-text">「現場管理ダッシュボード」を追加。案件のステータス管理とNotion連携に対応。</span>
+                </li>
+                <li class="update-item">
                     <span class="update-date">2026.02.22</span>
                     <span class="update-text">「工事請負契約書アプリ」を追加。操作フローを改善。</span>
                 </li>
@@ -209,6 +213,16 @@
                     <span class="label-en">PERSPECTIVE CASES</span>
                     <span class="label-jp">パース制作事例</span>
                     <span class="label-desc">提案に役立つ事例集（Notion）。</span>
+                </div>
+            </div>
+
+            <div class="menu-item" onclick="openModal('genbaModal')">
+                <span class="version-badge">Ver 1.0.0</span>
+                <div class="icon">🏗️</div>
+                <div class="label-group">
+                    <span class="label-en">GENBA MGMT</span>
+                    <span class="label-jp">現場管理ダッシュボード</span>
+                    <span class="label-desc">見積〜着工〜完了の案件を一元管理。Notion自動連携。</span>
                 </div>
             </div>
         </nav>
@@ -266,6 +280,36 @@
 
             <a href="cases.html?v=20260222" class="start-btn">事例集を開く</a>
             <button class="cancel-btn" onclick="closeModal('caseModal')">戻る</button>
+        </div></div>
+    </div>
+
+    <div id="genbaModal" class="modal">
+        <div class="modal-content"><div class="modal-body">
+            <h3>🏗️ 現場管理ダッシュボード</h3>
+            <p>見積中・着工中・完了の3ステータスで案件を一元管理。入力データはNotionデータベース（【一覧】現場管理）に自動反映されます。</p>
+
+            <h4>主な機能</h4>
+            <p>
+                ・ステータスタブで案件を切り替え表示<br>
+                ・見積日・金額・規模・施工パターンを入力<br>
+                ・着工中になると決定金額・入金額が追加表示<br>
+                ・オフライン時はローカル保存、次回オンライン時に自動同期
+            </p>
+
+            <div class="blue-box">
+                ℹ️ <b>初回セットアップ</b><br>
+                右上の設定アイコンから Cloudflare Worker URL を設定してください。APIキーの設定方法は管理者に確認。
+            </div>
+
+            <div class="modal-roadmap">
+                <span class="roadmap-title">📅 今後のアップデート予定</span>
+                <span class="roadmap-item">・顧客名・住所フィールドの追加</span>
+                <span class="roadmap-item">・月別売上サマリーの集計表示</span>
+                <span class="roadmap-item">・Notionからの双方向リアルタイム同期</span>
+            </div>
+
+            <a href="genba-dashboard.html" class="start-btn">現場管理を開く</a>
+            <button class="cancel-btn" onclick="closeModal('genbaModal')">戻る</button>
         </div></div>
     </div>
 
