@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>施工提案スライダー | Cement Artist Nu☆Man</title>
 <style>@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;500;700;900&display=swap');
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -233,6 +233,30 @@ body{font-family:'Noto Sans JP',sans-serif;background:#f5f3ef;color:#1a1a1a;min-
 
 <div class="footer">Cement Artist Nu☆Man ─ 株式会社KENSIN ─ ローラーストーン認定施工店</div>
 <input type="file" id="angleFileInput" accept="image/*" style="display:none">
+<input type="file" id="materialFileInput" accept="image/*" style="display:none">
+
+<!-- Lightbox -->
+<div id="lightbox" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.92);z-index:9999;justify-content:center;align-items:center;cursor:zoom-out;-webkit-overflow-scrolling:touch;overflow:auto">
+  <img id="lightboxImg" style="max-width:95%;max-height:95%;object-fit:contain;border-radius:8px;touch-action:pinch-zoom">
+  <div style="position:absolute;top:16px;right:16px;width:36px;height:36px;background:rgba(255,255,255,.15);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:20px;color:#fff" onclick="closeLightbox()">×</div>
+</div>
+
+<style>
+/* Pattern card material thumb */
+.pattern-card-material{display:flex;align-items:center;gap:6px;padding:4px 10px 8px;border-top:1px solid rgba(0,0,0,.04)}
+.pattern-card-material img{width:36px;height:36px;border-radius:4px;object-fit:cover;border:1px solid rgba(0,0,0,.06);cursor:pointer}
+.pattern-card-material span{font-size:9px;color:#999}
+/* Admin material upload */
+.ap-material{display:flex;align-items:center;gap:8px;margin-top:6px;padding-top:6px;border-top:1px solid rgba(0,0,0,.04)}
+.ap-material-thumb{width:50px;height:50px;border-radius:6px;overflow:hidden;background:#eee;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;border:1px solid rgba(0,0,0,.06)}
+.ap-material-thumb img{width:100%;height:100%;object-fit:cover}
+.ap-material-thumb svg{width:16px;height:16px;stroke:#ccc;fill:none;stroke-width:2}
+.ap-material-label{font-size:10px;color:#888}
+.ap-material-file{font-size:9px;color:#f18200;margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:120px}
+/* Tappable images */
+.slider-layer img,.pattern-card-thumb{cursor:pointer;pointer-events:auto !important}
+</style>
+
 <script src="./app.js"></script>
 </body>
 </html>
