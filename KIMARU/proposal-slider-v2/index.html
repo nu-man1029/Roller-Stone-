@@ -1,1 +1,383 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>施工提案スライダー | Cement Artist Nu☆Man</title>
+<style>@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;500;700;900&family=Noto+Serif+JP:wght@500;700;900&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:'Noto Sans JP',sans-serif;background:#f5f3ef;color:#1a1a1a;min-height:100dvh;display:flex;flex-direction:column;align-items:center;overflow-x:hidden;padding-bottom:env(safe-area-inset-bottom)}
+.watermark{position:fixed;bottom:-20px;right:-20px;width:200px;height:200px;opacity:.04;pointer-events:none;z-index:0}
+.watermark img{width:100%;height:100%;object-fit:contain;filter:invert(1)}
+.header{width:100%;max-width:960px;padding:16px 16px 8px;display:flex;align-items:center;z-index:1}
+.brand{display:flex;align-items:center;gap:10px}
+.brand-logo{width:40px;height:40px;border-radius:50%;overflow:hidden;flex-shrink:0;box-shadow:0 1px 6px rgba(0,0,0,.08)}
+.brand-logo img{width:100%;height:100%;object-fit:cover}
+.brand-text strong{display:block;font-size:14px;font-weight:900;color:#1a1a1a}
+.company-name{font-size:9px;color:#bbb;letter-spacing:.08em;font-weight:500}
 
+/* ── Hero proposal badge ── */
+.hero-proposal{width:100%;max-width:960px;padding:0 16px;z-index:1;display:none;margin-bottom:4px}
+.hero-inner{position:relative;padding:18px 20px;background:linear-gradient(135deg,#fff 0%,#fef6ed 100%);border-radius:14px;border:1px solid rgba(241,130,0,.12);box-shadow:0 2px 12px rgba(241,130,0,.08);overflow:hidden}
+.hero-inner::before{content:'';position:absolute;top:0;left:0;width:5px;height:100%;background:#f18200;border-radius:3px 0 0 3px}
+.hero-tag{display:inline-block;padding:3px 10px;background:#f18200;color:#fff;font-size:10px;font-weight:900;border-radius:4px;letter-spacing:.08em;margin-bottom:8px}
+.hero-client{font-size:20px;font-weight:900;color:#1a1a1a;line-height:1.3}
+.hero-client span{color:#f18200}
+.hero-sub{font-size:13px;font-weight:900;color:#f18200;margin-top:4px;letter-spacing:.04em}
+.hero-note{font-size:10px;color:#999;margin-top:6px;line-height:1.4}
+.hero-meta{display:flex;gap:12px;margin-top:8px;font-size:10px;color:#888;flex-wrap:wrap}
+
+.title-section{text-align:center;padding:4px 16px 10px;z-index:1}
+.title-section .subtitle{font-size:12px;color:#999;font-weight:300}
+
+.angle-tabs{display:none;gap:6px;margin:0 0 10px;justify-content:center;flex-wrap:wrap;width:100%;max-width:960px;padding:0 16px;z-index:1}
+.angle-tabs.show{display:flex}
+.angle-tab{padding:8px 18px;border:2px solid rgba(0,0,0,.08);border-radius:8px;font-family:'Noto Sans JP',sans-serif;font-size:12px;font-weight:700;cursor:pointer;background:#fff;color:#888;-webkit-appearance:none}
+.angle-tab:active{transform:scale(.96)}
+.angle-tab.active{background:#1a1a1a;color:#fff;border-color:#1a1a1a}
+
+.slider-wrapper{width:100%;max-width:960px;padding:0 12px;z-index:1}
+.slider-container{position:relative;width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;cursor:col-resize;box-shadow:0 2px 0 rgba(241,130,0,.12),0 8px 30px rgba(0,0,0,.07);border:1px solid rgba(0,0,0,.05);background:#e8e5e0;touch-action:none}
+.slider-layer{position:absolute;top:0;left:0;width:100%;height:100%}
+.slider-layer img{width:100%;height:100%;object-fit:cover;display:block;user-select:none;-webkit-user-drag:none;pointer-events:none}
+.layer-1{z-index:1}.layer-2{z-index:2;clip-path:inset(0 100% 0 0)}.layer-3{z-index:3;clip-path:inset(0 0 0 100%)}
+.divider{position:absolute;top:0;width:3px;height:100%;background:#fff;z-index:10;pointer-events:none;box-shadow:0 0 8px rgba(0,0,0,.25);opacity:0}
+.divider-knob{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:44px;height:44px;border-radius:50%;background:#f18200;border:3px solid #fff;box-shadow:0 2px 10px rgba(0,0,0,.3);display:flex;align-items:center;justify-content:center}
+.divider-knob svg{width:20px;height:20px;fill:#fff}
+.stage-label{position:absolute;bottom:10px;z-index:15;padding:5px 10px;border-radius:6px;font-size:11px;font-weight:700;pointer-events:none;white-space:nowrap;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);transition:opacity .2s}
+.label-1{left:10px;background:rgba(255,255,255,.85);color:#666;border:1px solid rgba(0,0,0,.06)}
+.label-2{left:50%;transform:translateX(-50%);background:rgba(255,255,255,.85);color:#444;border:1px solid rgba(0,0,0,.06)}
+.label-3{right:10px;background:rgba(241,130,0,.92);color:#fff}
+
+.timeline{display:flex;justify-content:space-between;margin-top:14px;position:relative;padding:0}
+.timeline::before{content:'';position:absolute;top:14px;left:30px;right:30px;height:2px;background:linear-gradient(90deg,#ddd,#f18200)}
+.timeline-step{display:flex;flex-direction:column;align-items:center;gap:4px;position:relative;z-index:1;flex:1}
+.timeline-dot{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff}
+.step-1 .timeline-dot{background:#ccc}.step-2 .timeline-dot{background:#aaa}.step-3 .timeline-dot{background:#f18200}
+.timeline-text{font-size:10px;font-weight:500;color:#999;text-align:center;line-height:1.3}
+.step-3 .timeline-text{color:#f18200;font-weight:700}
+
+.step-buttons{display:flex;gap:8px;margin-top:16px;justify-content:center;width:100%}
+.btn-step{flex:1;max-width:180px;padding:14px 8px;border:2px solid rgba(0,0,0,.08);border-radius:10px;font-family:'Noto Sans JP',sans-serif;font-size:14px;font-weight:900;cursor:pointer;background:#fff;color:#888;text-align:center;-webkit-appearance:none;transition:all .2s}
+.btn-step:active{transform:scale(.96)}
+.btn-step.active{background:#f18200;color:#fff;border-color:#f18200;box-shadow:0 3px 12px rgba(241,130,0,.3)}
+
+.pattern-section{margin-top:16px;width:100%;padding:16px;background:#fff;border-radius:12px;border:1px solid rgba(0,0,0,.05);box-shadow:0 1px 6px rgba(0,0,0,.03);display:none}
+.pattern-section.show{display:block}
+.pattern-section-title{font-size:13px;font-weight:900;color:#1a1a1a;margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.pattern-section-title::before{content:'';display:inline-block;width:4px;height:16px;background:#f18200;border-radius:2px}
+.pattern-cards{display:flex;gap:8px;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:4px;scroll-snap-type:x mandatory}
+.pattern-cards::-webkit-scrollbar{display:none}
+.pattern-card{flex-shrink:0;width:150px;border:2px solid #e0e0e0;border-radius:10px;cursor:pointer;background:#fff;transition:all .2s;overflow:hidden;scroll-snap-align:start;position:relative}
+.pattern-card:active{transform:scale(.97)}
+.pattern-card.active{border-color:#f18200;box-shadow:0 0 0 1px #f18200}
+.pattern-card-thumb{width:100%;aspect-ratio:16/10;object-fit:cover;display:block;border-bottom:1px solid rgba(0,0,0,.05)}
+.pattern-card-info{padding:8px 10px}
+.pattern-card-name{font-size:12px;font-weight:900;color:#1a1a1a}
+.pattern-card.active .pattern-card-name{color:#f18200}
+.pattern-card-color{font-size:10px;color:#888;margin-top:2px}
+.pattern-card-badge{position:absolute;top:4px;right:4px;width:18px;height:18px;border-radius:50%;background:#f18200;display:none;align-items:center;justify-content:center}
+.pattern-card-badge svg{width:10px;height:10px}
+.pattern-card.active .pattern-card-badge{display:flex}
+
+.instagram-cta{margin-top:16px;width:100%;background:#fff;border-radius:12px;border:1px solid rgba(0,0,0,.05);box-shadow:0 1px 6px rgba(0,0,0,.03);overflow:hidden}
+.instagram-cta a{display:flex;align-items:center;gap:12px;padding:14px 16px;text-decoration:none;color:inherit}
+.insta-avatar{width:46px;height:46px;border-radius:50%;overflow:hidden;flex-shrink:0;border:2px solid transparent;background:linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888) border-box;padding:2px}
+.insta-avatar img{width:100%;height:100%;border-radius:50%;object-fit:cover;display:block;border:2px solid #fff}
+.insta-info{flex:1;min-width:0}
+.insta-handle{font-size:13px;font-weight:900;color:#1a1a1a;display:flex;align-items:center;gap:5px}
+.insta-handle svg{width:14px;height:14px}
+.insta-bio{font-size:10px;color:#888;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.insta-follow-btn{flex-shrink:0;padding:8px 14px;border-radius:8px;background:linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);color:#fff;font-size:11px;font-weight:700}
+
+/* Admin */
+.admin-panel{margin-top:20px;width:100%;padding:16px;background:#fff;border-radius:12px;border:2px dashed rgba(241,130,0,.25)}
+.admin-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.admin-title{font-size:13px;font-weight:900;color:#f18200;display:flex;align-items:center;gap:6px}
+.admin-title svg{width:16px;height:16px;stroke:#f18200;fill:none;stroke-width:2}
+.admin-section{margin-bottom:16px;padding:14px;background:#fafaf8;border-radius:10px;border:1px solid rgba(0,0,0,.04)}
+.admin-section-title{font-size:12px;font-weight:900;color:#1a1a1a;margin-bottom:10px;display:flex;align-items:center;gap:5px}
+.admin-section-title svg{width:14px;height:14px;stroke:#f18200;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.admin-section-title .badge{font-size:10px;background:rgba(241,130,0,.1);color:#f18200;padding:2px 8px;border-radius:4px;font-weight:700;margin-left:auto}
+.field-row{display:flex;gap:8px;margin-bottom:8px}
+.field-group{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
+.field-group label{font-size:10px;font-weight:700;color:#888}
+.field-group input,.field-group select{padding:10px 12px;border:1px solid rgba(0,0,0,.1);border-radius:8px;font-family:'Noto Sans JP',sans-serif;font-size:14px;color:#1a1a1a;background:#fff;outline:none;width:100%;-webkit-appearance:none}
+.field-group input:focus,.field-group select:focus{border-color:#f18200}
+.field-group input::placeholder{color:#ccc;font-size:12px}
+.toggle-row{display:flex;align-items:center;gap:10px;padding:10px 12px;background:#fff;border-radius:8px;border:1px solid rgba(0,0,0,.06);margin-bottom:8px;cursor:pointer}
+.toggle-row:active{background:#fafafa}
+.toggle-switch{width:44px;height:24px;border-radius:12px;background:#ddd;position:relative;transition:background .2s;flex-shrink:0}
+.toggle-switch.on{background:#f18200}
+.toggle-switch::after{content:'';position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;background:#fff;transition:left .2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.toggle-switch.on::after{left:22px}
+.toggle-label{font-size:12px;font-weight:700;color:#666}
+.toggle-desc{font-size:10px;color:#999}
+
+.upload-box{display:flex;align-items:center;gap:10px;padding:10px;border:2px dashed rgba(0,0,0,.08);border-radius:8px;cursor:pointer;background:#fff}
+.upload-box:active{border-color:#f18200;background:rgba(241,130,0,.02)}
+.upload-box .ub-thumb{width:80px;height:50px;border-radius:6px;overflow:hidden;flex-shrink:0;background:#eee;display:flex;align-items:center;justify-content:center;border:1px solid rgba(0,0,0,.06)}
+.upload-box .ub-thumb img{width:100%;height:100%;object-fit:cover}
+.upload-box .ub-thumb svg{width:20px;height:20px;stroke:#ccc;fill:none;stroke-width:2}
+.upload-box .ub-label{font-size:12px;font-weight:700;color:#888}
+.upload-box .ub-file{font-size:10px;color:#f18200;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:140px}
+.upload-box.has-image{border-style:solid;border-color:rgba(0,0,0,.06)}
+
+.admin-pattern{padding:12px;background:#fff;border-radius:8px;border:1px solid rgba(0,0,0,.06);margin-bottom:8px}
+.admin-pattern-top{display:flex;align-items:center;gap:8px}
+.ap-thumb{width:70px;height:44px;border-radius:6px;overflow:hidden;flex-shrink:0;background:#eee;border:1px solid rgba(0,0,0,.06)}
+.ap-thumb img{width:100%;height:100%;object-fit:cover}
+.ap-num{font-size:12px;font-weight:900;color:#f18200;flex-shrink:0;width:18px}
+.ap-fields{flex:1;display:flex;gap:6px;min-width:0}
+.ap-fields input{padding:8px 10px;border:1px solid rgba(0,0,0,.08);border-radius:6px;font-family:'Noto Sans JP',sans-serif;font-size:12px;color:#1a1a1a;background:#fafafa;outline:none;width:100%;-webkit-appearance:none}
+.ap-fields input:focus{border-color:#f18200;background:#fff}
+.btn-remove{width:32px;height:32px;border:none;border-radius:6px;background:rgba(220,53,69,.08);color:#dc3545;cursor:pointer;font-size:18px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.admin-add-area{display:flex;align-items:center;gap:10px;padding:14px;border:2px dashed rgba(0,0,0,.1);border-radius:10px;cursor:pointer;margin-bottom:4px}
+.admin-add-area:active{border-color:#f18200;background:rgba(241,130,0,.02)}
+.admin-add-area.disabled{opacity:.4;pointer-events:none}
+.admin-add-icon{width:36px;height:36px;border-radius:8px;background:rgba(241,130,0,.08);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.admin-add-icon svg{width:18px;height:18px;stroke:#f18200;fill:none;stroke-width:2}
+.admin-add-text{font-size:12px;font-weight:700;color:#888}
+.admin-add-sub{font-size:10px;color:#bbb}
+.admin-angle{padding:12px;background:#fff;border-radius:8px;border:1px solid rgba(0,0,0,.06);margin-bottom:8px}
+.admin-angle-header{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.admin-angle-header input{padding:8px 10px;border:1px solid rgba(0,0,0,.08);border-radius:6px;font-family:'Noto Sans JP',sans-serif;font-size:12px;color:#1a1a1a;background:#fafafa;outline:none;flex:1;-webkit-appearance:none}
+.admin-angle-header input:focus{border-color:#f18200}
+.admin-angle-uploads{display:flex;gap:8px}
+.admin-angle-uploads .upload-box{flex:1}
+.step2-upload{transition:opacity .3s,max-height .3s;overflow:hidden}
+.step2-upload.hidden{opacity:.3;max-height:0;overflow:hidden;margin:0;padding:0}
+
+.btn-export{width:100%;padding:16px;border:none;border-radius:10px;font-family:'Noto Sans JP',sans-serif;font-size:15px;font-weight:900;cursor:pointer;background:#f18200;color:#fff;letter-spacing:.04em;box-shadow:0 4px 16px rgba(241,130,0,.25);-webkit-appearance:none;margin-top:12px}
+.btn-export:active{background:#e07500;transform:scale(.98)}
+.btn-export:disabled{background:#ddd;color:#aaa;box-shadow:none;transform:none}
+.export-filename{font-size:10px;color:#999;text-align:center;margin-top:6px}
+.footer{margin-top:20px;padding:12px 16px 20px;text-align:center;font-size:9px;color:#ccc;z-index:1}
+@media(min-width:641px){.header{padding:20px 24px 8px}.slider-wrapper{padding:0 20px}.btn-step{padding:12px 24px;max-width:200px}.pattern-card{width:160px}.hero-client{font-size:24px}}
+@media(max-width:640px){.field-row{flex-direction:column}.hero-inner{padding:14px 16px}.instagram-cta a{flex-wrap:wrap;justify-content:center;text-align:center;gap:8px}.insta-info{text-align:center}.admin-angle-uploads{flex-direction:column}.ap-fields{flex-direction:column}}</style>
+</head>
+<body>
+<div class="watermark"><img src="./images/symbol.jpg" alt=""></div>
+<div class="header"><div class="brand"><div class="brand-logo"><img src="./images/logo.jpg" alt=""></div><div class="brand-text"><strong>Cement Artist Nu☆Man</strong><span class="company-name">株式会社KENSIN</span></div></div></div>
+
+<!-- Hero proposal badge -->
+<div class="hero-proposal" id="heroBadge">
+  <div class="hero-inner">
+    <div class="hero-tag">施工前イメージ提案</div>
+    <div class="hero-client" id="heroClient"><span>〇〇</span> 様　施工提案パース画像</div>
+    <div class="hero-sub">※ こちらはAIパースによる施工前のイメージ画像です</div>
+    <div class="hero-note" id="heroNote"></div>
+    <div class="hero-meta"><span id="heroSite"></span><span id="heroDate"></span></div>
+  </div>
+</div>
+
+<div class="title-section"><p class="subtitle">スライダーを左右にドラッグして変化をご確認ください</p></div>
+<div class="angle-tabs" id="angleTabs"></div>
+
+<div class="slider-wrapper">
+  <div class="slider-container" id="sliderContainer">
+    <div class="slider-layer layer-1"><img id="imgStep1" src="./images/step1_before.png" alt="Before"></div>
+    <div class="slider-layer layer-2" id="layer2"><img id="imgStep2" src="./images/step2_concrete.png" alt="Process"></div>
+    <div class="slider-layer layer-3" id="layer3"><img id="imgStep3" src="./images/step3_default.png" alt="RollerStone"></div>
+    <div class="divider" id="dividerLine"><div class="divider-knob"><svg viewBox="0 0 24 24"><path d="M8 5l-5 7 5 7M16 5l5 7-5 7"/></svg></div></div>
+    <div class="stage-label label-1" id="labelBefore">STEP 1｜現状</div>
+    <div class="stage-label label-2" id="labelConcrete">STEP 2｜下地施工</div>
+    <div class="stage-label label-3" id="labelRS">STEP 3｜ローラーストーン</div>
+  </div>
+
+  <div class="timeline" id="timeline"></div>
+  <div class="step-buttons" id="stepButtons"></div>
+
+  <div class="pattern-section" id="patternSection"><div class="pattern-section-title">デザインパターンを選択</div><div class="pattern-cards" id="patternCards"></div></div>
+
+  <div class="instagram-cta"><a href="https://www.instagram.com/cementart_numan/" target="_blank" rel="noopener"><div class="insta-avatar"><img src="./images/insta_profile.jpg" alt=""></div><div class="insta-info"><div class="insta-handle">@cementart_numan <svg viewBox="0 0 24 24" fill="none" stroke="#c32aa3" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1.5" fill="#c32aa3" stroke="none"/></svg></div><div class="insta-bio">セメントアーティストぬーまん｜ローラーストーン@三重県｜今の駐車場壊さずおしゃれに蘇らせます</div></div><div class="insta-follow-btn">Instagramを見る</div></a></div>
+
+  <!-- ADMIN -->
+  <div class="admin-panel" id="adminPanel">
+    <div class="admin-header"><div class="admin-title"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>管理パネル</div></div>
+
+    <!-- ── 操作ガイド ── -->
+    <div style="background:linear-gradient(135deg,#fef9f3,#fff);border:1px solid rgba(241,130,0,.15);border-radius:10px;padding:14px 16px;margin-bottom:16px">
+      <div style="font-size:13px;font-weight:900;color:#f18200;margin-bottom:8px;display:flex;align-items:center;gap:6px">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f18200" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+        操作ガイド
+      </div>
+      <div style="font-size:11px;color:#666;line-height:1.8">
+        <b style="color:#f18200">❶ 案件情報</b>：お客様名・現場名・提案日を入力<br>
+        <b style="color:#f18200">❷ ステップ設定</b>：下地工程がない場合はOFFに切替<br>
+        <b style="color:#f18200">❸ STEP 1 & 2</b>：「アングル」セクションで現状写真・下地写真をアップロード<br>
+        <b style="color:#f18200">❹ STEP 3</b>：「STEP 3 提案パターン」で施工後パース画像を追加（最大5つ）<br>
+        <span style="color:#999;font-size:10px">　→ 各パターンに施工パターン・カラー・素材参考画像を設定可能</span><br>
+        <b style="color:#f18200">❺ 書き出し</b>：「クライアント用HTMLを書き出す」ボタンで提案ファイルを生成<br>
+        <span style="color:#999;font-size:10px">　→ 画像は自動圧縮されます（アップロード時にJPEG 75%変換）</span>
+      </div>
+    </div>
+
+    <!-- ── ❶ 案件情報 ── -->
+    <div class="admin-section">
+      <div class="admin-section-title"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>❶ 案件情報</div>
+      <div class="field-row"><div class="field-group"><label>お客様名</label><input type="text" id="fieldClient" placeholder="山田太郎 様"></div><div class="field-group"><label>現場名</label><input type="text" id="fieldSite" placeholder="松阪市〇〇町 玄関アプローチ"></div></div>
+      <div class="field-row"><div class="field-group"><label>提案日</label><input type="date" id="fieldDate"></div><div class="field-group"><label>備考</label><input type="text" id="fieldNote" placeholder="2回目提案"></div></div>
+    </div>
+
+    <!-- ── ❷ 施工ステップ設定 ── -->
+    <div class="admin-section">
+      <div class="admin-section-title"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>❷ 施工ステップ設定</div>
+      <div class="toggle-row" id="toggleStep2">
+        <div class="toggle-switch" id="step2Switch"></div>
+        <div>
+          <div class="toggle-label">下地工程（STEP 2）あり</div>
+          <div class="toggle-desc">OFFにすると STEP1（現状）→ STEP2（RS施工完了）の2ステップになります</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── ❸ STEP 1 & STEP 2 アングル ── -->
+    <div class="admin-section">
+      <div class="admin-section-title"><svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>❸ STEP 1 & STEP 2 アングル（ベース画像）<span class="badge" id="angleCount">1</span></div>
+      <div style="font-size:10px;color:#999;margin-bottom:10px;line-height:1.5">STEP 1（現状）と STEP 2（下地施工）の写真をアップロードしてください。<br>別アングルの写真がある場合は「アングルを追加」で複数セット登録できます。</div>
+      <div id="angleList"></div>
+      <div class="admin-add-area" id="addAngle"><div class="admin-add-icon"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div><div><div class="admin-add-text">アングルを追加</div><div class="admin-add-sub">別視点のSTEP 1 & STEP 2 画像セット（最大5セット）</div></div></div>
+    </div>
+
+    <!-- ── ❹ STEP 3 提案パターン ── -->
+    <div class="admin-section" style="border:2px solid rgba(241,130,0,.2);background:linear-gradient(135deg,rgba(241,130,0,.03),rgba(241,130,0,.01))">
+      <div class="admin-section-title" style="font-size:14px"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>❹ STEP 3｜ローラーストーン 提案パターン<span class="badge" id="patternBadge">0/5</span></div>
+      <div style="font-size:11px;color:#666;margin-bottom:12px;line-height:1.6;background:#fff;padding:10px 12px;border-radius:8px;border:1px solid rgba(0,0,0,.04)">
+        <b>ここに施工後のパース画像（AIパース等）を追加してください。</b><br>
+        <span style="color:#999">各パターンに下記を設定できます：</span><br>
+        <span style="color:#999">・施工パターン（乱形石調 / タイル調 / 木目調 / その他）</span><br>
+        <span style="color:#999">・カラー（RSグレー / RSグレージュ / RSブラック / その他）</span><br>
+        <span style="color:#999">・素材参考画像（実際のRSタイル等の写真）</span>
+      </div>
+      <div id="patternList"></div>
+      <div class="admin-add-area" id="addPattern"><div class="admin-add-icon"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div><div><div class="admin-add-text">STEP 3 パターンを追加</div><div class="admin-add-sub">施工後パース画像をアップロード → パターン名・カラー・素材を設定</div></div></div>
+      <input type="file" id="patternFileInput" accept="image/*" style="display:none">
+    </div>
+
+    <!-- ── ❺ 書き出し＆公開 ── -->
+    <button class="btn-export" id="btnExport" disabled>❺ クライアント用HTMLを書き出す</button>
+    <div class="export-filename" id="exportFilename"></div>
+
+    <!-- ── GitHub公開ガイド ── -->
+    <div style="margin-top:16px;background:#f8f8f6;border:1px solid rgba(0,0,0,.06);border-radius:10px;padding:14px 16px">
+      <div style="font-size:12px;font-weight:900;color:#1a1a1a;margin-bottom:8px;display:flex;align-items:center;gap:6px">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/></svg>
+        GitHubにアップして共有する手順
+      </div>
+      <div style="font-size:11px;color:#666;line-height:1.8">
+        <b>① ファイル名を変更</b><br>
+        <span style="color:#999">書き出されたHTMLファイルを <b style="color:#f18200">index.html</b> にリネーム</span><br><br>
+        <b>② GitHubにフォルダを作成</b><br>
+        <span style="color:#999">リポジトリ → KIMARU/proposal-slider/clients/ の中に<br>
+        案件名のフォルダを作成（例：<b style="color:#f18200">yamada-approach</b>）<br>
+        ※ フォルダ名は英数字・ハイフンのみ。日本語NG</span><br><br>
+        <b>③ アップロード</b><br>
+        <span style="color:#999">作成したフォルダ内で「Add file」→「Upload files」→ index.html をアップ</span><br><br>
+        <b>④ URLをクライアントに共有</b><br>
+        <span style="color:#999;word-break:break-all">https://nu-man1029.github.io/Roller-Stone-/KIMARU/proposal-slider/clients/<b style="color:#f18200">案件フォルダ名</b>/</span><br><br>
+        <b>⚠️ 注意事項</b><br>
+        <span style="color:#c33">・GitHub Pagesの反映に1〜2分かかることがあります</span><br>
+        <span style="color:#c33">・1ファイル100MB以下にしてください（圧縮済みなら通常2〜5MB）</span><br>
+        <span style="color:#c33">・フォルダ名に日本語・スペースは使えません</span>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════ -->
+    <!-- ❻ リール用カバー画像 -->
+    <!-- ═══════════════════════════════ -->
+    <div class="admin-section" style="margin-top:20px;border:2px solid rgba(241,130,0,.2);background:linear-gradient(135deg,rgba(241,130,0,.03),rgba(241,130,0,.01))">
+      <div class="admin-section-title" style="font-size:14px">
+        <svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+        ❻ リール用カバー画像を書き出す
+      </div>
+      <div style="font-size:11px;color:#666;margin-bottom:12px;line-height:1.5;background:#fff;padding:10px 12px;border-radius:8px;border:1px solid rgba(0,0,0,.04)">
+        フックテキストとデザインの雰囲気を選択して、Instagram リールのカバー画像（1080×1920）を生成します。<br>
+        <span style="color:#999">※ STEP 1 とパターンAの画像が自動で反映されます</span>
+      </div>
+
+      <div class="field-row">
+        <div class="field-group">
+          <label>フックテキスト</label>
+          <select id="hookSelect" style="padding:10px 12px;border:1px solid rgba(0,0,0,.1);border-radius:8px;font-family:'Noto Sans JP',sans-serif;font-size:13px;color:#1a1a1a;background:#fff;outline:none;width:100%;-webkit-appearance:none">
+            <option value="A">A：施工前にコレ見せたら / どうなると思います？</option>
+            <option value="B">B：※これ、まだ施工してません</option>
+            <option value="C">C：カタログ渡して終わりの提案、/ まだやってます？</option>
+            <option value="D">D：想像させない、/ 体験させる提案</option>
+            <option value="E">E：提案の成約率を上げた / たった1つの方法</option>
+            <option value="custom">自由入力</option>
+          </select>
+        </div>
+      </div>
+      <div id="customHookArea" style="display:none;margin-bottom:8px">
+        <div class="field-row">
+          <div class="field-group"><label>1行目</label><input type="text" id="hookLine1" placeholder="1行目テキスト"></div>
+          <div class="field-group"><label>2行目（オレンジ）</label><input type="text" id="hookLine2" placeholder="2行目テキスト"></div>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field-group">
+          <label>デザインの雰囲気</label>
+          <select id="styleSelect" style="padding:10px 12px;border:1px solid rgba(0,0,0,.1);border-radius:8px;font-family:'Noto Sans JP',sans-serif;font-size:13px;color:#1a1a1a;background:#fff;outline:none;width:100%;-webkit-appearance:none">
+            <option value="dark">A：Dark Luxury（黒 × 明朝体）</option>
+            <option value="light">B：Light Natural（白 × 明朝体）</option>
+            <option value="navy">C：Navy Bold（紺 × ゴシック太字）</option>
+          </select>
+        </div>
+      </div>
+
+      <button id="btnCover" class="btn-export" disabled style="margin-top:8px;background:#333">❻ カバー画像を書き出す（PNG）</button>
+      <div style="font-size:10px;color:#999;text-align:center;margin-top:4px">※ STEP 3 パターンが1つ以上必要です</div>
+    </div>
+
+    <!-- ═══════════════════════════════ -->
+    <!-- ❼ リール用スライダー動画HTML -->
+    <!-- ═══════════════════════════════ -->
+    <div class="admin-section" style="margin-top:16px;border:2px solid rgba(241,130,0,.2);background:linear-gradient(135deg,rgba(241,130,0,.03),rgba(241,130,0,.01))">
+      <div class="admin-section-title" style="font-size:14px">
+        <svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        ❼ リール用スライダー動画HTMLを書き出す
+      </div>
+      <div style="font-size:11px;color:#666;margin-bottom:12px;line-height:1.5;background:#fff;padding:10px 12px;border-radius:8px;border:1px solid rgba(0,0,0,.04)">
+        自動再生スライダーHTMLを書き出します。スマホで全画面表示 → 画面録画するだけでリール素材が完成します。<br>
+        <span style="color:#999">動き：ビフォー（停止）→ スーッとA → 停止 → 戻る → スーッとB → … → 最後にホールド → ループ</span><br>
+        <span style="color:#999">※ 3秒カウントダウン付き（録画タイミング用）</span>
+      </div>
+      <div style="font-size:10px;color:#999;margin-bottom:8px">※ ❻で選択した雰囲気・フックテキストがそのまま反映されます</div>
+
+      <button id="btnReelVideo" class="btn-export" disabled style="margin-top:4px;background:#1a1a1a">❼ スライダー動画HTMLを書き出す</button>
+      <div style="font-size:10px;color:#999;text-align:center;margin-top:4px">※ STEP 1 画像 と STEP 3 パターンが1つ以上必要です</div>
+    </div>
+
+  </div>
+</div>
+
+<div class="footer">Cement Artist Nu☆Man ─ 株式会社KENSIN ─ ローラーストーン認定施工店</div>
+<input type="file" id="angleFileInput" accept="image/*" style="display:none">
+<input type="file" id="materialFileInput" accept="image/*" style="display:none">
+
+<!-- Lightbox -->
+<div id="lightbox" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.92);z-index:9999;justify-content:center;align-items:center;cursor:zoom-out;-webkit-overflow-scrolling:touch;overflow:auto">
+  <img id="lightboxImg" style="max-width:95%;max-height:95%;object-fit:contain;border-radius:8px;touch-action:pinch-zoom">
+  <div style="position:absolute;top:16px;right:16px;width:36px;height:36px;background:rgba(255,255,255,.15);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:20px;color:#fff" onclick="closeLightbox()">×</div>
+</div>
+
+<style>
+/* Pattern card material thumb */
+.pattern-card-material{display:flex;align-items:center;gap:6px;padding:4px 10px 8px;border-top:1px solid rgba(0,0,0,.04)}
+.pattern-card-material img{width:36px;height:36px;border-radius:4px;object-fit:cover;border:1px solid rgba(0,0,0,.06);cursor:pointer}
+.pattern-card-material span{font-size:9px;color:#999}
+/* Admin material upload */
+.ap-material{display:flex;align-items:center;gap:8px;margin-top:6px;padding-top:6px;border-top:1px solid rgba(0,0,0,.04)}
+.ap-material-thumb{width:50px;height:50px;border-radius:6px;overflow:hidden;background:#eee;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;border:1px solid rgba(0,0,0,.06)}
+.ap-material-thumb img{width:100%;height:100%;object-fit:cover}
+.ap-material-thumb svg{width:16px;height:16px;stroke:#ccc;fill:none;stroke-width:2}
+.ap-material-label{font-size:10px;color:#888}
+.ap-material-file{font-size:9px;color:#f18200;margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:120px}
+/* Tappable images */
+.slider-layer img,.pattern-card-thumb{cursor:pointer;pointer-events:auto !important}
+</style>
+
+<script src="./app.js"></script>
+</body>
+</html>
