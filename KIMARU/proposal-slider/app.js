@@ -1,7 +1,7 @@
 var GITHUB_BASE='https://nu-man1029.github.io/Roller-Stone-/KIMARU/proposal-slider';
 var LABELS=['A','B','C','D','E'];
 var TYPE_OPTIONS=['乱形石調','タイル調','木目調','その他'];
-var COLOR_OPTIONS=['RSグレー','RSグレージュ','RSブラック','その他'];
+var COLOR_OPTIONS=['RSグレー','RSグレージュ','RSブラック','RSミルクティー','RSピンクブラウン','RSイエローベーシュ','RSオレンジ','RSモスグリーン','その他'];
 
 // ══ IMAGE COMPRESSION ══
 function compressImage(dataUrl,cb,maxW,q){
