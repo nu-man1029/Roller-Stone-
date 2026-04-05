@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>施工提案スライダー | Cement Artist Nu☆Man</title>
-<style>@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;500;700;900&display=swap');
+<style>@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;500;700;900&family=Noto+Serif+JP:wght@500;700;900&display=swap');
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 body{font-family:'Noto Sans JP',sans-serif;background:#f5f3ef;color:#1a1a1a;min-height:100dvh;display:flex;flex-direction:column;align-items:center;overflow-x:hidden;padding-bottom:env(safe-area-inset-bottom)}
 .watermark{position:fixed;bottom:-20px;right:-20px;width:200px;height:200px;opacity:.04;pointer-events:none;z-index:0}
@@ -259,29 +259,120 @@ body{font-family:'Noto Sans JP',sans-serif;background:#f5f3ef;color:#1a1a1a;min-
     <button class="btn-export" id="btnExport" disabled>❺ クライアント用HTMLを書き出す</button>
     <div class="export-filename" id="exportFilename"></div>
 
-    <!-- ── GitHub公開ガイド ── -->
-    <div style="margin-top:16px;background:#f8f8f6;border:1px solid rgba(0,0,0,.06);border-radius:10px;padding:14px 16px">
-      <div style="font-size:12px;font-weight:900;color:#1a1a1a;margin-bottom:8px;display:flex;align-items:center;gap:6px">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/></svg>
-        GitHubにアップして共有する手順
+    <!-- ── ❺-B GitHub直接アップロード ── -->
+    <div style="margin-top:12px;background:#fff;border:2px solid rgba(39,160,60,.25);border-radius:12px;padding:16px">
+      <div style="font-size:13px;font-weight:900;color:#1a7a2a;margin-bottom:12px;display:flex;align-items:center;gap:6px">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1a7a2a" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/></svg>
+        🚀 GitHubに直接アップロード（ワンクリック共有）
       </div>
-      <div style="font-size:11px;color:#666;line-height:1.8">
-        <b>① ファイル名を変更</b><br>
-        <span style="color:#999">書き出されたHTMLファイルを <b style="color:#f18200">index.html</b> にリネーム</span><br><br>
-        <b>② GitHubにフォルダを作成</b><br>
-        <span style="color:#999">リポジトリ → KIMARU/proposal-slider/clients/ の中に<br>
-        案件名のフォルダを作成（例：<b style="color:#f18200">yamada-approach</b>）<br>
-        ※ フォルダ名は英数字・ハイフンのみ。日本語NG</span><br><br>
-        <b>③ アップロード</b><br>
-        <span style="color:#999">作成したフォルダ内で「Add file」→「Upload files」→ index.html をアップ</span><br><br>
-        <b>④ URLをクライアントに共有</b><br>
-        <span style="color:#999;word-break:break-all">https://nu-man1029.github.io/Roller-Stone-/KIMARU/proposal-slider/clients/<b style="color:#f18200">案件フォルダ名</b>/</span><br><br>
-        <b>⚠️ 注意事項</b><br>
-        <span style="color:#c33">・GitHub Pagesの反映に1〜2分かかることがあります</span><br>
-        <span style="color:#c33">・1ファイル100MB以下にしてください（圧縮済みなら通常2〜5MB）</span><br>
-        <span style="color:#c33">・フォルダ名に日本語・スペースは使えません</span>
+
+      <div class="field-row">
+        <div class="field-group">
+          <label>案件フォルダ名 <span style="font-weight:400;color:#bbb">（英数字・ハイフンのみ）</span></label>
+          <input type="text" id="githubFolder" placeholder="例：yamada-approach" style="padding:10px 12px;border:1px solid rgba(0,0,0,.12);border-radius:8px;font-family:'Noto Sans JP',sans-serif;font-size:13px;color:#1a1a1a;outline:none;width:100%">
+        </div>
       </div>
+
+      <div class="field-group" style="margin-top:8px">
+        <label>GitHub Personal Access Token <span style="font-weight:400;color:#bbb">（初回のみ入力）</span></label>
+        <div style="display:flex;gap:6px;align-items:center">
+          <input type="password" id="githubToken" placeholder="ghp_xxxxxxxxxxxx" style="flex:1;padding:10px 12px;border:1px solid rgba(0,0,0,.12);border-radius:8px;font-family:monospace;font-size:12px;color:#1a1a1a;outline:none">
+          <button id="btnSaveToken" onclick="saveToken()" style="padding:10px 14px;background:#f5f5f5;border:1px solid rgba(0,0,0,.1);border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;color:#555">保存</button>
+        </div>
+        <div style="font-size:9px;color:#bbb;margin-top:4px">※ このデバイスにのみ保存。外部に送信されません。</div>
+      </div>
+
+      <button id="btnUploadGitHub" class="btn-export" disabled style="margin-top:12px;background:#1a7a2a">🚀 生成 & GitHubにアップロード</button>
+
+      <div id="githubUploading" style="display:none;text-align:center;padding:12px;font-size:12px;color:#1a7a2a;font-weight:700">
+        ⏳ アップロード中... しばらくお待ちください
+      </div>
+
+      <div id="githubResult" style="display:none;margin-top:12px;padding:14px;background:linear-gradient(135deg,#f0fff4,#e6ffed);border-radius:10px;border:1px solid rgba(39,160,60,.2)">
+        <div style="font-size:12px;font-weight:900;color:#1a7a2a;margin-bottom:6px">✅ アップロード完了！</div>
+        <div style="font-size:11px;color:#666;margin-bottom:8px">以下のURLをクライアントにLINEで送ってください（1〜2分後に反映されます）</div>
+        <div id="githubUrlText" style="font-size:11px;color:#1a1a1a;word-break:break-all;padding:10px 12px;background:#fff;border-radius:8px;border:1px solid rgba(0,0,0,.08);font-family:monospace;line-height:1.6"></div>
+        <button onclick="copyGithubUrl()" style="margin-top:8px;width:100%;padding:10px;background:#f18200;color:#fff;border:none;border-radius:8px;font-family:'Noto Sans JP',sans-serif;font-size:13px;font-weight:900;cursor:pointer">📋 URLをコピー</button>
+      </div>
+
+      <div id="githubError" style="display:none;margin-top:10px;padding:12px;background:#fff5f5;border-radius:8px;border:1px solid rgba(200,0,0,.15);font-size:11px;color:#c33;line-height:1.6"></div>
+
+      <details style="margin-top:12px">
+        <summary style="font-size:10px;color:#bbb;cursor:pointer">手動でアップロードする場合はこちら（旧手順）</summary>
+        <div style="font-size:10px;color:#999;line-height:1.8;margin-top:8px;padding:10px;background:#f8f8f6;border-radius:8px">
+          ① 書き出したHTMLを <b>index.html</b> にリネーム<br>
+          ② GitHub → KIMARU/proposal-slider/clients/案件フォルダ/ に Upload files<br>
+          ③ URLをクライアントに共有
+        </div>
+      </details>
     </div>
+
+    <!-- ═══════════════════════════════ -->
+    <!-- ❻ リール用カバー画像 -->
+    <!-- ═══════════════════════════════ -->
+    <div class="admin-section" style="margin-top:20px;border:2px solid rgba(241,130,0,.2);background:linear-gradient(135deg,rgba(241,130,0,.03),rgba(241,130,0,.01))">
+      <div class="admin-section-title" style="font-size:14px">
+        <svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+        ❻ リール用カバー画像を書き出す
+      </div>
+      <div style="font-size:11px;color:#666;margin-bottom:12px;line-height:1.5;background:#fff;padding:10px 12px;border-radius:8px;border:1px solid rgba(0,0,0,.04)">
+        フックテキストとデザインの雰囲気を選択して、Instagram リールのカバー画像（1080×1920）を生成します。<br>
+        <span style="color:#999">※ STEP 1 とパターンAの画像が自動で反映されます</span>
+      </div>
+
+      <div class="field-row">
+        <div class="field-group">
+          <label>フックテキスト</label>
+          <select id="hookSelect" style="padding:10px 12px;border:1px solid rgba(0,0,0,.1);border-radius:8px;font-family:'Noto Sans JP',sans-serif;font-size:13px;color:#1a1a1a;background:#fff;outline:none;width:100%;-webkit-appearance:none">
+            <option value="A">A：施工前にコレ見せたら / どうなると思います？</option>
+            <option value="B">B：※これ、まだ施工してません</option>
+            <option value="C">C：カタログ渡して終わりの提案、/ まだやってます？</option>
+            <option value="D">D：想像させない、/ 体験させる提案</option>
+            <option value="E">E：提案の成約率を上げた / たった1つの方法</option>
+            <option value="custom">自由入力</option>
+          </select>
+        </div>
+      </div>
+      <div id="customHookArea" style="display:none;margin-bottom:8px">
+        <div class="field-row">
+          <div class="field-group"><label>1行目</label><input type="text" id="hookLine1" placeholder="1行目テキスト"></div>
+          <div class="field-group"><label>2行目（オレンジ）</label><input type="text" id="hookLine2" placeholder="2行目テキスト"></div>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field-group">
+          <label>デザインの雰囲気</label>
+          <select id="styleSelect" style="padding:10px 12px;border:1px solid rgba(0,0,0,.1);border-radius:8px;font-family:'Noto Sans JP',sans-serif;font-size:13px;color:#1a1a1a;background:#fff;outline:none;width:100%;-webkit-appearance:none">
+            <option value="dark">A：Dark Luxury（黒 × 明朝体）</option>
+            <option value="light">B：Light Natural（白 × 明朝体）</option>
+            <option value="navy">C：Navy Bold（紺 × ゴシック太字）</option>
+          </select>
+        </div>
+      </div>
+
+      <button id="btnCover" class="btn-export" disabled style="margin-top:8px;background:#333">❻ カバー画像を書き出す（PNG）</button>
+      <div style="font-size:10px;color:#999;text-align:center;margin-top:4px">※ STEP 3 パターンが1つ以上必要です</div>
+    </div>
+
+    <!-- ═══════════════════════════════ -->
+    <!-- ❼ リール用スライダー動画HTML -->
+    <!-- ═══════════════════════════════ -->
+    <div class="admin-section" style="margin-top:16px;border:2px solid rgba(241,130,0,.2);background:linear-gradient(135deg,rgba(241,130,0,.03),rgba(241,130,0,.01))">
+      <div class="admin-section-title" style="font-size:14px">
+        <svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        ❼ リール用スライダー動画HTMLを書き出す
+      </div>
+      <div style="font-size:11px;color:#666;margin-bottom:12px;line-height:1.5;background:#fff;padding:10px 12px;border-radius:8px;border:1px solid rgba(0,0,0,.04)">
+        自動再生スライダーHTMLを書き出します。スマホで全画面表示 → 画面録画するだけでリール素材が完成します。<br>
+        <span style="color:#999">動き：ビフォー（停止）→ スーッとA → 停止 → 戻る → スーッとB → … → 最後にホールド → ループ</span><br>
+        <span style="color:#999">※ 3秒カウントダウン付き（録画タイミング用）</span>
+      </div>
+      <div style="font-size:10px;color:#999;margin-bottom:8px">※ ❻で選択した雰囲気・フックテキストがそのまま反映されます</div>
+
+      <button id="btnReelVideo" class="btn-export" disabled style="margin-top:4px;background:#1a1a1a">❼ スライダー動画HTMLを書き出す</button>
+      <div style="font-size:10px;color:#999;text-align:center;margin-top:4px">※ STEP 1 画像 と STEP 3 パターンが1つ以上必要です</div>
+    </div>
+
   </div>
 </div>
 
