@@ -206,7 +206,7 @@ body{font-family:'Noto Sans JP',sans-serif;background:#f5f3ef;color:#1a1a1a;min-
         <b style="color:#f18200">❶ 案件情報</b>：お客様名・現場名・提案日を入力<br>
         <b style="color:#f18200">❷ ステップ設定</b>：下地工程がない場合はOFFに切替<br>
         <b style="color:#f18200">❸ STEP 1 & 2</b>：「アングル」セクションで現状写真・下地写真をアップロード<br>
-        <b style="color:#f18200">❹ STEP 3</b>：「STEP 3 提案パターン」で施工後パース画像を追加（最大5つ）<br>
+        <b style="color:#f18200">❹ STEP 3</b>：「STEP 3 提案パターン」で施工後パース画像を追加（最大10パターン）<br>
         <span style="color:#999;font-size:10px">　→ 各パターンに施工パターン・カラー・素材参考画像を設定可能</span><br>
         <b style="color:#f18200">❺ 書き出し</b>：「クライアント用HTMLを書き出す」ボタンで提案ファイルを生成<br>
         <span style="color:#999;font-size:10px">　→ 画像は自動圧縮されます（アップロード時にJPEG 75%変換）</span>
@@ -242,7 +242,7 @@ body{font-family:'Noto Sans JP',sans-serif;background:#f5f3ef;color:#1a1a1a;min-
 
     <!-- ── ❹ STEP 3 提案パターン ── -->
     <div class="admin-section" style="border:2px solid rgba(241,130,0,.2);background:linear-gradient(135deg,rgba(241,130,0,.03),rgba(241,130,0,.01))">
-      <div class="admin-section-title" style="font-size:14px"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>❹ STEP 3｜ローラーストーン 提案パターン<span class="badge" id="patternBadge">0/5</span></div>
+      <div class="admin-section-title" style="font-size:14px"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>❹ STEP 3｜ローラーストーン 提案パターン<span class="badge" id="patternBadge">0/10</span></div>
       <div style="font-size:11px;color:#666;margin-bottom:12px;line-height:1.6;background:#fff;padding:10px 12px;border-radius:8px;border:1px solid rgba(0,0,0,.04)">
         <b>ここに施工後のパース画像（AIパース等）を追加してください。</b><br>
         <span style="color:#999">各パターンに下記を設定できます：</span><br>
@@ -259,28 +259,57 @@ body{font-family:'Noto Sans JP',sans-serif;background:#f5f3ef;color:#1a1a1a;min-
     <button class="btn-export" id="btnExport" disabled>❺ クライアント用HTMLを書き出す</button>
     <div class="export-filename" id="exportFilename"></div>
 
-    <!-- ── GitHub公開ガイド ── -->
-    <div style="margin-top:16px;background:#f8f8f6;border:1px solid rgba(0,0,0,.06);border-radius:10px;padding:14px 16px">
-      <div style="font-size:12px;font-weight:900;color:#1a1a1a;margin-bottom:8px;display:flex;align-items:center;gap:6px">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/></svg>
-        GitHubにアップして共有する手順
+    <!-- ── ❺-B GitHub直接アップロード ── -->
+    <div style="margin-top:12px;background:#fff;border:2px solid rgba(39,160,60,.25);border-radius:12px;padding:16px">
+      <div style="font-size:13px;font-weight:900;color:#1a7a2a;margin-bottom:12px;display:flex;align-items:center;gap:6px">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1a7a2a" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/></svg>
+        🚀 GitHubに直接アップロード（ワンクリック共有）
       </div>
-      <div style="font-size:11px;color:#666;line-height:1.8">
-        <b>① ファイル名を変更</b><br>
-        <span style="color:#999">書き出されたHTMLファイルを <b style="color:#f18200">index.html</b> にリネーム</span><br><br>
-        <b>② GitHubにフォルダを作成</b><br>
-        <span style="color:#999">リポジトリ → KIMARU/proposal-slider/clients/ の中に<br>
-        案件名のフォルダを作成（例：<b style="color:#f18200">yamada-approach</b>）<br>
-        ※ フォルダ名は英数字・ハイフンのみ。日本語NG</span><br><br>
-        <b>③ アップロード</b><br>
-        <span style="color:#999">作成したフォルダ内で「Add file」→「Upload files」→ index.html をアップ</span><br><br>
-        <b>④ URLをクライアントに共有</b><br>
-        <span style="color:#999;word-break:break-all">https://nu-man1029.github.io/Roller-Stone-/KIMARU/proposal-slider/clients/<b style="color:#f18200">案件フォルダ名</b>/</span><br><br>
-        <b>⚠️ 注意事項</b><br>
-        <span style="color:#c33">・GitHub Pagesの反映に1〜2分かかることがあります</span><br>
-        <span style="color:#c33">・1ファイル100MB以下にしてください（圧縮済みなら通常2〜5MB）</span><br>
-        <span style="color:#c33">・フォルダ名に日本語・スペースは使えません</span>
+
+      <div class="field-row">
+        <div class="field-group">
+          <label>発注元フォルダ <span style="font-weight:400;color:#bbb">（英数字・ハイフンのみ　例：repaint / tokai-minimini）</span></label>
+          <input type="text" id="githubSubFolder" placeholder="例：repaint" style="padding:10px 12px;border:1px solid rgba(0,0,0,.12);border-radius:8px;font-family:'Noto Sans JP',sans-serif;font-size:13px;color:#1a1a1a;outline:none;width:100%">
+        </div>
+        <div class="field-group">
+          <label>案件フォルダ名 <span style="font-weight:400;color:#bbb">（英数字・ハイフンのみ）</span></label>
+          <input type="text" id="githubFolder" placeholder="例：yamada-approach" style="padding:10px 12px;border:1px solid rgba(0,0,0,.12);border-radius:8px;font-family:'Noto Sans JP',sans-serif;font-size:13px;color:#1a1a1a;outline:none;width:100%">
+        </div>
       </div>
+      <div style="font-size:10px;color:#bbb;margin-bottom:4px">📁 構造：clients / <span style="color:#f18200">発注元</span> / <span style="color:#1a1a1a">案件名</span> / index.html</div>
+
+      <div class="field-group" style="margin-top:8px">
+        <label>GitHub Personal Access Token <span style="font-weight:400;color:#bbb">（初回のみ入力）</span></label>
+        <div style="display:flex;gap:6px;align-items:center">
+          <input type="password" id="githubToken" placeholder="ghp_xxxxxxxxxxxx" style="flex:1;padding:10px 12px;border:1px solid rgba(0,0,0,.12);border-radius:8px;font-family:monospace;font-size:12px;color:#1a1a1a;outline:none">
+          <button id="btnSaveToken" onclick="saveToken()" style="padding:10px 14px;background:#f5f5f5;border:1px solid rgba(0,0,0,.1);border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;color:#555">保存</button>
+        </div>
+        <div style="font-size:9px;color:#bbb;margin-top:4px">※ このデバイスにのみ保存。外部に送信されません。</div>
+      </div>
+
+      <button id="btnUploadGitHub" class="btn-export" disabled style="margin-top:12px;background:#1a7a2a">🚀 生成 & GitHubにアップロード</button>
+
+      <div id="githubUploading" style="display:none;text-align:center;padding:12px;font-size:12px;color:#1a7a2a;font-weight:700">
+        ⏳ アップロード中... しばらくお待ちください
+      </div>
+
+      <div id="githubResult" style="display:none;margin-top:12px;padding:14px;background:linear-gradient(135deg,#f0fff4,#e6ffed);border-radius:10px;border:1px solid rgba(39,160,60,.2)">
+        <div style="font-size:12px;font-weight:900;color:#1a7a2a;margin-bottom:6px">✅ アップロード完了！</div>
+        <div style="font-size:11px;color:#666;margin-bottom:8px">以下のURLをクライアントにLINEで送ってください（1〜2分後に反映されます）</div>
+        <div id="githubUrlText" style="font-size:11px;color:#1a1a1a;word-break:break-all;padding:10px 12px;background:#fff;border-radius:8px;border:1px solid rgba(0,0,0,.08);font-family:monospace;line-height:1.6"></div>
+        <button onclick="copyGithubUrl()" style="margin-top:8px;width:100%;padding:10px;background:#f18200;color:#fff;border:none;border-radius:8px;font-family:'Noto Sans JP',sans-serif;font-size:13px;font-weight:900;cursor:pointer">📋 URLをコピー</button>
+      </div>
+
+      <div id="githubError" style="display:none;margin-top:10px;padding:12px;background:#fff5f5;border-radius:8px;border:1px solid rgba(200,0,0,.15);font-size:11px;color:#c33;line-height:1.6"></div>
+
+      <details style="margin-top:12px">
+        <summary style="font-size:10px;color:#bbb;cursor:pointer">手動でアップロードする場合はこちら（旧手順）</summary>
+        <div style="font-size:10px;color:#999;line-height:1.8;margin-top:8px;padding:10px;background:#f8f8f6;border-radius:8px">
+          ① 書き出したHTMLを <b>index.html</b> にリネーム<br>
+          ② GitHub → KIMARU/proposal-slider/clients/案件フォルダ/ に Upload files<br>
+          ③ URLをクライアントに共有
+        </div>
+      </details>
     </div>
 
     <!-- ═══════════════════════════════ -->

@@ -1,7 +1,7 @@
-var GITHUB_BASE='https://nu-man1029.github.io/Roller-Stone-/KIMARU/proposal-slider';
-var LABELS=['A','B','C','D','E'];
+var GITHUB_BASE='https://nu-man1029.github.io/Roller-Stone-/KIMARU/proposal-slider-v2';
+var LABELS=['A','B','C','D','E','F','G','H','I','J'];
 var TYPE_OPTIONS=['乱形石調','タイル調','木目調','その他'];
-var COLOR_OPTIONS=['RSグレー','RSグレージュ','RSブラック','その他'];
+var COLOR_OPTIONS=['RSグレー','RSグレージュ','RSブラック','RSミルクティー','RSピンクブラウン','RSイエローベーシュ','RSオレンジ','RSモスグリーン','その他'];
 
 // ══ IMAGE COMPRESSION ══
 function compressImage(dataUrl,cb,maxW,q){
@@ -34,7 +34,7 @@ var dragMoved=false;
 document.addEventListener('click',function(e){
   if(dragMoved)return;
   var img=e.target;
-  if(img.tagName==='IMG' && (img.closest('.slider-layer')||img.classList.contains('pattern-card-thumb')||img.closest('.ap-material-thumb')||img.closest('.pattern-card-material'))){
+  if(img.tagName==='IMG' && (img.closest('.slider-layer')||img.closest('.ap-material-thumb')||img.closest('.pattern-card-material'))){
     openLightbox(img.src);
   }
 });
@@ -196,10 +196,10 @@ function renderPatterns(){
     pendingMaterialIdx=parseInt(this.dataset.midx);materialFileInput.click();
   })});
 
-  $('patternBadge').textContent=patterns.length+'/5';
-  $('addPattern').classList.toggle('disabled',patterns.length>=5);
+  $('patternBadge').textContent=patterns.length+'/10';
+  $('addPattern').classList.toggle('disabled',patterns.length>=10);
   $('btnExport').disabled=patterns.length===0;
-  renderPatternCards();estimateSize();updateReelButtons();
+  renderPatternCards();estimateSize();updateReelButtons();updateUploadBtn();
 }
 
 materialFileInput.addEventListener('change',function(e){
@@ -217,8 +217,12 @@ function renderPatternCards(){
       var label=getPatternLabel(p)||'パターン '+LABELS[i];
       var c=document.createElement('div');c.className='pattern-card'+(i===activePattern?' active':'');
       var matHtml=p.materialData?'<div class="pattern-card-material"><img src="'+p.materialData+'"><span>素材参考</span></div>':'';
-      c.innerHTML='<img class="pattern-card-thumb" src="'+p.data+'"><div class="pattern-card-info"><div class="pattern-card-name">'+label+'</div></div>'+matHtml+'<div class="pattern-card-badge"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" fill="none" stroke="#fff" stroke-width="3"/></svg></div>';
-      c.addEventListener('click',function(e){if(e.target.tagName==='IMG')return;activePattern=i;applyView();renderPatternCards();animateTo(hasStep2?100:100)});
+      var plb='<div style="position:absolute;top:5px;left:5px;background:rgba(26,26,26,.82);color:#fff;font-size:10px;font-weight:900;padding:2px 8px;border-radius:4px">パターン'+LABELS[i]+'</div>';
+      c.innerHTML='<div style="position:relative">'+plb+'<img class="pattern-card-thumb" src="'+p.data+'"></div><div class="pattern-card-info"><div class="pattern-card-name">'+label+'</div></div>'+matHtml+'<div class="pattern-card-badge"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" fill="none" stroke="#fff" stroke-width="3"/></svg></div>';
+      c.addEventListener('click',function(e){
+        if(e.target.closest('.pattern-card-material'))return;
+        activePattern=i;applyView();renderPatternCards();animateTo(hasStep2?100:100);
+      });
       cards.appendChild(c);
     });
   }else sec.classList.remove('show');
@@ -262,7 +266,8 @@ function buildExport(info){
   var patCards='';
   if(pd.length>=1)patCards='<div class="pattern-section show"><div class="pattern-section-title">デザインパターンを選択</div><div class="pattern-cards">'+pd.map(function(p,i){
     var matHtml=p.mat?'<div class="pattern-card-material"><img src="'+p.mat+'" onclick="event.stopPropagation();openLightbox(this.src)"><span>素材参考</span></div>':'';
-    return'<div class="pattern-card'+(i===0?' active':'')+'" onclick="switchPattern('+i+')"><img class="pattern-card-thumb" src="'+p.data+'" onclick="event.stopPropagation();openLightbox(this.src)"><div class="pattern-card-info"><div class="pattern-card-name">'+p.label+'</div></div>'+matHtml+'<div class="pattern-card-badge"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" fill="none" stroke="#fff" stroke-width="3"/></svg></div></div>'}).join('')+'</div></div>';
+    var plb='<div style="position:absolute;top:5px;left:5px;background:rgba(26,26,26,.82);color:#fff;font-size:10px;font-weight:900;padding:2px 8px;border-radius:4px">パターン'+['A','B','C','D','E'][i]+'</div>';
+    return'<div class="pattern-card'+(i===0?' active':'')+'" onclick="if(!event.target.closest(\'.pattern-card-material\')){switchPattern('+i+')}"><div style="position:relative">'+plb+'<img class="pattern-card-thumb" src="'+p.data+'"></div><div class="pattern-card-info"><div class="pattern-card-name">'+p.label+'</div></div>'+matHtml+'<div class="pattern-card-badge"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" fill="none" stroke="#fff" stroke-width="3"/></svg></div></div>'}).join('')+'</div></div>';
 
   var hero='';
   if(info.client)hero='<div class="hero-proposal" style="display:block"><div class="hero-inner"><div class="hero-tag">施工前イメージ提案</div><div class="hero-client"><span>'+info.client+'</span> 様　施工提案パース画像</div><div class="hero-sub">※ こちらはAIパースによる施工前のイメージ画像です</div>'+(info.note?'<div class="hero-note">※ '+info.note+'</div>':'')+'<div class="hero-meta">'+(info.site?'<span>📍 '+info.site+'</span>':'')+(info.date?'<span>📅 '+info.date.replace(/-/g,'/')+'</span>':'')+'</div></div></div>';
@@ -312,6 +317,111 @@ function buildExport(info){
     'function switchPattern(i){activeP=i;imgStep3.src=PATTERNS[i];document.querySelectorAll(".pattern-card").forEach(function(c,j){c.classList.toggle("active",j===i)});animateTo(100)}'+
     'updateSlider(0);'+
     '<\/script></body></html>';
+}
+
+// ══════════════════════════════════════════
+// ❺-B GITHUB DIRECT UPLOAD
+// ══════════════════════════════════════════
+var GITHUB_OWNER='nu-man1029';
+var GITHUB_REPO='Roller-Stone-';
+var GITHUB_CLIENTS_BASE='KIMARU/proposal-slider-v2/clients';
+
+// トークン保存・読み込み
+(function initToken(){
+  var saved=localStorage.getItem('gh_token');
+  if(saved)$('githubToken').value=saved;
+})();
+function saveToken(){
+  var t=$('githubToken').value.trim();
+  if(t){localStorage.setItem('gh_token',t);$('btnSaveToken').textContent='✅ 保存済';setTimeout(function(){$('btnSaveToken').textContent='保存'},1500)}
+}
+
+// フォルダ名自動生成（案件情報から）
+function autoFolder(){
+  var c=fieldClient.value.trim().replace(/[\s　様]/g,'').substring(0,10);
+  var s=fieldSite.value.trim().replace(/[\s　]/g,'-').substring(0,15);
+  var base=(c||'client')+(s?'-'+s:'');
+  // 英数字・ハイフン以外を除去
+  return base.toLowerCase().replace(/[^a-z0-9\-]/g,'') || 'client-proposal';
+}
+[fieldClient,fieldSite].forEach(function(f){f.addEventListener('input',function(){
+  if(!$('githubFolder').dataset.manual)$('githubFolder').value=autoFolder();
+})});
+$('githubFolder').addEventListener('input',function(){this.dataset.manual='1'});
+
+// アップロードボタン有効化
+function updateUploadBtn(){
+  $('btnUploadGitHub').disabled=patterns.length===0||!$('githubToken').value.trim()||!$('githubFolder').value.trim();
+}
+$('githubToken').addEventListener('input',updateUploadBtn);
+$('githubFolder').addEventListener('input',updateUploadBtn);
+
+// base64エンコード（Unicode対応）
+function toBase64Unicode(str){
+  return btoa(unescape(encodeURIComponent(str)));
+}
+
+// GitHub APIでファイルをアップロード
+async function pushToGitHub(token,path,content,message){
+  var apiUrl='https://api.github.com/repos/'+GITHUB_OWNER+'/'+GITHUB_REPO+'/contents/'+path;
+  // 既存ファイルのSHAを取得（上書き用）
+  var sha=null;
+  try{
+    var checkRes=await fetch(apiUrl,{headers:{'Authorization':'token '+token,'Accept':'application/vnd.github.v3+json'}});
+    if(checkRes.ok){var existing=await checkRes.json();sha=existing.sha}
+  }catch(e){}
+
+  var body={message:message,content:toBase64Unicode(content)};
+  if(sha)body.sha=sha;
+
+  var res=await fetch(apiUrl,{
+    method:'PUT',
+    headers:{'Authorization':'token '+token,'Content-Type':'application/json','Accept':'application/vnd.github.v3+json'},
+    body:JSON.stringify(body)
+  });
+  if(!res.ok){var err=await res.json();throw new Error(err.message||'Upload failed ('+res.status+')')}
+  return await res.json();
+}
+
+$('btnUploadGitHub').addEventListener('click',async function(){
+  var token=$('githubToken').value.trim();
+  var folder=$('githubFolder').value.trim().toLowerCase().replace(/[^a-z0-9\-]/g,'');
+  if(!token||!folder||patterns.length===0)return;
+
+  // UI状態リセット
+  $('githubResult').style.display='none';
+  $('githubError').style.display='none';
+  $('githubUploading').style.display='block';
+  $('btnUploadGitHub').disabled=true;
+
+  try{
+    var info={client:fieldClient.value.trim(),site:fieldSite.value.trim(),date:fieldDate.value,note:fieldNote.value.trim()};
+    var html=buildExport(info);
+    var sub=$('githubSubFolder').value.trim().toLowerCase().replace(/[^a-z0-9\-]/g,'');var path=GITHUB_CLIENTS_BASE+'/'+(sub?sub+'/':'')+folder+'/index.html';
+    var msg='Add proposal: '+(sub?sub+'/':'')+folder+(info.client?' ('+info.client+')':'');
+    await pushToGitHub(token,path,html,msg);
+
+    var pageUrl='https://nu-man1029.github.io/Roller-Stone-/KIMARU/proposal-slider-v2/clients/'+(sub?sub+'/':'')+folder+'/';
+    $('githubUrlText').textContent=pageUrl;
+    $('githubUploading').style.display='none';
+    $('githubResult').style.display='block';
+
+    // トークンを自動保存
+    localStorage.setItem('gh_token',token);
+  }catch(e){
+    $('githubUploading').style.display='none';
+    $('githubError').style.display='block';
+    $('githubError').innerHTML='❌ アップロード失敗：'+e.message+'<br><span style="color:#999">・トークンの権限（Contents: Read and Write）を確認してください<br>・フォルダ名に使えない文字が含まれていないか確認してください</span>';
+  }
+  $('btnUploadGitHub').disabled=false;
+});
+
+var _ghUrl='';
+function copyGithubUrl(){
+  var url=$('githubUrlText').textContent;
+  navigator.clipboard.writeText(url).then(function(){
+    var btn=event.target;btn.textContent='✅ コピーしました！';setTimeout(function(){btn.textContent='📋 URLをコピー'},2000);
+  });
 }
 
 // ══════════════════════════════════════════
