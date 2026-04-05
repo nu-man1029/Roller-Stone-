@@ -34,7 +34,7 @@ var dragMoved=false;
 document.addEventListener('click',function(e){
   if(dragMoved)return;
   var img=e.target;
-  if(img.tagName==='IMG' && (img.closest('.slider-layer')||img.classList.contains('pattern-card-thumb')||img.closest('.ap-material-thumb')||img.closest('.pattern-card-material'))){
+  if(img.tagName==='IMG' && (img.closest('.slider-layer')||img.closest('.ap-material-thumb')||img.closest('.pattern-card-material'))){
     openLightbox(img.src);
   }
 });
@@ -220,7 +220,6 @@ function renderPatternCards(){
       c.innerHTML='<img class="pattern-card-thumb" src="'+p.data+'"><div class="pattern-card-info"><div class="pattern-card-name">'+label+'</div></div>'+matHtml+'<div class="pattern-card-badge"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" fill="none" stroke="#fff" stroke-width="3"/></svg></div>';
       c.addEventListener('click',function(e){
         if(e.target.closest('.pattern-card-material'))return;
-        if(e.target.classList.contains('pattern-card-thumb'))e.stopPropagation();
         activePattern=i;applyView();renderPatternCards();animateTo(hasStep2?100:100);
       });
       cards.appendChild(c);
@@ -266,7 +265,7 @@ function buildExport(info){
   var patCards='';
   if(pd.length>=1)patCards='<div class="pattern-section show"><div class="pattern-section-title">デザインパターンを選択</div><div class="pattern-cards">'+pd.map(function(p,i){
     var matHtml=p.mat?'<div class="pattern-card-material"><img src="'+p.mat+'" onclick="event.stopPropagation();openLightbox(this.src)"><span>素材参考</span></div>':'';
-    return'<div class="pattern-card'+(i===0?' active':'')+'" onclick="switchPattern('+i+')"><img class="pattern-card-thumb" src="'+p.data+'" onclick="event.stopPropagation();openLightbox(this.src)"><div class="pattern-card-info"><div class="pattern-card-name">'+p.label+'</div></div>'+matHtml+'<div class="pattern-card-badge"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" fill="none" stroke="#fff" stroke-width="3"/></svg></div></div>'}).join('')+'</div></div>';
+    return'<div class="pattern-card'+(i===0?' active':'')+'" onclick="if(!event.target.closest(\'.pattern-card-material\')){switchPattern('+i+')}"><img class="pattern-card-thumb" src="'+p.data+'"><div class="pattern-card-info"><div class="pattern-card-name">'+p.label+'</div></div>'+matHtml+'<div class="pattern-card-badge"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" fill="none" stroke="#fff" stroke-width="3"/></svg></div></div>'}).join('')+'</div></div>';
 
   var hero='';
   if(info.client)hero='<div class="hero-proposal" style="display:block"><div class="hero-inner"><div class="hero-tag">施工前イメージ提案</div><div class="hero-client"><span>'+info.client+'</span> 様　施工提案パース画像</div><div class="hero-sub">※ こちらはAIパースによる施工前のイメージ画像です</div>'+(info.note?'<div class="hero-note">※ '+info.note+'</div>':'')+'<div class="hero-meta">'+(info.site?'<span>📍 '+info.site+'</span>':'')+(info.date?'<span>📅 '+info.date.replace(/-/g,'/')+'</span>':'')+'</div></div></div>';
